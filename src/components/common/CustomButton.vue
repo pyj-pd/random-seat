@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type ButtonHTMLAttributes, type PropType } from 'vue'
+import { type ButtonHTMLAttributes } from 'vue'
 
 interface ButtonProps extends /* @vue-ignore */ ButtonHTMLAttributes {
   disabled?: boolean

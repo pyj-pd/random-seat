@@ -5,13 +5,14 @@ import { waitMs } from '@/utils/time'
 import { storeToRefs } from 'pinia'
 import { onMounted, ref } from 'vue'
 
-const DEFAULT_SHUFFLE_DELAY_MS = 1.2,
-  SHUFFLE_DELAY_INCREASE = 1.08,
-  SHUFFLE_END_DELAY = 850
+const DEFAULT_SHUFFLE_DELAY_MS = 50,
+  SHUFFLE_DELAY_INCREASE = 1.12,
+  SHUFFLE_DELAY_START_AFTER = 50,
+  SHUFFLE_END_DELAY = 950
 
 const AUDIO_LOCATION = '/sounds/roulette.mp3'
 
-let audioContext: AudioContext, audioBuffer: AudioBuffer
+let audioContext: AudioContext, gainNode: GainNode, audioBuffer: AudioBuffer
 
 const seatSizeStore = useSeatSizeStore()
 const { shuffleSeats } = seatSizeStore
@@ -25,14 +26,17 @@ type PickingState = null | {
 const pickingState = ref<PickingState>(null)
 
 const startRandomPick = async () => {
-  let shuffleDelay: number = DEFAULT_SHUFFLE_DELAY_MS
+  let shuffleDelay: number = DEFAULT_SHUFFLE_DELAY_MS,
+    startDelayRemaining = SHUFFLE_DELAY_START_AFTER
 
   while (shuffleDelay <= SHUFFLE_END_DELAY) {
     shuffleSeats()
     playSound()
 
     await waitMs(shuffleDelay)
-    shuffleDelay *= SHUFFLE_DELAY_INCREASE
+
+    if (startDelayRemaining <= 0) shuffleDelay *= SHUFFLE_DELAY_INCREASE
+    else startDelayRemaining--
   }
 
   console.log('end')
@@ -43,13 +47,17 @@ const startRandomPick = async () => {
 const playSound = () => {
   const source = audioContext.createBufferSource()
   source.buffer = audioBuffer
-  source.playbackRate.value = 4
-  source.connect(audioContext.destination)
+  source.playbackRate.value = 3
+  source.connect(gainNode)
   source.start()
 }
 
 onMounted(async () => {
   audioContext = new AudioContext()
+
+  gainNode = audioContext.createGain()
+  gainNode.gain.value = 70
+  gainNode.connect(audioContext.destination)
 
   const response = await fetch(AUDIO_LOCATION)
   audioBuffer = await audioContext.decodeAudioData(await response.arrayBuffer())
