@@ -1,19 +1,19 @@
 import {
   DEFAULT_COLUMN_SIZE,
   DEFAULT_ROW_SIZE,
-  DEFAULT_SEAT_DATA,
+  DEFAULT_SEAT_ROW_DATA,
   type SeatData,
   type SeatPosition,
   type SeatRowData,
 } from '@/constants/seat'
-import { initializeSeatData } from '@/utils/array'
+import { getShuffledSeatData, getTotalNumberOfSeats, initializeSeatData } from '@/utils/seat'
 import { defineStore } from 'pinia'
 
 export const useSeatSizeStore = defineStore('seatSize', {
   state: () => ({
     columnSize: DEFAULT_COLUMN_SIZE,
     rowSize: DEFAULT_ROW_SIZE,
-    seatData: DEFAULT_SEAT_DATA as SeatRowData,
+    seatData: DEFAULT_SEAT_ROW_DATA as SeatRowData,
   }),
   getters: {
     /**
@@ -22,6 +22,12 @@ export const useSeatSizeStore = defineStore('seatSize', {
      */
     getSeatData(state) {
       return ([columnPos, rowPos]: SeatPosition) => state.seatData[rowPos][columnPos]
+    },
+    /**
+     * Total number of seats included.
+     */
+    totalSeatNumber(state) {
+      return getTotalNumberOfSeats(state.seatData)
     },
   },
   actions: {
@@ -47,6 +53,12 @@ export const useSeatSizeStore = defineStore('seatSize', {
      */
     setSeatData([columnPos, rowPos]: SeatPosition, data: SeatData) {
       this.seatData[rowPos][columnPos] = data
+    },
+    /**
+     * Assign random numbers to the seats.
+     */
+    shuffleSeats() {
+      this.seatData = getShuffledSeatData(this.seatData)
     },
   },
 })

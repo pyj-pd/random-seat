@@ -1,6 +1,16 @@
+<script setup lang="ts">
+import { type ButtonHTMLAttributes, type PropType } from 'vue'
+
+interface ButtonProps extends /* @vue-ignore */ ButtonHTMLAttributes {
+  disabled?: boolean
+}
+
+defineProps<ButtonProps>()
+</script>
+
 <template>
   <div :class="$style.container">
-    <button :class="$style.button"><slot></slot></button>
+    <button v-bind="$props" :class="$style.button"><slot></slot></button>
   </div>
 </template>
 

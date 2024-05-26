@@ -10,7 +10,7 @@ const { setSize, setSeatData } = seatSizeStore
 
 const { setCurrentSectionId } = useSectionStore()
 
-const { columnSize, rowSize, seatData, getSeatData } = storeToRefs(seatSizeStore)
+const { columnSize, rowSize, seatData, getSeatData, totalSeatNumber } = storeToRefs(seatSizeStore)
 
 /**
  * Exclude or include a seat at certain position based on current state.
@@ -18,13 +18,16 @@ const { columnSize, rowSize, seatData, getSeatData } = storeToRefs(seatSizeStore
  */
 const toggleSeat = (position: SeatPosition) => {
   const currentSeatData = getSeatData.value(position)
-  setSeatData(position, currentSeatData === false ? null : false)
+  setSeatData(position, { ...currentSeatData, isExcluded: !currentSeatData.isExcluded })
 }
 </script>
 
 <template>
   <main :class="$style.container">
     <p>제외하고 싶은 자리를 클릭해주세요.</p>
+    <p>
+      총 자리 수: <b>{{ totalSeatNumber }}개</b>
+    </p>
     <div :class="$style['table-vertical-wrapper']">
       <div :class="$style['table-top']">TOP</div>
       <div :class="$style['table-horizontal-wrapper']">
@@ -42,7 +45,7 @@ const toggleSeat = (position: SeatPosition) => {
               <th scope="row">{{ rowIndex }}</th>
               <td v-for="(column, columnIndex) in row" :key="`${rowIndex},${columnIndex}`">
                 <button @click="() => toggleSeat([columnIndex, rowIndex])">
-                  {{ column === false ? 'X' : 'O' }}
+                  {{ column.isExcluded ? 'X' : 'O' }}
                 </button>
               </td>
             </tr>
