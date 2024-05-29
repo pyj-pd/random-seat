@@ -43,3 +43,7 @@ pnpm test:unit
 ```sh
 pnpm lint
 ```
+
+## Sounds
+
+Sound effects are from [Ubuntu Yaru GNOME Theme](https://github.com/ubuntu/yaru).
