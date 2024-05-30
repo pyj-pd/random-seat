@@ -3,7 +3,7 @@ import CustomButton from '@/components/common/CustomButton.vue'
 import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
 import { waitMs } from '@/utils/time'
 import { storeToRefs } from 'pinia'
-import { onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 /**
  * Initial delay between each shuffle in milliseconds.
@@ -23,7 +23,7 @@ const DEFAULT_SHUFFLE_DELAY_MS = 50,
    */
   SHUFFLE_END_DELAY = 950
 
-const SHUFFLE_SOUND_VOLUME = 20,
+const SHUFFLE_SOUND_VOLUME = 5,
   SHUFFLE_SOUND_PLAYBACK_RATE = 3,
   SHUFFLE_DONE_SOUND_PLAYBACK_RATE = 1.5
 

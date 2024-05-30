@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SlideTransition from '@/components/common/SlideTransition.vue'
 import NavigationBar from '@/components/home/NavigationBar.vue'
 import { useSectionStore } from '@/stores/useSectionStore'
 import { storeToRefs } from 'pinia'
@@ -17,15 +18,16 @@ const { currentSectionData } = storeToRefs(sectionStore)
   <div :class="$style.container">
     <NavigationBar />
     <div :class="$style['view-container']">
-      <Transition name="view" :class="$style.view" mode="out-in">
-        <component :is="currentSectionData.component" />
-      </Transition>
+      <SlideTransition :class="$style.view">
+        <component :is="currentSectionData.component"></component>
+      </SlideTransition>
     </div>
   </div>
 </template>
 
 <style module lang="scss">
 @use '@/styles/palette' as palette;
+@use '@/styles/value' as value;
 
 .container {
   position: relative;
@@ -49,35 +51,6 @@ const { currentSectionData } = storeToRefs(sectionStore)
   width: 100%;
   min-height: 100%;
 
-  padding: 60px;
-}
-</style>
-
-<style scoped lang="scss">
-$enter-y: 20px;
-
-.view-enter-active,
-.view-leave-active {
-  transition-duration: 0.5s;
-  transition-property: transform, opacity;
-}
-
-.view-enter-active {
-  transition-timing-function: ease-out;
-}
-
-.view-leave-active {
-  transition-timing-function: ease-in;
-  pointer-events: none;
-}
-
-.view-enter-from {
-  transform: translateY($enter-y);
-  opacity: 0;
-}
-
-.view-leave-to {
-  transform: translateY(-$enter-y);
-  opacity: 0;
+  padding: value.$view-padding;
 }
 </style>

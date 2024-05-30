@@ -16,8 +16,8 @@ defineProps<ButtonProps>()
 
 <style module lang="scss">
 @use '@/styles/palette' as palette;
+@use '@/styles/value' as value;
 
-$border-width: 2px;
 $initial-shadow-depth: 4px;
 $animation-duration: 0.1s;
 
@@ -55,18 +55,18 @@ $animation-duration: 0.1s;
 
   cursor: pointer;
 
-  border: solid $border-width currentColor;
+  border: solid value.$border-width currentColor;
 
   &::after {
     content: '';
 
     position: absolute;
     z-index: -1;
-    top: -$border-width;
-    left: -$border-width;
+    top: calc(-1 * value.$border-width);
+    left: calc(-1 * value.$border-width);
 
     box-sizing: content-box;
-    padding: $border-width;
+    padding: value.$border-width;
 
     clip-path: polygon(
       0% 0%,
