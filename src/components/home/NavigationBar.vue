@@ -1,18 +1,16 @@
 <script setup lang="ts">
 import { useSectionStore } from '@/stores/useSectionStore'
 import { storeToRefs } from 'pinia'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import SlideTransition from '../common/SlideTransition.vue'
+import { defaultSectionId } from '@/constants/section'
 
 const sectionStore = useSectionStore()
-const { setCurrentSectionId } = sectionStore
+const { navigateToLastSection } = sectionStore
 
-const { currentSectionId, currentSectionData, lastSectionId } = storeToRefs(sectionStore)
+const { currentSectionId, currentSectionData } = storeToRefs(sectionStore)
 
-/**
- * Move to last section.
- */
-const goBack = () => lastSectionId.value && setCurrentSectionId(lastSectionId.value)
+const isBackButtonVisible = computed<boolean>(() => currentSectionId.value !== defaultSectionId)
 
 const titleRefresh = ref<number>(0)
 
@@ -23,9 +21,18 @@ watch(currentSectionId, () => {
 
 <template>
   <div :class="$style.container">
-    <button @click="goBack" aria-label="뒤로가기" :class="$style['back-button']">
-      <span :class="$style['back-arrow-icon']"></span>
-    </button>
+    <div :class="$style['back-button-container']">
+      <Transition name="back-button">
+        <button
+          v-if="isBackButtonVisible"
+          @click="navigateToLastSection"
+          aria-label="뒤로가기"
+          :class="$style['back-button']"
+        >
+          <span :class="$style['back-arrow-icon']"></span>
+        </button>
+      </Transition>
+    </div>
     <div :class="$style['title-container']">
       <SlideTransition enter-y="5px">
         <span :key="titleRefresh" :class="$style['section-title']">{{
@@ -39,14 +46,8 @@ watch(currentSectionId, () => {
 <style module lang="scss">
 @use '@/styles/palette' as palette;
 @use '@/styles/value' as value;
-@use '@/styles/zindex' as zindex;
 
 .container {
-  position: absolute;
-  z-index: zindex.$navigation-bar;
-  top: 0;
-  left: 0;
-
   display: flex;
   gap: 15px;
   align-items: center;
@@ -59,13 +60,26 @@ watch(currentSectionId, () => {
   width: 100%;
 }
 
+.back-button-container {
+  display: flex;
+
+  width: 45px;
+  height: 45px;
+}
+
 .back-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   cursor: pointer;
 
-  border: solid value.$border-width currentColor;
-  background: none;
+  border: none;
 
-  padding: 10px;
+  background-color: palette.$white;
+
+  width: 100%;
+  height: 100%;
 }
 
 .back-arrow-icon {
@@ -88,5 +102,17 @@ watch(currentSectionId, () => {
   display: block;
 
   font-weight: bold;
+}
+</style>
+
+<style scoped lang="scss">
+.back-button-enter-active,
+.back-button-leave-active {
+  transition: 0.5s ease-in-out;
+}
+
+.back-button-enter-from,
+.back-button-leave-to {
+  opacity: 0;
 }
 </style>

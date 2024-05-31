@@ -2,9 +2,11 @@
 withDefaults(
   defineProps<{
     enterY?: string
+    duration?: number
   }>(),
   {
-    enterY: '20px',
+    enterY: '15px',
+    duration: 0.25,
   },
 )
 </script>
@@ -18,11 +20,12 @@ withDefaults(
 <style scoped lang="scss">
 .slide-transition {
   --enter-y: v-bind('$props.enterY');
+  --duration: v-bind('$props.duration');
 }
 
 .slide-transition-enter-active,
 .slide-transition-leave-active {
-  transition-duration: 0.5s;
+  transition-duration: calc(var(--duration) * 1s);
   transition-property: transform, opacity;
 }
 

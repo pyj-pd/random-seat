@@ -21,6 +21,7 @@ const { setCurrentSectionId } = useSectionStore()
 }
 
 .title {
-  font-size: 2.5em;
+  font-size: 4em;
+  letter-spacing: -0.05em;
 }
 </style>
