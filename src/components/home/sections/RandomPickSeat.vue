@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CustomButton from '@/components/common/CustomButton.vue'
+import CustomButton from '@/components/common/ShadowButton.vue'
 import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
 import { waitMs } from '@/utils/time'
 import { storeToRefs } from 'pinia'
@@ -12,7 +12,7 @@ const DEFAULT_SHUFFLE_DELAY_MS = 50,
   /**
    * The factor by which the delay increases after each shuffle.
    */
-  SHUFFLE_DELAY_INCREASE = 1.2,
+  SHUFFLE_DELAY_INCREASE = 1.02,
   /**
    * Delays will be increased after this amount of shuffles.
    * That is, there will be no delay before this amount of shuffles.
@@ -65,7 +65,7 @@ const startRandomPick = async () => {
 
     await waitMs(shuffleDelay)
 
-    if (startDelayRemaining <= 0) shuffleDelay *= SHUFFLE_DELAY_INCREASE
+    if (startDelayRemaining <= 0) shuffleDelay **= SHUFFLE_DELAY_INCREASE
     else startDelayRemaining--
   }
 

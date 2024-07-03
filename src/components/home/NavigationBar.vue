@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import SlideTransition from '../common/SlideTransition.vue'
 import { defaultSectionId } from '@/constants/section'
+import NormalButton from '../common/NormalButton.vue'
 
 const sectionStore = useSectionStore()
 const { navigateToLastSection } = sectionStore
@@ -23,14 +24,15 @@ watch(currentSectionId, () => {
   <div :class="$style.container">
     <div :class="$style['back-button-container']">
       <Transition name="back-button">
-        <button
+        <NormalButton
           v-if="isBackButtonVisible"
           @click="navigateToLastSection"
           aria-label="뒤로가기"
           :class="$style['back-button']"
+          :animation="false"
         >
           <span :class="$style['back-arrow-icon']"></span>
-        </button>
+        </NormalButton>
       </Transition>
     </div>
     <div :class="$style['title-container']">
@@ -52,7 +54,6 @@ watch(currentSectionId, () => {
   gap: 15px;
   align-items: center;
 
-  background-color: palette.$white;
   border-bottom: solid value.$border-width palette.$black;
 
   padding: 15px value.$view-padding;
@@ -72,14 +73,11 @@ watch(currentSectionId, () => {
   justify-content: center;
   align-items: center;
 
-  cursor: pointer;
-
-  border: none;
-
-  background-color: palette.$white;
-
   width: 100%;
   height: 100%;
+
+  padding: 0;
+  border: none;
 }
 
 .back-arrow-icon {

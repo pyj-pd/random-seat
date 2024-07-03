@@ -21,8 +21,10 @@ body {
   font-size: 15px;
   line-height: 1.6;
 
+  background-color: palette.$white;
+  background-image: url('/images/texture.jpg');
+  background-blend-mode: luminosity;
   color: palette.$black;
-  background: palette.$white;
 
   text-rendering: optimizelegibility;
   -webkit-font-smoothing: antialiased;

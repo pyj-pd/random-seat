@@ -17,18 +17,22 @@ export const initializeSeatData = (
   rowSize: number,
   originalData?: SeatRowData,
 ): SeatRowData => {
+  // Intialize new data
   if (originalData === undefined)
     return [...new Array(rowSize)].map(() => Array<SeatData>(columnSize).fill(DEFAULT_SEAT_DATA))
 
   // Modify the data
+
+  // Add rows
   if (originalData.length < rowSize)
-    originalData.push(
+    originalData.unshift(
       ...Array(rowSize - originalData.length).fill(
         Array<SeatData>(columnSize).fill(DEFAULT_SEAT_DATA),
       ),
     )
   else if (originalData.length > rowSize) originalData.splice(rowSize)
 
+  // Add columns
   const newSeatData: SeatRowData = originalData.map((row) => {
     const newRow = [...row]
 

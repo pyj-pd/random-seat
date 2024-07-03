@@ -2,7 +2,7 @@
 import { type ButtonHTMLAttributes } from 'vue'
 
 interface ButtonProps extends /* @vue-ignore */ ButtonHTMLAttributes {
-  disabled?: boolean
+  disabled?: boolean /** @todo Disabled styles */
 }
 
 defineProps<ButtonProps>()
@@ -17,6 +17,7 @@ defineProps<ButtonProps>()
 <style module lang="scss">
 @use '@/styles/palette' as palette;
 @use '@/styles/value' as value;
+@use '@/styles/button' as button;
 
 $initial-shadow-depth: 4px;
 $animation-duration: 0.1s;
@@ -37,25 +38,11 @@ $animation-duration: 0.1s;
     calc($initial-shadow-depth - var(--v-shadow-depth))
   );
 
-  transition: transform $animation-duration;
+  transition: transform value.$animation-duration value.$animation-ease;
 }
 
 .button {
-  position: relative;
-
-  display: inline-block;
-
-  padding: 8px 25px;
-
-  font-weight: 500;
-  font-size: 1rem;
-
-  color: palette.$black;
-  background-color: palette.$white;
-
-  cursor: pointer;
-
-  border: solid value.$border-width currentColor;
+  @include button.button-default-styles();
 
   &::after {
     content: '';
@@ -69,12 +56,12 @@ $animation-duration: 0.1s;
     padding: value.$border-width;
 
     clip-path: polygon(
-      0% 0%,
       calc(100% - var(--v-shadow-depth)) 0%,
       100% var(--v-shadow-depth),
       100% 100%,
       var(--v-shadow-depth) 100%,
-      0% calc(100% - var(--v-shadow-depth))
+      0% calc(100% - var(--v-shadow-depth)),
+      calc(100% - var(--v-shadow-depth)) calc(100% - var(--v-shadow-depth))
     );
 
     background-color: currentColor;
@@ -82,7 +69,7 @@ $animation-duration: 0.1s;
     width: calc(100% + var(--v-shadow-depth));
     height: calc(100% + var(--v-shadow-depth));
 
-    transition: all $animation-duration;
+    transition: all value.$animation-duration value.$animation-ease;
   }
 }
 </style>

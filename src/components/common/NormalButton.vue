@@ -1,0 +1,59 @@
+<script setup lang="ts">
+import { type ButtonHTMLAttributes } from 'vue'
+
+interface ButtonProps extends /* @vue-ignore */ ButtonHTMLAttributes {
+  disabled?: boolean /** @todo Disabled styles */
+  animation?: boolean
+}
+
+withDefaults(defineProps<ButtonProps>(), {
+  animation: true,
+})
+</script>
+
+<template>
+  <button v-bind="$props" :class="[$style.button, { [$style.animated]: $props.animation }]">
+    <slot></slot>
+  </button>
+</template>
+
+<style module lang="scss">
+@use '@/styles/palette' as palette;
+@use '@/styles/value' as value;
+@use '@/styles/button' as button;
+
+.button {
+  @include button.button-default-styles();
+}
+
+.button.animated {
+  &::after {
+    content: '';
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+
+    transform: scaleX(0);
+    transform-origin: left center;
+
+    width: 100%;
+    height: 100%;
+
+    background-color: palette.$black;
+
+    transition: transform value.$animation-duration value.$animation-ease;
+  }
+
+  transition: color value.$animation-duration value.$animation-ease;
+
+  &:hover {
+    color: palette.$white;
+
+    &::after {
+      transform: scaleX(1);
+    }
+  }
+}
+</style>
