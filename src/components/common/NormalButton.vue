@@ -4,6 +4,7 @@ import { type ButtonHTMLAttributes } from 'vue'
 interface ButtonProps extends /* @vue-ignore */ ButtonHTMLAttributes {
   disabled?: boolean /** @todo Disabled styles */
   animation?: boolean
+  vertical?: boolean
 }
 
 withDefaults(defineProps<ButtonProps>(), {
@@ -12,7 +13,14 @@ withDefaults(defineProps<ButtonProps>(), {
 </script>
 
 <template>
-  <button v-bind="$props" :class="[$style.button, { [$style.animated]: $props.animation }]">
+  <button
+    v-bind="$props"
+    :class="[
+      $style.button,
+      { [$style.animated]: $props.animation },
+      { [$style.vertical]: $props.vertical },
+    ]"
+  >
     <slot></slot>
   </button>
 </template>
@@ -26,6 +34,7 @@ withDefaults(defineProps<ButtonProps>(), {
   @include button.button-default-styles();
 }
 
+// Animation is on
 .button.animated {
   &::after {
     content: '';
@@ -46,6 +55,12 @@ withDefaults(defineProps<ButtonProps>(), {
     transition: transform value.$animation-duration value.$animation-ease;
   }
 
+  // Vertical
+  &.vertical::after {
+    transform: scaleY(0);
+    transform-origin: center bottom;
+  }
+
   transition: color value.$animation-duration value.$animation-ease;
 
   &:hover {
@@ -53,6 +68,9 @@ withDefaults(defineProps<ButtonProps>(), {
 
     &::after {
       transform: scaleX(1);
+    }
+    &.vertical::after {
+      transform: scaleY(1);
     }
   }
 }

@@ -5,8 +5,8 @@ withDefaults(
     duration?: number
   }>(),
   {
-    enterY: '15px',
-    duration: 0.25,
+    enterY: '10px',
+    duration: 0.4,
   },
 )
 </script>
@@ -18,23 +18,25 @@ withDefaults(
 </template>
 
 <style scoped lang="scss">
+@use '@/styles/value' as value;
+
 .slide-transition {
   --enter-y: v-bind('$props.enterY');
-  --duration: v-bind('$props.duration');
+  --duration: calc(v-bind('$props.duration') * 1s);
 }
 
 .slide-transition-enter-active,
 .slide-transition-leave-active {
-  transition-duration: calc(var(--duration) * 1s);
+  transition-duration: var(--duration);
   transition-property: transform, opacity;
 }
 
 .slide-transition-enter-active {
-  transition-timing-function: ease-out;
+  transition-timing-function: value.$ease-out;
 }
 
 .slide-transition-leave-active {
-  transition-timing-function: ease-in;
+  transition-timing-function: value.$ease-in;
   pointer-events: none;
 }
 

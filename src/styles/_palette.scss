@@ -1,4 +1,9 @@
+@use 'sass:color';
+
 $white: hsl(35, 47%, 85%);
 $gray: hsl(35, 63%, 79%);
-$dark-gray: hsl(35, 52%, 70%);
+$dark-gray: color.scale($gray, $lightness: -15%);
+$blackish: hsl(34, 20%, 23%);
 $black: hsl(30, 9%, 13%);
+
+$red: hsl(7, 47%, 51%);

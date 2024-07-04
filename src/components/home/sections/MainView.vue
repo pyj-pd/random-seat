@@ -15,6 +15,8 @@ const { setCurrentSectionId } = useSectionStore()
 </template>
 
 <style module lang="scss">
+@use '@/styles/value' as value;
+
 .container {
   display: grid;
   gap: 20px;
@@ -25,5 +27,18 @@ const { setCurrentSectionId } = useSectionStore()
 .title {
   font-size: 2.5em;
   letter-spacing: -0.05em;
+
+  animation: title-animation 0.5s value.$ease-out 0.2s 1 both;
+}
+
+@keyframes title-animation {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
 }
 </style>

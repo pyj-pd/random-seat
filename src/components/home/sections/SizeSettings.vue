@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import NormalButton from '@/components/common/NormalButton.vue'
 import CustomButton from '@/components/common/ShadowButton.vue'
-import type { SeatPosition } from '@/constants/seat'
+import { MAX_SEAT_COLUMN_SIZE, MAX_SEAT_ROW_SIZE, type SeatPosition } from '@/constants/seat'
 import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
 import { useSectionStore } from '@/stores/useSectionStore'
 import { storeToRefs } from 'pinia'
+import PersonIcon from '../PersonIcon.vue'
 
 const seatSizeStore = useSeatSizeStore()
 const { setSize, setSeatData, removeSeatLine } = seatSizeStore
@@ -54,13 +55,14 @@ const toggleSeat = (position: SeatPosition) => {
             <th scope="col" :class="$style['no-style']"></th>
 
             <!-- Column number headers -->
-            <th
-              scope="col"
-              v-for="column in columnSize"
-              :key="column"
-              @click="() => removeSeatLine('column', column - 1)"
-            >
-              {{ column }}
+            <th scope="col" v-for="column in columnSize" :key="column">
+              <NormalButton
+                @click="() => removeSeatLine('column', column - 1)"
+                :class="$style['header-button']"
+                :animation="false"
+              >
+                {{ column }}
+              </NormalButton>
             </th>
           </tr>
           <tr>
@@ -68,19 +70,29 @@ const toggleSeat = (position: SeatPosition) => {
             <td :class="$style['no-style']"></td>
 
             <!-- Row add button -->
-            <td :colspan="columnSize" :class="$style['line-button-container']">
+            <td
+              v-if="rowSize < MAX_SEAT_ROW_SIZE"
+              :colspan="columnSize"
+              :class="$style['line-button-container']"
+            >
               <NormalButton
                 @click="() => setSize(columnSize, rowSize + 1, true)"
                 :class="$style['line-button']"
-                :animation="false"
                 >+</NormalButton
               >
             </td>
           </tr>
+          <!-- Row content -->
           <tr v-for="(row, rowIndex) in seatData" :key="rowIndex">
-            <!-- Row content -->
-            <th scope="row" @click="() => removeSeatLine('row', rowIndex)">
-              {{ rowIndex + 1 }}
+            <!-- Row number headers -->
+            <th scope="row">
+              <NormalButton
+                @click="() => removeSeatLine('row', rowIndex)"
+                :class="$style['header-button']"
+                :animation="false"
+              >
+                {{ rowIndex + 1 }}
+              </NormalButton>
             </th>
 
             <!-- Seat button -->
@@ -90,13 +102,13 @@ const toggleSeat = (position: SeatPosition) => {
                 :class="$style['seat-button']"
                 :animation="false"
               >
-                {{ column.isExcluded ? 'X' : 'O' }}
+                <PersonIcon />
               </NormalButton>
             </td>
 
-            <!-- Column add button -->
+            <!-- Column add button on first row and make it full height -->
             <td
-              v-if="rowIndex === 0"
+              v-if="rowIndex === 0 && columnSize < MAX_SEAT_COLUMN_SIZE"
               rowspan="0"
               :class="[$style['line-button-container'], $style.vertical]"
             >
@@ -104,7 +116,7 @@ const toggleSeat = (position: SeatPosition) => {
                 <NormalButton
                   @click="() => setSize(columnSize + 1, rowSize, true)"
                   :class="[$style['line-button'], $style.vertical]"
-                  :animation="false"
+                  vertical
                   >+</NormalButton
                 >
               </div>
@@ -177,6 +189,7 @@ const toggleSeat = (position: SeatPosition) => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  flex: 0 0 auto;
 
   min-width: 500px;
 
@@ -213,13 +226,41 @@ const toggleSeat = (position: SeatPosition) => {
 }
 
 .seat-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   width: 100%;
   height: 100%;
 
+  padding: 22px;
+
   background-color: palette.$gray;
+  color: palette.$blackish;
   border: solid value.$border-slim-width palette.$dark-gray;
 
   cursor: pointer;
+
+  > svg {
+    width: 100%;
+  }
+
+  .table tr:nth-child(even) & {
+    background-color: palette.$dark-gray;
+  }
+}
+
+// Line header buttons
+.header-button {
+  border: none;
+
+  width: 60px;
+  height: 40px;
+
+  &:hover {
+    background-color: palette.$red;
+    color: palette.$gray;
+  }
 }
 
 // Line modifier button

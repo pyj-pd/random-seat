@@ -1,8 +1,15 @@
+// Padding
 $view-padding: 60px;
 
+// Border
 $border-width: 2px;
 $border-slim-width: 1.5px;
 $border-radius: 10px;
 
-$animation-duration: 0.15s;
-$animation-ease: ease-in-out;
+// Animation
+$ease-in-out: ease-in-out;
+$ease-in: cubic-bezier(0.5, 0, 0.6, 0.2);
+$ease-out: cubic-bezier(0.4, 0.8, 0.5, 1);
+
+$animation-duration: 0.2s;
+$animation-ease: $ease-in-out;
