@@ -4,6 +4,7 @@ import NavigationBar from '@/components/home/NavigationBar.vue'
 import { useSectionStore } from '@/stores/useSectionStore'
 import { storeToRefs } from 'pinia'
 import { useHead } from 'unhead'
+import { watch } from 'vue'
 
 useHead({
   title: '무작위 자리 뽑기',
@@ -11,7 +12,13 @@ useHead({
 
 const sectionStore = useSectionStore()
 
-const { currentSectionData } = storeToRefs(sectionStore)
+const { currentSectionId, currentSectionData } = storeToRefs(sectionStore)
+
+watch(currentSectionId, () => {
+  window.scrollTo({
+    top: 0,
+  })
+})
 </script>
 
 <template>

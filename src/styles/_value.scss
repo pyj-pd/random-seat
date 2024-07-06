@@ -1,3 +1,13 @@
+@use './palette';
+
+// Background
+@mixin paper-texture-background($background-color: palette.$white) {
+  background-color: $background-color;
+  background-image: url('/images/texture.jpg');
+  background-blend-mode: luminosity;
+  background-size: cover;
+}
+
 // Padding
 $view-padding: 60px;
 

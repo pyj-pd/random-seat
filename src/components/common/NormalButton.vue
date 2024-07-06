@@ -31,7 +31,7 @@ withDefaults(defineProps<ButtonProps>(), {
 @use '@/styles/button' as button;
 
 .button {
-  @include button.button-default-styles();
+  @include button.button-common-styles();
 }
 
 // Animation is on

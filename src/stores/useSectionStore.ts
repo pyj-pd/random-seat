@@ -26,6 +26,8 @@ export const useSectionStore = defineStore('section', {
      * Navigate to the last section saved in the navigation history.
      */
     navigateToLastSection() {
+      if (this.sectionHistory.length < 1) return
+
       const lastSectionId = this.sectionHistory[this.sectionHistory.length - 1]
 
       this.sectionHistory.splice(this.sectionHistory.length - 1, 1) // Remove the last section from the history

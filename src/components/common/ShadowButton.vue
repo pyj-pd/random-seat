@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { type ButtonHTMLAttributes } from 'vue'
+import LoadingIndicator from './LoadingIndicator.vue'
 
 interface ButtonProps extends /* @vue-ignore */ ButtonHTMLAttributes {
   disabled?: boolean /** @todo Disabled styles */
+  warning?: boolean
+  loading?: boolean
 }
 
 defineProps<ButtonProps>()
@@ -10,7 +13,15 @@ defineProps<ButtonProps>()
 
 <template>
   <div :class="$style.container">
-    <button v-bind="$props" :class="$style.button"><slot></slot></button>
+    <button
+      v-bind="$props"
+      :class="[$style.button, { [$style.warning]: warning }, { [$style.loading]: loading }]"
+    >
+      <div :class="$style.slot">
+        <slot></slot>
+      </div>
+      <LoadingIndicator v-if="loading" />
+    </button>
   </div>
 </template>
 
@@ -42,7 +53,21 @@ $animation-duration: 0.1s;
 }
 
 .button {
-  @include button.button-default-styles();
+  @include button.button-common-styles();
+
+  &.warning {
+    @include button.button-warning-styles();
+  }
+
+  &.loading {
+    & > .slot {
+      visibility: hidden;
+    }
+  }
+
+  &:disabled {
+    @include button.button-disabled-styles();
+  }
 
   &::after {
     content: '';

@@ -1,11 +1,19 @@
 <script setup lang="ts">
 import NormalButton from '@/components/common/NormalButton.vue'
 import CustomButton from '@/components/common/ShadowButton.vue'
-import { MAX_SEAT_COLUMN_SIZE, MAX_SEAT_ROW_SIZE, type SeatPosition } from '@/constants/seat'
+import {
+  DEFAULT_COLUMN_SIZE,
+  DEFAULT_ROW_SIZE,
+  MAX_SEAT_COLUMN_SIZE,
+  MAX_SEAT_ROW_SIZE,
+  type SeatPosition,
+} from '@/constants/seat'
 import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
 import { useSectionStore } from '@/stores/useSectionStore'
 import { storeToRefs } from 'pinia'
 import PersonIcon from '../PersonIcon.vue'
+import { ref } from 'vue'
+import XShape from '../XShape.vue'
 
 const seatSizeStore = useSeatSizeStore()
 const { setSize, setSeatData, removeSeatLine } = seatSizeStore
@@ -13,6 +21,10 @@ const { setSize, setSeatData, removeSeatLine } = seatSizeStore
 const { setCurrentSectionId } = useSectionStore()
 
 const { columnSize, rowSize, seatData, getSeatData, totalSeatNumber } = storeToRefs(seatSizeStore)
+
+// Transition every time a row/column is added
+const rowUpdateRefresh = ref<number | null>(null),
+  columnUpdateRefresh = ref<number | null>(null)
 
 /**
  * Exclude or include a seat at certain position based on current state.
@@ -22,6 +34,36 @@ const toggleSeat = (position: SeatPosition) => {
   const currentSeatData = getSeatData.value(position)
   setSeatData(position, { ...currentSeatData, isExcluded: !currentSeatData.isExcluded })
 }
+
+const resetSeatData = () => setSize(DEFAULT_COLUMN_SIZE, DEFAULT_ROW_SIZE, false)
+
+const addRow = () => {
+    setSize(columnSize.value, rowSize.value + 1, true)
+
+    rowUpdateRefresh.value ??= 0
+    rowUpdateRefresh.value++
+
+    columnUpdateRefresh.value = null
+  },
+  addColumn = () => {
+    setSize(columnSize.value + 1, rowSize.value, true)
+
+    rowUpdateRefresh.value = null
+
+    columnUpdateRefresh.value ??= 0
+    columnUpdateRefresh.value++
+  }
+
+const removeRow = (index: number) => {
+    removeSeatLine('row', index)
+
+    rowUpdateRefresh.value = null
+  },
+  removeColumn = (index: number) => {
+    removeSeatLine('column', index)
+
+    columnUpdateRefresh.value = null
+  }
 </script>
 
 <template>
@@ -57,7 +99,7 @@ const toggleSeat = (position: SeatPosition) => {
             <!-- Column number headers -->
             <th scope="col" v-for="column in columnSize" :key="column">
               <NormalButton
-                @click="() => removeSeatLine('column', column - 1)"
+                @click="() => removeColumn(column - 1)"
                 :class="$style['header-button']"
                 :animation="false"
               >
@@ -75,11 +117,7 @@ const toggleSeat = (position: SeatPosition) => {
               :colspan="columnSize"
               :class="$style['line-button-container']"
             >
-              <NormalButton
-                @click="() => setSize(columnSize, rowSize + 1, true)"
-                :class="$style['line-button']"
-                >+</NormalButton
-              >
+              <NormalButton @click="addRow" :class="$style['line-button']">+</NormalButton>
             </td>
           </tr>
           <!-- Row content -->
@@ -87,7 +125,7 @@ const toggleSeat = (position: SeatPosition) => {
             <!-- Row number headers -->
             <th scope="row">
               <NormalButton
-                @click="() => removeSeatLine('row', rowIndex)"
+                @click="() => removeRow(rowIndex)"
                 :class="$style['header-button']"
                 :animation="false"
               >
@@ -99,10 +137,19 @@ const toggleSeat = (position: SeatPosition) => {
             <td v-for="(column, columnIndex) in row" :key="`${rowIndex},${columnIndex}`">
               <NormalButton
                 @click="() => toggleSeat([columnIndex, rowIndex])"
-                :class="$style['seat-button']"
+                :class="[
+                  $style['seat-button'],
+                  {
+                    [$style.new]:
+                      (rowIndex === 0 && rowUpdateRefresh !== null) ||
+                      (columnIndex === columnSize - 1 && columnUpdateRefresh !== null),
+                  },
+                ]"
+                :key="rowUpdateRefresh ?? columnUpdateRefresh ?? 0"
                 :animation="false"
               >
-                <PersonIcon />
+                <PersonIcon v-if="!seatData[rowIndex][columnIndex].isExcluded" />
+                <XShape v-else :class="$style['x-shape']" />
               </NormalButton>
             </td>
 
@@ -114,7 +161,7 @@ const toggleSeat = (position: SeatPosition) => {
             >
               <div>
                 <NormalButton
-                  @click="() => setSize(columnSize + 1, rowSize, true)"
+                  @click="addColumn"
                   :class="[$style['line-button'], $style.vertical]"
                   vertical
                   >+</NormalButton
@@ -125,7 +172,10 @@ const toggleSeat = (position: SeatPosition) => {
         </table>
       </div>
     </div>
-    <CustomButton @click="() => setCurrentSectionId('random-pick-seat')">다음으로</CustomButton>
+    <div :class="$style['action-button-container']">
+      <CustomButton @click="resetSeatData" warning>초기화</CustomButton>
+      <CustomButton @click="() => setCurrentSectionId('random-pick-seat')">다음으로</CustomButton>
+    </div>
   </main>
 </template>
 
@@ -174,12 +224,14 @@ const toggleSeat = (position: SeatPosition) => {
   }
 }
 
+$table-width: 880px;
+
 // Table scroll view
 .table-scroll-view-container {
   display: flex;
 
-  width: fit-content;
-  max-width: 100%;
+  width: 100%;
+  max-width: $table-width;
 
   overflow-x: auto;
 }
@@ -191,7 +243,7 @@ const toggleSeat = (position: SeatPosition) => {
   align-items: center;
   flex: 0 0 auto;
 
-  min-width: 500px;
+  width: $table-width;
 
   padding: 10px 15px;
   border: solid value.$border-width palette.$black;
@@ -207,7 +259,7 @@ const toggleSeat = (position: SeatPosition) => {
 
   font-weight: bold;
 
-  background-color: black;
+  background-color: palette.$black;
   color: white;
 }
 
@@ -225,10 +277,9 @@ const toggleSeat = (position: SeatPosition) => {
   }
 }
 
+// Seat button
 .seat-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: relative;
 
   width: 100%;
   height: 100%;
@@ -241,12 +292,32 @@ const toggleSeat = (position: SeatPosition) => {
 
   cursor: pointer;
 
-  > svg {
-    width: 100%;
+  &.new {
+    animation: seat-initial-animation 0.5s value.$ease-in-out both;
   }
 
   .table tr:nth-child(even) & {
     background-color: palette.$dark-gray;
+  }
+}
+
+.seat-button > svg {
+  width: 100%;
+
+  &.x-shape {
+    $x-shape-size: 7px;
+
+    width: $x-shape-size;
+    height: $x-shape-size;
+  }
+}
+
+@keyframes seat-initial-animation {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
@@ -302,5 +373,11 @@ $line-button-size: 30px;
       height: 100%;
     }
   }
+}
+
+// Action buttons
+.action-button-container {
+  display: flex;
+  gap: 10px;
 }
 </style>

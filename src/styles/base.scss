@@ -1,4 +1,5 @@
 @use './palette' as palette;
+@use './value' as value;
 
 @font-face {
   font-family: Happiness Sans;
@@ -21,9 +22,7 @@ body {
   font-size: 15px;
   line-height: 1.6;
 
-  background-color: palette.$white;
-  background-image: url('/images/texture.jpg');
-  background-blend-mode: luminosity;
+  @include value.paper-texture-background();
   color: palette.$black;
 
   text-rendering: optimizelegibility;

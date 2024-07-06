@@ -10,14 +10,13 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
  */
 const DEFAULT_SHUFFLE_DELAY_MS = 50,
   /**
+   * Wait this times until the delay actually starts to get increased.
+   */
+  SHUFFLE_DELAY_START_AFTER_NUMBERS = 50,
+  /**
    * The factor by which the delay increases after each shuffle.
    */
-  SHUFFLE_DELAY_INCREASE = 1.02,
-  /**
-   * Delays will be increased after this amount of shuffles.
-   * That is, there will be no delay before this amount of shuffles.
-   */
-  SHUFFLE_DELAY_START_AFTER_NUMBERS = 60,
+  SHUFFLE_DELAY_INCREASE = 1.025,
   /**
    * Shuffling will end after reaching this amount of delay(miliseconds).
    */
@@ -41,7 +40,7 @@ const { shuffleSeats } = seatSizeStore
 
 const { seatData } = storeToRefs(seatSizeStore)
 
-type PickingState = 'initial' | 'picking' | 'idle'
+type PickingState = 'initial' | 'picking' | 'idle' | 'done'
 
 const pickingState = ref<PickingState>('initial')
 
@@ -69,14 +68,12 @@ const startRandomPick = async () => {
     else startDelayRemaining--
   }
 
-  console.log('end')
-
   if (!isUnmounted) {
     // Play roulette done sound
     playSound(rouletteDoneAudioBuffer, { playbackRate: SHUFFLE_DONE_SOUND_PLAYBACK_RATE })
   }
 
-  pickingState.value = 'idle'
+  pickingState.value = 'done'
 }
 
 /**
@@ -122,49 +119,103 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => (isUnmounted = true))
+
+// Fullscreen handler
+const containerRef = ref<HTMLDivElement | null>(null),
+  isFullscreen = ref<boolean>(false)
+
+const toggleFullscreen = () => {
+  if (document.fullscreenElement === null)
+    containerRef.value?.requestFullscreen({
+      navigationUI: 'hide',
+    })
+  else document.exitFullscreen()
+}
+
+const checkFullscreen = () => (isFullscreen.value = document.fullscreenElement !== null)
+
+onMounted(() => document.addEventListener('fullscreenchange', checkFullscreen))
+
+onBeforeUnmount(() => document.removeEventListener('fullscreenchange', checkFullscreen))
 </script>
 
 <template>
-  <main :class="$style.container">
+  <main :class="$style.container" ref="containerRef">
     <div>
       <table :class="$style.table">
-        <tbody>
-          <tr v-for="(row, rowIndex) in seatData" :key="rowIndex">
-            <td v-for="(column, columnIndex) in row" :key="`${rowIndex},${columnIndex}`">
+        <tr v-for="(row, rowIndex) in seatData" :key="rowIndex">
+          <td v-for="(column, columnIndex) in row" :key="`${rowIndex},${columnIndex}`">
+            <div :class="[$style.seat, { [$style.excluded]: column.isExcluded }]">
               {{ column.assignedNumber }}
-            </td>
-          </tr>
-        </tbody>
+            </div>
+          </td>
+        </tr>
       </table>
     </div>
-    <CustomButton @click="startRandomPick" :disabled="pickingState === 'picking'"
-      >뽑기</CustomButton
-    >
+    <div>
+      <CustomButton @click="toggleFullscreen">{{
+        !isFullscreen ? '전체화면으로 보기' : '전체화면 나가기'
+      }}</CustomButton>
+      <CustomButton
+        @click="startRandomPick"
+        :disabled="pickingState === 'picking'"
+        :loading="pickingState === 'picking'"
+        >뽑기</CustomButton
+      >
+    </div>
   </main>
 </template>
 
 <style module lang="scss">
+@use '@/styles/palette' as palette;
+@use '@/styles/value' as value;
+
 .container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 30px;
+
+  &:fullscreen {
+    @include value.paper-texture-background(palette.$black);
+  }
 }
 
 .table {
-  td {
-    border: 1px solid black;
-
-    > button {
-      width: 100%;
-      height: 100%;
-    }
-  }
+  border-collapse: separate;
+  border-spacing: 10px;
 
   td,
   th {
-    width: 60px;
-    height: 50px;
+    width: 80px;
+    height: 60px;
+  }
+}
+
+.seat {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: palette.$dark-gray;
+  color: palette.$black;
+
+  font-size: 1.5rem;
+  font-weight: 500;
+
+  border: solid value.$border-slim-width palette.$blackish;
+
+  &.excluded {
+    background-color: palette.$gray;
+  }
+
+  > button {
+    width: 100%;
+    height: 100%;
   }
 }
 </style>

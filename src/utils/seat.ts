@@ -77,7 +77,7 @@ export const getShuffledSeatData = (data: SeatRowData): SeatRowData => {
   const newData: SeatRowData = data.map((row) =>
     row.map((seat): SeatData => {
       // If the seat is excluded, do not assign random numbers
-      if (seat.isExcluded) return seat
+      if (seat.isExcluded) return { ...seat, assignedNumber: null }
 
       // If the seat is included, assign a random number
       // from `randomNumbers` array

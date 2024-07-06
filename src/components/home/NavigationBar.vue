@@ -13,6 +13,9 @@ const { currentSectionId, currentSectionData } = storeToRefs(sectionStore)
 
 const isBackButtonVisible = computed<boolean>(() => currentSectionId.value !== defaultSectionId)
 
+/**
+ * Slide transition each time section changes
+ */
 const titleRefresh = ref<number>(0)
 
 watch(currentSectionId, () => {
@@ -69,10 +72,6 @@ watch(currentSectionId, () => {
 }
 
 .back-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
   width: 100%;
   height: 100%;
 
