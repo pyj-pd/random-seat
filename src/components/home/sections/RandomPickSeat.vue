@@ -251,7 +251,7 @@ useEventListener(
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 30px;
 
   margin: auto;
 
@@ -278,7 +278,7 @@ useEventListener(
 .top-indicator {
   display: block;
 
-  width: 10%;
+  width: 20%;
   height: value.$border-width;
 
   background-color: palette.$blackish;
@@ -306,7 +306,7 @@ $table-spacing: 10px;
   height: 65px;
 
   background-color: palette.$dark-gray;
-  color: palette.$black;
+  color: palette.$blackish;
 
   font-size: 1.3rem;
   font-weight: 700;
