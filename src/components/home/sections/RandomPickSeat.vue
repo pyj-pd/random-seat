@@ -101,12 +101,14 @@ const startRandomPick = async () => {
   if (!isUnmounted) {
     // Play roulette done sound
     playSound(rouletteDoneAudioBuffer, { playbackRate: SHUFFLE_DONE_SOUND_PLAYBACK_RATE })
+
+    pickingState.value = 'done'
+
+    // Confetti
+    launchConfetti()
+  } else {
+    pickingState.value = 'idle'
   }
-
-  pickingState.value = 'done'
-
-  // Confetti
-  launchConfetti()
 }
 
 /**
@@ -175,27 +177,32 @@ useEventListener(
 <template>
   <main :class="$style.container" ref="containerRef">
     <canvas ref="confettiCanvas" :class="$style['confetti-canvas']"></canvas>
-    <div>
-      <table :class="[$style.table, { [$style.done]: pickingState === 'done' }]">
-        <tr v-for="(row, rowIndex) in seatData" :key="rowIndex">
-          <td v-for="(column, columnIndex) in row" :key="`${rowIndex},${columnIndex}`">
-            <div :class="[$style.seat, { [$style.excluded]: column.isExcluded }]">
+    <div :class="$style['scroll-view-container']">
+      <div :class="[$style['table-container'], { [$style.done]: pickingState === 'done' }]">
+        <span :class="$style['top-indicator']"></span>
+        <div :class="$style.table">
+          <div :class="$style.row" v-for="(row, rowIndex) in seatData" :key="rowIndex">
+            <div
+              v-for="(column, columnIndex) in row"
+              :key="`${rowIndex},${columnIndex}`"
+              :class="[$style.seat, { [$style.excluded]: column.isExcluded }]"
+            >
               {{ column.assignedNumber }}
             </div>
-          </td>
-        </tr>
-      </table>
-    </div>
-    <div :class="$style['button-container']">
-      <CustomButton @click="toggleFullscreen">{{
-        !isFullscreen ? '전체화면으로 보기' : '전체화면 나가기'
-      }}</CustomButton>
-      <CustomButton
-        @click="startRandomPick"
-        :disabled="pickingState === 'picking'"
-        :loading="pickingState === 'picking'"
-        >뽑기</CustomButton
-      >
+          </div>
+        </div>
+      </div>
+      <div :class="$style['button-container']">
+        <CustomButton @click="toggleFullscreen">{{
+          !isFullscreen ? '전체화면으로 보기' : '전체화면 나가기'
+        }}</CustomButton>
+        <CustomButton
+          @click="startRandomPick"
+          :disabled="pickingState === 'picking'"
+          :loading="pickingState === 'picking'"
+          >뽑기</CustomButton
+        >
+      </div>
     </div>
   </main>
 </template>
@@ -206,10 +213,8 @@ useEventListener(
 
 .container {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 30px;
 
   &:fullscreen {
     @include value.paper-texture-background(palette.$black);
@@ -228,9 +233,32 @@ useEventListener(
   pointer-events: none;
 }
 
-.table {
-  border-collapse: separate;
-  border-spacing: 10px;
+.scroll-view-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 30px;
+
+  width: 100%;
+
+  padding: 20px;
+
+  overflow-x: auto;
+}
+
+.table-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  margin: auto;
+
+  width: fit-content;
+
+  white-space: nowrap;
+  flex: 0 0 auto;
 
   &.done {
     animation: roulette-done-animation 0.2s value.$ease-in-out both;
@@ -247,20 +275,25 @@ useEventListener(
   }
 }
 
-.table td,
-.table th {
-  width: 85px;
-  height: 65px;
+.top-indicator {
+  display: block;
 
-  .container:fullscreen & {
-    width: 140px;
-    height: 100px;
+  width: 10%;
+  height: value.$border-width;
 
-    .seat {
-      font-size: 1.7rem;
+  background-color: palette.$blackish;
+}
 
-      border-width: value.$border-width;
-    }
+$table-spacing: 10px;
+
+.table {
+  display: flex;
+  flex-direction: column;
+  gap: $table-spacing;
+
+  & > .row {
+    display: flex;
+    gap: $table-spacing;
   }
 }
 
@@ -269,8 +302,8 @@ useEventListener(
   justify-content: center;
   align-items: center;
 
-  width: 100%;
-  height: 100%;
+  width: 95px;
+  height: 65px;
 
   background-color: palette.$dark-gray;
   color: palette.$black;
@@ -282,6 +315,17 @@ useEventListener(
 
   &.excluded {
     background-color: palette.$gray;
+
+    display: none;
+  }
+
+  .container:fullscreen & {
+    width: 150px;
+    height: 100px;
+
+    font-size: 1.7rem;
+
+    border-width: value.$border-width;
   }
 
   > button {
@@ -293,5 +337,10 @@ useEventListener(
 .button-container {
   display: flex;
   gap: value.$button-container-gap;
+
+  margin: auto;
+
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 </style>

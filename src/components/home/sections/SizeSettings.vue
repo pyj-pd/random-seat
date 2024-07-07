@@ -6,6 +6,7 @@ import {
   DEFAULT_ROW_SIZE,
   MAX_SEAT_COLUMN_SIZE,
   MAX_SEAT_ROW_SIZE,
+  MIN_SEAT_NUMBER,
   type SeatPosition,
 } from '@/constants/seat'
 import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
@@ -31,11 +32,18 @@ const rowUpdateRefresh = ref<number | null>(null),
  * @param position Position of the seat
  */
 const toggleSeat = (position: SeatPosition) => {
+  if (totalSeatNumber.value <= MIN_SEAT_NUMBER) return // Seat number reached minimum
+
   const currentSeatData = getSeatData.value(position)
   setSeatData(position, { ...currentSeatData, isExcluded: !currentSeatData.isExcluded })
 }
 
-const resetSeatData = () => setSize(DEFAULT_COLUMN_SIZE, DEFAULT_ROW_SIZE, false)
+const resetSeatData = () => {
+  setSize(DEFAULT_COLUMN_SIZE, DEFAULT_ROW_SIZE, false)
+
+  rowUpdateRefresh.value = null
+  columnUpdateRefresh.value = null
+}
 
 const addRow = () => {
     setSize(columnSize.value, rowSize.value + 1, true)
@@ -270,7 +278,7 @@ $table-width: 880px;
 .table {
   td,
   th {
-    width: 60px;
+    width: 70px;
     height: 50px;
   }
 
