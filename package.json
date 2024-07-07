@@ -14,10 +14,10 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@unhead/vue": "^1.9.15",
     "canvas-confetti": "^1.9.3",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
-    "unhead": "^1.9.10",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },

@@ -4,7 +4,7 @@ import NavigationBar from '@/components/home/NavigationBar.vue'
 import { MAX_SEAT_COLUMN_SIZE, MAX_SEAT_ROW_SIZE } from '@/constants/seat'
 import { useSectionStore } from '@/stores/useSectionStore'
 import { storeToRefs } from 'pinia'
-import { useHead } from 'unhead'
+import { useHead } from '@unhead/vue'
 import { watch } from 'vue'
 
 useHead({
