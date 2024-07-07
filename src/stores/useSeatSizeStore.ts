@@ -6,6 +6,7 @@ import {
   MAX_SEAT_ROW_SIZE,
   MIN_SEAT_COLUMN_SIZE,
   MIN_SEAT_ROW_SIZE,
+  SEAT_DATA_LOCAL_STORAGE_KEY,
   type SeatData,
   type SeatPosition,
   type SeatRowData,
@@ -63,7 +64,6 @@ export const useSeatSizeStore = defineStore('seatSize', {
      * @param rowSize
      * @param modify Whether to modify the original data or initialize again.
      * @returns An object that indicates whether setting seat size was successful.
-     * @todo Adding row at both sides
      */
     setSize(columnSize: number, rowSize: number, modify: boolean = false): SetSeatSizeResult {
       const result: SetSeatSizeResult = {
@@ -155,5 +155,8 @@ export const useSeatSizeStore = defineStore('seatSize', {
     shuffleSeats() {
       this.seatData = getShuffledSeatData(this.seatData)
     },
+  },
+  persist: {
+    key: SEAT_DATA_LOCAL_STORAGE_KEY,
   },
 })

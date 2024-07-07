@@ -3,7 +3,7 @@ import { type ButtonHTMLAttributes } from 'vue'
 import LoadingIndicator from './LoadingIndicator.vue'
 
 interface ButtonProps extends /* @vue-ignore */ ButtonHTMLAttributes {
-  disabled?: boolean /** @todo Disabled styles */
+  disabled?: boolean
   warning?: boolean
   loading?: boolean
 }

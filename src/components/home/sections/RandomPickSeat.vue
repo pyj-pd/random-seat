@@ -4,6 +4,8 @@ import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
 import { waitMs } from '@/utils/time'
 import { storeToRefs } from 'pinia'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
+import confetti from 'canvas-confetti'
+import { useEventListener } from '@/composables/useEventListener'
 
 /**
  * Initial delay between each shuffle in milliseconds.
@@ -44,6 +46,34 @@ type PickingState = 'initial' | 'picking' | 'idle' | 'done'
 
 const pickingState = ref<PickingState>('initial')
 
+// Confetti handling
+const confettiCanvas = ref<HTMLCanvasElement | null>(null)
+let confettiInstance: confetti.CreateTypes
+
+onMounted(() => {
+  if (confettiCanvas.value === null) return
+
+  // Initialize confetti instance
+  confettiInstance = confetti.create(confettiCanvas.value, {
+    resize: true,
+    useWorker: true,
+  })
+})
+
+onBeforeUnmount(() => confettiInstance.reset()) // Destroy confetti instance
+
+const launchConfetti = () =>
+  confettiInstance({
+    scalar: 1.5,
+    shapes: ['circle'],
+    spread: 300,
+    particleCount: 250,
+    origin: {
+      x: 0.5,
+      y: 0.5,
+    },
+  })
+
 /**
  * Start shuffling the seat data.
  */
@@ -74,6 +104,9 @@ const startRandomPick = async () => {
   }
 
   pickingState.value = 'done'
+
+  // Confetti
+  launchConfetti()
 }
 
 /**
@@ -120,7 +153,7 @@ onMounted(async () => {
 
 onBeforeUnmount(() => (isUnmounted = true))
 
-// Fullscreen handler
+// Fullscreen handling
 const containerRef = ref<HTMLDivElement | null>(null),
   isFullscreen = ref<boolean>(false)
 
@@ -132,17 +165,18 @@ const toggleFullscreen = () => {
   else document.exitFullscreen()
 }
 
-const checkFullscreen = () => (isFullscreen.value = document.fullscreenElement !== null)
-
-onMounted(() => document.addEventListener('fullscreenchange', checkFullscreen))
-
-onBeforeUnmount(() => document.removeEventListener('fullscreenchange', checkFullscreen))
+useEventListener(
+  document,
+  'fullscreenchange',
+  () => (isFullscreen.value = document.fullscreenElement !== null),
+)
 </script>
 
 <template>
   <main :class="$style.container" ref="containerRef">
+    <canvas ref="confettiCanvas" :class="$style['confetti-canvas']"></canvas>
     <div>
-      <table :class="$style.table">
+      <table :class="[$style.table, { [$style.done]: pickingState === 'done' }]">
         <tr v-for="(row, rowIndex) in seatData" :key="rowIndex">
           <td v-for="(column, columnIndex) in row" :key="`${rowIndex},${columnIndex}`">
             <div :class="[$style.seat, { [$style.excluded]: column.isExcluded }]">
@@ -152,7 +186,7 @@ onBeforeUnmount(() => document.removeEventListener('fullscreenchange', checkFull
         </tr>
       </table>
     </div>
-    <div>
+    <div :class="$style['button-container']">
       <CustomButton @click="toggleFullscreen">{{
         !isFullscreen ? '전체화면으로 보기' : '전체화면 나가기'
       }}</CustomButton>
@@ -182,14 +216,51 @@ onBeforeUnmount(() => document.removeEventListener('fullscreenchange', checkFull
   }
 }
 
+.confetti-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+
+  width: 100%;
+  height: 100%;
+
+  pointer-events: none;
+}
+
 .table {
   border-collapse: separate;
   border-spacing: 10px;
 
-  td,
-  th {
-    width: 80px;
-    height: 60px;
+  &.done {
+    animation: roulette-done-animation 0.2s value.$ease-in-out both;
+  }
+}
+
+@keyframes roulette-done-animation {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+.table td,
+.table th {
+  width: 85px;
+  height: 65px;
+
+  .container:fullscreen & {
+    width: 140px;
+    height: 100px;
+
+    .seat {
+      font-size: 1.7rem;
+
+      border-width: value.$border-width;
+    }
   }
 }
 
@@ -204,8 +275,8 @@ onBeforeUnmount(() => document.removeEventListener('fullscreenchange', checkFull
   background-color: palette.$dark-gray;
   color: palette.$black;
 
-  font-size: 1.5rem;
-  font-weight: 500;
+  font-size: 1.3rem;
+  font-weight: 700;
 
   border: solid value.$border-slim-width palette.$blackish;
 
@@ -217,5 +288,10 @@ onBeforeUnmount(() => document.removeEventListener('fullscreenchange', checkFull
     width: 100%;
     height: 100%;
   }
+}
+
+.button-container {
+  display: flex;
+  gap: value.$button-container-gap;
 }
 </style>

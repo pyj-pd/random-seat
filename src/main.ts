@@ -6,12 +6,21 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import { createHead } from 'unhead'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 const app = createApp(App)
 
-app.use(createPinia())
+// Pinia
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
+
+app.use(pinia)
+
+// Router
 app.use(router)
 
+// Mount
 app.mount('#app')
 
+// Unhead(for tab title)
 createHead()

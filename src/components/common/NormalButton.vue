@@ -2,7 +2,7 @@
 import { type ButtonHTMLAttributes } from 'vue'
 
 interface ButtonProps extends /* @vue-ignore */ ButtonHTMLAttributes {
-  disabled?: boolean /** @todo Disabled styles */
+  disabled?: boolean
   animation?: boolean
   vertical?: boolean
 }

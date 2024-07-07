@@ -144,11 +144,15 @@ const removeRow = (index: number) => {
                       (rowIndex === 0 && rowUpdateRefresh !== null) ||
                       (columnIndex === columnSize - 1 && columnUpdateRefresh !== null),
                   },
+                  {
+                    [$style.excluded]: column.isExcluded,
+                  },
                 ]"
                 :key="rowUpdateRefresh ?? columnUpdateRefresh ?? 0"
                 :animation="false"
               >
-                <PersonIcon v-if="!seatData[rowIndex][columnIndex].isExcluded" />
+                <template v-if="column.assignedNumber">{{ column.assignedNumber }}</template>
+                <PersonIcon v-else-if="!column.isExcluded" />
                 <XShape v-else :class="$style['x-shape']" />
               </NormalButton>
             </td>
@@ -292,17 +296,30 @@ $table-width: 880px;
 
   cursor: pointer;
 
+  transition: value.$animation-duration value.$animation-ease;
+  transition-property: transform;
+
   &.new {
     animation: seat-initial-animation 0.5s value.$ease-in-out both;
   }
 
-  .table tr:nth-child(even) & {
+  &.excluded {
+    transform: scale(0.9);
+    filter: grayscale(1);
+
+    background-color: palette.$white;
+    border-color: palette.$gray;
+  }
+
+  .table tr:nth-child(even) &:not(.excluded) {
     background-color: palette.$dark-gray;
   }
 }
 
 .seat-button > svg {
-  width: 100%;
+  $person-icon-size: 11px;
+
+  width: $person-icon-size;
 
   &.x-shape {
     $x-shape-size: 7px;
@@ -378,6 +395,6 @@ $line-button-size: 30px;
 // Action buttons
 .action-button-container {
   display: flex;
-  gap: 10px;
+  gap: value.$button-container-gap;
 }
 </style>
