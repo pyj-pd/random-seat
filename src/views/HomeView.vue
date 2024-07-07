@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import SlideTransition from '@/components/common/SlideTransition.vue'
 import NavigationBar from '@/components/home/NavigationBar.vue'
+import { MAX_SEAT_COLUMN_SIZE, MAX_SEAT_ROW_SIZE } from '@/constants/seat'
 import { useSectionStore } from '@/stores/useSectionStore'
 import { storeToRefs } from 'pinia'
 import { useHead } from 'unhead'
@@ -8,6 +9,19 @@ import { watch } from 'vue'
 
 useHead({
   title: '무작위 자리 뽑기',
+  meta: [
+    {
+      name: 'description',
+      content: `최대 ${MAX_SEAT_COLUMN_SIZE}×${MAX_SEAT_ROW_SIZE} 크기의 자리를 무작위로 배치해 보세요.`,
+    },
+  ],
+
+  link: [
+    {
+      rel: 'icon',
+      href: '/favicon.svg',
+    },
+  ],
 })
 
 const sectionStore = useSectionStore()
