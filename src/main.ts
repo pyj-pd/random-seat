@@ -1,27 +1,21 @@
 import './styles/base.scss'
 
-import { createApp } from 'vue'
+import { ViteSSG } from 'vite-ssg'
 import { createPinia } from 'pinia'
 
 import App from './App.vue'
-import router from './router'
+import { routes } from './router'
 import { createHead } from '@unhead/vue'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
-const app = createApp(App)
+export const createApp = ViteSSG(
+  App,
+  { routes },
+  ({ app, router, routes, isClient, initialState }) => {
+    // Pinia
+    const pinia = createPinia()
+    pinia.use(piniaPluginPersistedstate)
 
-// Pinia
-const pinia = createPinia()
-pinia.use(piniaPluginPersistedstate)
-
-app.use(pinia)
-
-// Unhead(for tab title)
-const head = createHead()
-app.use(head)
-
-// Router
-app.use(router)
-
-// Mount
-app.mount('#app')
+    app.use(pinia)
+  },
+)
