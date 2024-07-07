@@ -97,4 +97,10 @@ $animation-duration: 0.1s;
     transition: all value.$animation-duration value.$animation-ease;
   }
 }
+
+.slot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 </style>
