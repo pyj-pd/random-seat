@@ -86,6 +86,14 @@ export const useSeatSizeStore = defineStore('seatSize', {
       return result
     },
     /**
+     * Reset seat data.
+     * @param columnSize Column size to reset to. If not provided, it will use current column size.
+     * @param rowSize Row size to reset to. If not provided, it will use current row size.
+     */
+    resetData(columnSize?: number, rowSize?: number) {
+      this.setSize(columnSize ?? this.columnSize, rowSize ?? this.rowSize, false)
+    },
+    /**
      * Remove certain column or row.
      * @param type Which one trying to remove: Column or row
      * @param where Index of the column/row

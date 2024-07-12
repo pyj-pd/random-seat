@@ -7,6 +7,8 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import confetti from 'canvas-confetti'
 import { useEventListener } from '@/composables/useEventListener'
 
+/** @todo add button click number */
+
 /**
  * Initial delay between each shuffle in milliseconds.
  */
@@ -31,6 +33,9 @@ const SHUFFLE_SOUND_VOLUME = 5,
 const ROULETTE_AUDIO_LOCATION = '/sounds/roulette.mp3',
   ROULETTE_DONE_AUDIO_LOCATION = '/sounds/roulette-done.mp3'
 
+const MAX_VIEW_WIDTH = 1500, // px
+  VIEW_WIDTH_RATIO = 0.85
+
 let audioContext: AudioContext, gainNode: GainNode
 
 let rouletteAudioBuffer: AudioBuffer, rouletteDoneAudioBuffer: AudioBuffer
@@ -38,7 +43,7 @@ let rouletteAudioBuffer: AudioBuffer, rouletteDoneAudioBuffer: AudioBuffer
 let isUnmounted: boolean = false
 
 const seatSizeStore = useSeatSizeStore()
-const { shuffleSeats } = seatSizeStore
+const { shuffleSeats, resetData } = seatSizeStore
 
 const { seatData } = storeToRefs(seatSizeStore)
 
@@ -75,12 +80,18 @@ const launchConfetti = () =>
   })
 
 /**
+ * How many times the seat has been picked since last reset.
+ */
+const howManyPicks = ref<number>(0)
+
+/**
  * Start shuffling the seat data.
  */
 const startRandomPick = async () => {
   if (pickingState.value === 'picking') return // nope !
 
   pickingState.value = 'picking'
+  howManyPicks.value++
 
   let shuffleDelay: number = DEFAULT_SHUFFLE_DELAY_MS,
     /**
@@ -155,6 +166,14 @@ onMounted(async () => {
 
 onBeforeUnmount(() => (isUnmounted = true))
 
+/**
+ * Reset seat data and random pick counts.
+ */
+const resetSeatData = () => {
+  resetData()
+  howManyPicks.value = 0
+}
+
 // Fullscreen handling
 const containerRef = ref<HTMLDivElement | null>(null),
   isFullscreen = ref<boolean>(false)
@@ -167,18 +186,65 @@ const toggleFullscreen = () => {
   else document.exitFullscreen()
 }
 
-useEventListener(
-  document,
-  'fullscreenchange',
-  () => (isFullscreen.value = document.fullscreenElement !== null),
-)
+useEventListener(document, 'fullscreenchange', () => {
+  isFullscreen.value = document.fullscreenElement !== null
+})
+
+// Screen size handling for fullscreen
+const viewContainerRef = ref<HTMLDivElement | null>(null)
+
+/**
+ * Size of the elements in the table.
+ */
+const elementSize = ref<number | null>(null)
+
+const updateViewSize = () => {
+  if (!viewContainerRef.value) return
+
+  const { clientWidth, clientHeight } = viewContainerRef.value
+
+  let viewWidth: number
+
+  if (isFullscreen.value) {
+    // Compare real width as style
+    // with a width value calculated by the screen height
+    // and use the minimum one
+    // for screens that are long horizontally.
+
+    const aspectRatio = clientWidth / clientHeight
+
+    const widthBasedOnScreenHeight = window.innerHeight * aspectRatio * 0.5
+
+    viewWidth = Math.min(widthBasedOnScreenHeight, clientWidth)
+  } else {
+    // Limit width
+    viewWidth = Math.min(clientWidth, MAX_VIEW_WIDTH)
+  }
+
+  elementSize.value = viewWidth * VIEW_WIDTH_RATIO
+}
+
+useEventListener(window, 'resize', () => {
+  updateViewSize()
+})
 </script>
 
 <template>
   <main :class="$style.container" ref="containerRef">
     <canvas ref="confettiCanvas" :class="$style['confetti-canvas']"></canvas>
-    <div :class="$style['scroll-view-container']">
+    <div
+      :class="$style['view-container']"
+      ref="viewContainerRef"
+      :style="
+        elementSize !== null && {
+          '--size': `${elementSize}px`,
+        }
+      "
+    >
       <div :class="[$style['table-container'], { [$style.done]: pickingState === 'done' }]">
+        <div :class="$style['random-pick-counter']">
+          <span :key="howManyPicks" v-if="howManyPicks > 0">{{ howManyPicks }}번째 추첨</span>
+        </div>
         <span :class="$style['top-indicator']"></span>
         <div :class="$style.table">
           <div :class="$style.row" v-for="(row, rowIndex) in seatData" :key="rowIndex">
@@ -196,6 +262,9 @@ useEventListener(
         <CustomButton @click="toggleFullscreen">{{
           !isFullscreen ? '전체화면으로 보기' : '전체화면 나가기'
         }}</CustomButton>
+        <CustomButton @click="resetSeatData" :disabled="pickingState === 'picking'" warning
+          >초기화</CustomButton
+        >
         <CustomButton
           @click="startRandomPick"
           :disabled="pickingState === 'picking'"
@@ -216,6 +285,8 @@ useEventListener(
   justify-content: center;
   align-items: center;
 
+  padding: 20px;
+
   &:fullscreen {
     @include value.paper-texture-background(palette.$black);
   }
@@ -233,29 +304,34 @@ useEventListener(
   pointer-events: none;
 }
 
-.scroll-view-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 30px;
-
-  width: 100%;
-
-  padding: 20px;
-
-  overflow-x: auto;
-}
-
-.table-container {
+.view-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 30px;
 
+  width: 100%;
+}
+
+// Elements in table should use `var(--size)` for any sizes for dynamic screen sizes
+.table-container {
+  --border-size: calc(var(--size) * 0.0012);
+  --font-size: calc(var(--size) * 0.02);
+
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: calc(var(--size) * 0.03);
+
   margin: auto;
 
   width: fit-content;
+
+  font-size: var(--font-size);
 
   white-space: nowrap;
   flex: 0 0 auto;
@@ -275,25 +351,63 @@ useEventListener(
   }
 }
 
+.random-pick-counter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  & > span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-weight: 900;
+
+    padding: calc(var(--size) * 0.02) calc(var(--size) * 0.05);
+
+    background-color: palette.$black;
+    color: palette.$white;
+
+    animation: random-pick-counter-animation 2s value.$ease-in-out both;
+  }
+
+  pointer-events: none;
+}
+
+@keyframes random-pick-counter-animation {
+  0%,
+  100% {
+    transform: scaleY(0);
+
+    // opacity: 0;
+  }
+  10%,
+  90% {
+    transform: scaleY(1);
+
+    // opacity: 1;
+  }
+}
+
 .top-indicator {
   display: block;
 
-  width: 20%;
-  height: value.$border-width;
+  height: var(--border-size);
+  aspect-ratio: 110 / 1;
 
   background-color: palette.$blackish;
 }
 
-$table-spacing: 10px;
-
 .table {
+  --table-spacing: calc(var(--size) * 0.01);
   display: flex;
   flex-direction: column;
-  gap: $table-spacing;
+  gap: var(--table-spacing);
 
   & > .row {
     display: flex;
-    gap: $table-spacing;
+    gap: var(--table-spacing);
   }
 }
 
@@ -302,30 +416,20 @@ $table-spacing: 10px;
   justify-content: center;
   align-items: center;
 
-  width: 95px;
-  height: 65px;
+  width: calc(var(--size) * 0.1);
+  aspect-ratio: 1.5 / 1;
 
   background-color: palette.$dark-gray;
   color: palette.$blackish;
 
-  font-size: 1.3rem;
   font-weight: 700;
 
-  border: solid value.$border-slim-width palette.$blackish;
+  border: solid var(--border-size) palette.$blackish;
 
   &.excluded {
     background-color: palette.$gray;
 
     display: none;
-  }
-
-  .container:fullscreen & {
-    width: 150px;
-    height: 100px;
-
-    font-size: 1.7rem;
-
-    border-width: value.$border-width;
   }
 
   > button {
@@ -342,5 +446,12 @@ $table-spacing: 10px;
 
   flex: 0 0 auto;
   white-space: nowrap;
+
+  @media screen and (max-width: 650px) {
+    & {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
 }
 </style>

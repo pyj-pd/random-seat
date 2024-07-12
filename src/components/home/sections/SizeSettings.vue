@@ -17,7 +17,7 @@ import { ref } from 'vue'
 import XShape from '../XShape.vue'
 
 const seatSizeStore = useSeatSizeStore()
-const { setSize, setSeatData, removeSeatLine } = seatSizeStore
+const { setSize, resetData, setSeatData, removeSeatLine } = seatSizeStore
 
 const { setCurrentSectionId } = useSectionStore()
 
@@ -39,12 +39,13 @@ const toggleSeat = (position: SeatPosition) => {
 }
 
 const resetSeatData = () => {
-  setSize(DEFAULT_COLUMN_SIZE, DEFAULT_ROW_SIZE, false)
+  resetData(DEFAULT_COLUMN_SIZE, DEFAULT_ROW_SIZE)
 
   rowUpdateRefresh.value = null
   columnUpdateRefresh.value = null
 }
 
+// Line add buttons
 const addRow = () => {
     setSize(columnSize.value, rowSize.value + 1, true)
 
@@ -62,6 +63,7 @@ const addRow = () => {
     columnUpdateRefresh.value++
   }
 
+// Line header buttons for removing the line
 const removeRow = (index: number) => {
     removeSeatLine('row', index)
 
