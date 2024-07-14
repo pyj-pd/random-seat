@@ -2,10 +2,10 @@
 import CustomButton from '@/components/common/ShadowButton.vue'
 import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
 import { waitMs } from '@/utils/time'
-import { storeToRefs } from 'pinia'
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import confetti from 'canvas-confetti'
 import { useEventListener } from '@/composables/useEventListener'
+import { storeToRefs } from 'pinia'
 
 /** @todo add button click number */
 
@@ -33,9 +33,6 @@ const SHUFFLE_SOUND_VOLUME = 5,
 const ROULETTE_AUDIO_LOCATION = '/sounds/roulette.mp3',
   ROULETTE_DONE_AUDIO_LOCATION = '/sounds/roulette-done.mp3'
 
-const MAX_VIEW_WIDTH = 1500, // px
-  VIEW_WIDTH_RATIO = 0.85
-
 let audioContext: AudioContext, gainNode: GainNode
 
 let rouletteAudioBuffer: AudioBuffer, rouletteDoneAudioBuffer: AudioBuffer
@@ -44,12 +41,22 @@ let isUnmounted: boolean = false
 
 const seatSizeStore = useSeatSizeStore()
 const { shuffleSeats, resetData } = seatSizeStore
-
-const { seatData } = storeToRefs(seatSizeStore)
+const { columnSize, rowSize } = storeToRefs(seatSizeStore)
 
 type PickingState = 'initial' | 'picking' | 'idle' | 'done'
 
 const pickingState = ref<PickingState>('initial')
+
+// Initialize table canvas
+const tableCanvasRef = ref<HTMLCanvasElement | null>(null)
+
+const resizeTableCanvas = () => {
+  /** @todo */
+}
+
+watch([columnSize, rowSize], () => resizeTableCanvas(), {
+  immediate: true,
+})
 
 // Confetti handling
 const confettiCanvas = ref<HTMLCanvasElement | null>(null)
@@ -189,74 +196,17 @@ const toggleFullscreen = () => {
 useEventListener(document, 'fullscreenchange', () => {
   isFullscreen.value = document.fullscreenElement !== null
 })
-
-// Screen size handling for fullscreen
-const viewContainerRef = ref<HTMLDivElement | null>(null)
-
-/**
- * Size of the elements in the table.
- */
-const elementSize = ref<number | null>(null)
-
-const updateViewSize = () => {
-  if (!viewContainerRef.value) return
-
-  const { clientWidth, clientHeight } = viewContainerRef.value
-
-  let viewWidth: number
-
-  if (isFullscreen.value) {
-    // Compare real width as style
-    // with a width value calculated by the screen height
-    // and use the minimum one
-    // for screens that are long horizontally.
-
-    const aspectRatio = clientWidth / clientHeight
-
-    const widthBasedOnScreenHeight = window.innerHeight * aspectRatio * 0.5
-
-    viewWidth = Math.min(widthBasedOnScreenHeight, clientWidth)
-  } else {
-    // Limit width
-    viewWidth = Math.min(clientWidth, MAX_VIEW_WIDTH)
-  }
-
-  elementSize.value = viewWidth * VIEW_WIDTH_RATIO
-}
-
-useEventListener(window, 'resize', () => {
-  updateViewSize()
-})
 </script>
 
 <template>
   <main :class="$style.container" ref="containerRef">
     <canvas ref="confettiCanvas" :class="$style['confetti-canvas']"></canvas>
-    <div
-      :class="$style['view-container']"
-      ref="viewContainerRef"
-      :style="
-        elementSize !== null && {
-          '--size': `${elementSize}px`,
-        }
-      "
-    >
+    <div :class="$style['view-container']" ref="viewContainerRef">
       <div :class="[$style['table-container'], { [$style.done]: pickingState === 'done' }]">
         <div :class="$style['random-pick-counter']">
           <span :key="howManyPicks" v-if="howManyPicks > 0">{{ howManyPicks }}번째 추첨</span>
         </div>
-        <span :class="$style['top-indicator']"></span>
-        <div :class="$style.table">
-          <div :class="$style.row" v-for="(row, rowIndex) in seatData" :key="rowIndex">
-            <div
-              v-for="(column, columnIndex) in row"
-              :key="`${rowIndex},${columnIndex}`"
-              :class="[$style.seat, { [$style.excluded]: column.isExcluded }]"
-            >
-              {{ column.assignedNumber }}
-            </div>
-          </div>
-        </div>
+        <canvas ref="tableCanvasRef" :class="$style['table-canvas']"></canvas>
       </div>
       <div :class="$style['button-container']">
         <CustomButton @click="toggleFullscreen">{{
@@ -314,29 +264,14 @@ useEventListener(window, 'resize', () => {
   width: 100%;
 }
 
-// Elements in table should use `var(--size)` for any sizes for dynamic screen sizes
 .table-container {
-  --border-size: calc(var(--size) * 0.0012);
-  --font-size: calc(var(--size) * 0.02);
-
   position: relative;
+}
 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: calc(var(--size) * 0.03);
+.table-canvas {
+  background-color: red;
 
-  margin: auto;
-
-  width: fit-content;
-
-  font-size: var(--font-size);
-
-  white-space: nowrap;
-  flex: 0 0 auto;
-
-  &.done {
+  .done & {
     animation: roulette-done-animation 0.2s value.$ease-in-out both;
   }
 }
@@ -362,9 +297,12 @@ useEventListener(window, 'resize', () => {
     justify-content: center;
     align-items: center;
 
+    white-space: nowrap;
+
+    font-size: 2rem;
     font-weight: 900;
 
-    padding: calc(var(--size) * 0.02) calc(var(--size) * 0.05);
+    padding: 25px 60px;
 
     background-color: palette.$black;
     color: palette.$white;
@@ -379,65 +317,12 @@ useEventListener(window, 'resize', () => {
   0%,
   100% {
     transform: scaleY(0);
-
-    // opacity: 0;
   }
   10%,
   90% {
     transform: scaleY(1);
-
-    // opacity: 1;
   }
 }
-
-.top-indicator {
-  display: block;
-
-  height: var(--border-size);
-  aspect-ratio: 110 / 1;
-
-  background-color: palette.$blackish;
-}
-
-.table {
-  --table-spacing: calc(var(--size) * 0.01);
-  display: flex;
-  flex-direction: column;
-  gap: var(--table-spacing);
-
-  & > .row {
-    display: flex;
-    gap: var(--table-spacing);
-  }
-}
-
-.seat {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  width: calc(var(--size) * 0.1);
-  aspect-ratio: 1.5 / 1;
-
-  background-color: palette.$dark-gray;
-  color: palette.$blackish;
-
-  font-weight: 700;
-
-  border: solid var(--border-size) palette.$blackish;
-
-  &.excluded {
-    background-color: palette.$gray;
-
-    display: none;
-  }
-
-  > button {
-    width: 100%;
-    height: 100%;
-  }
-}
-
 .button-container {
   display: flex;
   gap: value.$button-container-gap;
