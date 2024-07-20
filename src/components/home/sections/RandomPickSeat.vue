@@ -2,7 +2,7 @@
 import CustomButton from '@/components/common/ShadowButton.vue'
 import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
 import { waitMs } from '@/utils/time'
-import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import confetti from 'canvas-confetti'
 import { useEventListener } from '@/composables/useEventListener'
 import { storeToRefs } from 'pinia'
@@ -72,6 +72,9 @@ watch(
 
 // Control buttons handling
 const isControlHidden = ref<boolean>(false)
+
+watch(isControlHidden, (newState) => (document.body.style.cursor = newState ? 'none' : 'unset')) // Hide cursor after inactivity
+onBeforeUnmount(() => (document.body.style.cursor = 'unset')) // Reset cursor state before unmounting
 
 const CONTROL_BUTTONS_HIDE_AFTER = 3_000 //ms
 
