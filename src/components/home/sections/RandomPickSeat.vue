@@ -2,10 +2,13 @@
 import CustomButton from '@/components/common/ShadowButton.vue'
 import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
 import { waitMs } from '@/utils/time'
-import { storeToRefs } from 'pinia'
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import confetti from 'canvas-confetti'
 import { useEventListener } from '@/composables/useEventListener'
+import { storeToRefs } from 'pinia'
+import { SEAT_GAP, SeatSvg, SVG_VIEWBOX_WIDTH, type SvgSeatSize } from '@/utils/seat-svg'
+import ButtonContainer from '@/components/common/ButtonContainer.vue'
+import MouseGuide from '../MouseGuide.vue'
 
 /**
  * Initial delay between each shuffle in milliseconds.
@@ -38,13 +41,55 @@ let rouletteAudioBuffer: AudioBuffer, rouletteDoneAudioBuffer: AudioBuffer
 let isUnmounted: boolean = false
 
 const seatSizeStore = useSeatSizeStore()
-const { shuffleSeats } = seatSizeStore
-
-const { seatData } = storeToRefs(seatSizeStore)
+const { shuffleSeats, resetData } = seatSizeStore
+const { columnSize, rowSize, seatData } = storeToRefs(seatSizeStore)
 
 type PickingState = 'initial' | 'picking' | 'idle' | 'done'
 
 const pickingState = ref<PickingState>('initial')
+
+// Set SVG size based on column and row size
+const svgRef = ref<HTMLOrSVGElement | null>(null)
+
+const svgHeight = ref<number>(0),
+  svgSeatSize = reactive<SvgSeatSize>({ width: 0, height: 0 })
+
+watch(
+  [columnSize, rowSize],
+  (newSize) => {
+    const svgInstance = new SeatSvg(...newSize)
+
+    svgHeight.value = svgInstance.getSvgHeight()
+
+    const { width, height } = svgInstance.getSeatSize()
+    svgSeatSize.width = width
+    svgSeatSize.height = height
+  },
+  {
+    immediate: true,
+  },
+)
+
+// Control buttons handling
+const isControlHidden = ref<boolean>(false)
+
+watch(isControlHidden, (newState) => (document.body.style.cursor = newState ? 'none' : 'unset')) // Hide cursor after inactivity
+onBeforeUnmount(() => (document.body.style.cursor = 'unset')) // Reset cursor state before unmounting
+
+const CONTROL_BUTTONS_HIDE_AFTER = 3_000 //ms
+
+let buttonHiddenTimer: number
+
+const startButtonHiddenTimer = () => {
+  // Show button controls
+  isControlHidden.value = false
+
+  // Start timer
+  clearTimeout(buttonHiddenTimer)
+  buttonHiddenTimer = setTimeout(() => (isControlHidden.value = true), CONTROL_BUTTONS_HIDE_AFTER)
+}
+
+useEventListener(window, ['pointermove', 'pointerdown'], startButtonHiddenTimer, true)
 
 // Confetti handling
 const confettiCanvas = ref<HTMLCanvasElement | null>(null)
@@ -75,12 +120,19 @@ const launchConfetti = () =>
   })
 
 /**
+ * How many times the seat has been picked since last reset.
+ */
+const howManyPicks = ref<number>(0)
+
+/**
  * Start shuffling the seat data.
  */
 const startRandomPick = async () => {
   if (pickingState.value === 'picking') return // nope !
 
   pickingState.value = 'picking'
+  howManyPicks.value++
+  isControlHidden.value = true
 
   let shuffleDelay: number = DEFAULT_SHUFFLE_DELAY_MS,
     /**
@@ -155,6 +207,14 @@ onMounted(async () => {
 
 onBeforeUnmount(() => (isUnmounted = true))
 
+/**
+ * Reset seat data and random pick counts.
+ */
+const resetSeatData = () => {
+  resetData(undefined, undefined, true)
+  howManyPicks.value = 0
+}
+
 // Fullscreen handling
 const containerRef = ref<HTMLDivElement | null>(null),
   isFullscreen = ref<boolean>(false)
@@ -167,42 +227,67 @@ const toggleFullscreen = () => {
   else document.exitFullscreen()
 }
 
-useEventListener(
-  document,
-  'fullscreenchange',
-  () => (isFullscreen.value = document.fullscreenElement !== null),
-)
+useEventListener(document, 'fullscreenchange', () => {
+  isFullscreen.value = document.fullscreenElement !== null
+})
 </script>
 
 <template>
   <main :class="$style.container" ref="containerRef">
     <canvas ref="confettiCanvas" :class="$style['confetti-canvas']"></canvas>
-    <div :class="$style['scroll-view-container']">
+    <div :class="$style['view-container']" ref="viewContainerRef">
       <div :class="[$style['table-container'], { [$style.done]: pickingState === 'done' }]">
-        <span :class="$style['top-indicator']"></span>
-        <div :class="$style.table">
-          <div :class="$style.row" v-for="(row, rowIndex) in seatData" :key="rowIndex">
-            <div
-              v-for="(column, columnIndex) in row"
-              :key="`${rowIndex},${columnIndex}`"
-              :class="[$style.seat, { [$style.excluded]: column.isExcluded }]"
-            >
-              {{ column.assignedNumber }}
-            </div>
-          </div>
+        <div :class="$style['random-pick-counter']">
+          <span :key="howManyPicks" v-if="howManyPicks > 0">{{ howManyPicks }}번째 추첨</span>
         </div>
+        <svg
+          ref="svgRef"
+          :class="$style['table-svg']"
+          :viewBox="`0 0 ${SVG_VIEWBOX_WIDTH} ${svgHeight}`"
+          preserveAspectRatio="xMidYMid"
+        >
+          <!--Row -->
+          <g v-for="(row, rowIndex) in seatData" :key="rowIndex">
+            <!-- Seat -->
+            <template v-for="(column, columnIndex) in row" :key="`${rowIndex},${columnIndex}`">
+              <g v-if="!column.isExcluded" :class="$style.seat">
+                <rect
+                  :x="(svgSeatSize.width + SEAT_GAP) * columnIndex"
+                  :y="(svgSeatSize.height + SEAT_GAP) * rowIndex"
+                  :width="svgSeatSize.width"
+                  :height="svgSeatSize.height"
+                />
+                <text
+                  :x="(svgSeatSize.width + SEAT_GAP) * columnIndex + svgSeatSize.width / 2"
+                  :y="(svgSeatSize.height + SEAT_GAP) * rowIndex + svgSeatSize.height / 2"
+                  text-anchor="middle"
+                  dominant-baseline="middle"
+                  font-size="1.8rem"
+                >
+                  {{ column.assignedNumber }}
+                </text>
+              </g>
+            </template>
+          </g>
+        </svg>
       </div>
-      <div :class="$style['button-container']">
+      <ButtonContainer :class="[$style['button-container'], { [$style.hidden]: isControlHidden }]">
         <CustomButton @click="toggleFullscreen">{{
           !isFullscreen ? '전체화면으로 보기' : '전체화면 나가기'
         }}</CustomButton>
+        <div :style="{ position: 'relative' }">
+          <CustomButton @click="resetSeatData" :disabled="pickingState === 'picking'" warning
+            >초기화</CustomButton
+          >
+          <MouseGuide text="완전히 새로 뽑는다면 먼저 눌러주세요." />
+        </div>
         <CustomButton
           @click="startRandomPick"
           :disabled="pickingState === 'picking'"
           :loading="pickingState === 'picking'"
           >뽑기</CustomButton
         >
-      </div>
+      </ButtonContainer>
     </div>
   </main>
 </template>
@@ -215,6 +300,8 @@ useEventListener(
   display: flex;
   justify-content: center;
   align-items: center;
+
+  padding: 20px;
 
   &:fullscreen {
     @include value.paper-texture-background(palette.$black);
@@ -233,35 +320,57 @@ useEventListener(
   pointer-events: none;
 }
 
-.scroll-view-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 30px;
-
-  width: 100%;
-
-  padding: 20px;
-
-  overflow-x: auto;
-}
-
-.table-container {
+.view-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 30px;
 
-  margin: auto;
+  width: 100%;
+  height: 100%;
+}
 
-  width: fit-content;
+.table-container {
+  position: relative;
 
-  white-space: nowrap;
-  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  &.done {
+  width: 100%;
+  height: 100%;
+}
+
+.table-svg {
+  .container:not(:fullscreen) & {
+    width: 100%;
+    max-width: 800px;
+  }
+
+  .container:fullscreen & {
+    width: 70%;
+    height: 70%;
+  }
+
+  overflow: visible;
+
+  .done & {
     animation: roulette-done-animation 0.2s value.$ease-in-out both;
+  }
+}
+
+.seat {
+  rect {
+    stroke: palette.$darker-gray;
+    stroke-width: 2.5px;
+
+    fill: palette.$dark-gray;
+  }
+
+  text {
+    font-size: 2rem;
+    font-weight: 700;
   }
 }
 
@@ -275,72 +384,69 @@ useEventListener(
   }
 }
 
-.top-indicator {
-  display: block;
+.random-pick-counter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 
-  width: 20%;
-  height: value.$border-width;
-
-  background-color: palette.$blackish;
-}
-
-$table-spacing: 10px;
-
-.table {
-  display: flex;
-  flex-direction: column;
-  gap: $table-spacing;
-
-  & > .row {
+  & > span {
     display: flex;
-    gap: $table-spacing;
+    justify-content: center;
+    align-items: center;
+
+    white-space: nowrap;
+
+    font-size: 2rem;
+    font-weight: 900;
+
+    padding: 25px 60px;
+
+    background-color: palette.$black;
+    color: palette.$white;
+
+    animation: random-pick-counter-animation 2s value.$ease-in-out both;
   }
+
+  pointer-events: none;
 }
 
-.seat {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  width: 95px;
-  height: 65px;
-
-  background-color: palette.$dark-gray;
-  color: palette.$blackish;
-
-  font-size: 1.3rem;
-  font-weight: 700;
-
-  border: solid value.$border-slim-width palette.$blackish;
-
-  &.excluded {
-    background-color: palette.$gray;
-
-    display: none;
+@keyframes random-pick-counter-animation {
+  0%,
+  100% {
+    transform: scaleY(0);
   }
-
-  .container:fullscreen & {
-    width: 150px;
-    height: 100px;
-
-    font-size: 1.7rem;
-
-    border-width: value.$border-width;
-  }
-
-  > button {
-    width: 100%;
-    height: 100%;
+  10%,
+  90% {
+    transform: scaleY(1);
   }
 }
 
 .button-container {
-  display: flex;
-  gap: value.$button-container-gap;
+  .container:fullscreen & {
+    position: absolute;
+    bottom: 0;
+    left: 0;
 
-  margin: auto;
+    width: 100%;
+
+    padding: 50px;
+
+    transition: value.$animation-duration value.$animation-ease;
+    transition-property: opacity, transform;
+
+    button {
+      backdrop-filter: blur(2px);
+    }
+
+    &.hidden {
+      transform: translateY(10px);
+      opacity: 0;
+
+      pointer-events: none;
+    }
+  }
 
   flex: 0 0 auto;
-  white-space: nowrap;
 }
 </style>

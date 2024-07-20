@@ -66,5 +66,11 @@ watch(currentSectionId, () => {
   min-height: 100%;
 
   padding: value.$view-padding;
+
+  @media screen and (max-width: value.$small-screen-width) {
+    & {
+      padding: value.$small-screen-view-padding;
+    }
+  }
 }
 </style>

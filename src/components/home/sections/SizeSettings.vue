@@ -6,6 +6,7 @@ import {
   DEFAULT_ROW_SIZE,
   MAX_SEAT_COLUMN_SIZE,
   MAX_SEAT_ROW_SIZE,
+  MIN_SEAT_COLUMN_SIZE,
   MIN_SEAT_NUMBER,
   type SeatPosition,
 } from '@/constants/seat'
@@ -13,15 +14,37 @@ import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
 import { useSectionStore } from '@/stores/useSectionStore'
 import { storeToRefs } from 'pinia'
 import PersonIcon from '../PersonIcon.vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import XShape from '../XShape.vue'
+import MouseGuide from '../MouseGuide.vue'
+import ButtonContainer from '@/components/common/ButtonContainer.vue'
 
 const seatSizeStore = useSeatSizeStore()
-const { setSize, setSeatData, removeSeatLine } = seatSizeStore
+const { setSize, resetData, setSeatData, removeSeatLine } = seatSizeStore
 
 const { setCurrentSectionId } = useSectionStore()
 
-const { columnSize, rowSize, seatData, getSeatData, totalSeatNumber } = storeToRefs(seatSizeStore)
+const { columnSize, rowSize, isFirstTime, seatData, getSeatData, totalSeatNumber } =
+  storeToRefs(seatSizeStore)
+
+/**
+ * Update this in order to reshow the mouse guide pop-up.
+ */
+const mouseGuideKey = ref<number>(0)
+const showMouseGuide = ref<boolean>(false)
+
+const reshowMouseGuide = () => mouseGuideKey.value++
+
+onMounted(() => {
+  // Show mouse guide only on first time.
+  // This will work on `onMounted` because we need initial data of `isFirstTime`
+  // before actually changing the `isFirstTime` value.
+
+  showMouseGuide.value = isFirstTime.value
+  if (isFirstTime.value) reshowMouseGuide() // Show tooltip if first time
+
+  isFirstTime.value = false
+})
 
 // Transition every time a row/column is added
 const rowUpdateRefresh = ref<number | null>(null),
@@ -39,12 +62,13 @@ const toggleSeat = (position: SeatPosition) => {
 }
 
 const resetSeatData = () => {
-  setSize(DEFAULT_COLUMN_SIZE, DEFAULT_ROW_SIZE, false)
+  resetData(DEFAULT_COLUMN_SIZE, DEFAULT_ROW_SIZE)
 
   rowUpdateRefresh.value = null
   columnUpdateRefresh.value = null
 }
 
+// Line add buttons
 const addRow = () => {
     setSize(columnSize.value, rowSize.value + 1, true)
 
@@ -62,6 +86,7 @@ const addRow = () => {
     columnUpdateRefresh.value++
   }
 
+// Line header buttons for removing the line
 const removeRow = (index: number) => {
     removeSeatLine('row', index)
 
@@ -77,11 +102,7 @@ const removeRow = (index: number) => {
 <template>
   <main :class="$style.container">
     <div :class="$style.title">
-      <h2>제외하고 싶은 자리를 클릭해주세요.</h2>
-      <p>
-        자리를 눌러 해당 자리를 제외할 수 있으며<br />행과 열 숫자를 클릭해 해당 줄을 삭제할 수
-        있습니다.
-      </p>
+      <h2>자리 설정을 진행해 주세요.</h2>
     </div>
     <!-- Table scroll view -->
     <div :class="$style['table-scroll-view-container']">
@@ -113,6 +134,12 @@ const removeRow = (index: number) => {
               >
                 {{ column }}
               </NormalButton>
+              <MouseGuide
+                v-if="column === MIN_SEAT_COLUMN_SIZE"
+                text="숫자를 클릭해서 해당 줄을 없앨 수 있어요."
+                :reshowKey="mouseGuideKey"
+                :immediate="showMouseGuide"
+              />
             </th>
           </tr>
           <tr>
@@ -163,6 +190,14 @@ const removeRow = (index: number) => {
                 <PersonIcon v-else-if="!column.isExcluded" />
                 <XShape v-else :class="$style['x-shape']" />
               </NormalButton>
+              <MouseGuide
+                v-if="
+                  columnIndex === MIN_SEAT_COLUMN_SIZE - 1 && rowIndex === MIN_SEAT_COLUMN_SIZE - 1
+                "
+                text="자리를 클릭해서 해당 자리를 제외할 수 있어요."
+                :reshowKey="mouseGuideKey"
+                :immediate="showMouseGuide"
+              />
             </td>
 
             <!-- Column add button on first row and make it full height -->
@@ -184,10 +219,11 @@ const removeRow = (index: number) => {
         </table>
       </div>
     </div>
-    <div :class="$style['action-button-container']">
+    <ButtonContainer>
       <CustomButton @click="resetSeatData" warning>초기화</CustomButton>
+      <CustomButton @click="() => reshowMouseGuide()">도움말 보기</CustomButton>
       <CustomButton @click="() => setCurrentSectionId('random-pick-seat')">다음으로</CustomButton>
-    </div>
+    </ButtonContainer>
   </main>
 </template>
 
@@ -199,7 +235,7 @@ const removeRow = (index: number) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
+  gap: 50px;
 
   width: 100%;
   min-height: 700px;
@@ -263,21 +299,35 @@ $table-width: 880px;
 
 .table-top {
   display: flex;
+  gap: 5px;
   justify-content: center;
   align-items: center;
 
-  width: 100px;
+  width: 150px;
   height: 30px;
 
   font-weight: bold;
 
-  background-color: palette.$black;
-  color: white;
+  &::before,
+  &::after {
+    content: '';
+
+    width: 100%;
+    height: value.$border-width;
+
+    background-color: currentColor;
+  }
+
+  > span {
+    white-space: nowrap;
+  }
 }
 
 .table {
   td,
   th {
+    position: relative;
+
     width: 70px;
     height: 50px;
   }
@@ -304,7 +354,7 @@ $table-width: 880px;
 
   cursor: pointer;
 
-  transition: value.$animation-duration value.$animation-ease;
+  transition: 0.08s value.$animation-ease;
   transition-property: transform;
 
   &.new {
@@ -398,11 +448,5 @@ $line-button-size: 30px;
       height: 100%;
     }
   }
-}
-
-// Action buttons
-.action-button-container {
-  display: flex;
-  gap: value.$button-container-gap;
 }
 </style>

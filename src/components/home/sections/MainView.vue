@@ -3,6 +3,7 @@ import ShadowButton from '@/components/common/ShadowButton.vue'
 import { useSectionStore } from '@/stores/useSectionStore'
 import GitHubIcon from '../GitHubIcon.vue'
 import { PROJECT_REPO_URL } from '@/constants/project'
+import ButtonContainer from '@/components/common/ButtonContainer.vue'
 
 const { setCurrentSectionId } = useSectionStore()
 </script>
@@ -10,9 +11,9 @@ const { setCurrentSectionId } = useSectionStore()
 <template>
   <main :class="$style.container">
     <h2 :class="$style.title">무작위 자리 뽑기</h2>
-    <div :class="$style['button-container']">
+    <ButtonContainer :responsive="false" :class="$style['button-container']">
       <ShadowButton @click="() => setCurrentSectionId('size-settings')">시작하기</ShadowButton>
-    </div>
+    </ButtonContainer>
     <div :class="$style['link-container']">
       <a :href="PROJECT_REPO_URL" target="_blank">
         <GitHubIcon :height="17" />
@@ -49,14 +50,9 @@ const { setCurrentSectionId } = useSectionStore()
   }
 }
 
-.button-container,
 .link-container {
-  display: flex;
-  gap: value.$button-container-gap;
-  align-items: center;
-}
-
-.link-container > a {
-  color: inherit;
+  > a {
+    color: inherit;
+  }
 }
 </style>
