@@ -47,16 +47,13 @@ type PickingState = 'initial' | 'picking' | 'idle' | 'done'
 
 const pickingState = ref<PickingState>('initial')
 
-// Initialize table canvas
-const tableCanvasRef = ref<HTMLCanvasElement | null>(null)
+// Set SVG size based on column and row size
+const svgSize = ref<{
+  width: number
+  height: number
+}>({ width: 0, height: 0 })
 
-const resizeTableCanvas = () => {
-  /** @todo */
-}
-
-watch([columnSize, rowSize], () => resizeTableCanvas(), {
-  immediate: true,
-})
+watch([columnSize, rowSize], () => {}, { immediate: true })
 
 // Confetti handling
 const confettiCanvas = ref<HTMLCanvasElement | null>(null)
