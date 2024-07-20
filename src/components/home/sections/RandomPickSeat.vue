@@ -8,6 +8,7 @@ import { useEventListener } from '@/composables/useEventListener'
 import { storeToRefs } from 'pinia'
 import { SEAT_GAP, SeatSvg, SVG_VIEWBOX_WIDTH, type SvgSeatSize } from '@/utils/seat-svg'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
+import MouseGuide from '../MouseGuide.vue'
 
 /**
  * Initial delay between each shuffle in milliseconds.
@@ -271,9 +272,12 @@ useEventListener(document, 'fullscreenchange', () => {
         <CustomButton @click="toggleFullscreen">{{
           !isFullscreen ? '전체화면으로 보기' : '전체화면 나가기'
         }}</CustomButton>
-        <CustomButton @click="resetSeatData" :disabled="pickingState === 'picking'" warning
-          >초기화</CustomButton
-        >
+        <div :style="{ position: 'relative' }">
+          <CustomButton @click="resetSeatData" :disabled="pickingState === 'picking'" warning
+            >초기화</CustomButton
+          >
+          <MouseGuide text="완전히 새로 뽑는다면 먼저 눌러주세요." />
+        </div>
         <CustomButton
           @click="startRandomPick"
           :disabled="pickingState === 'picking'"
