@@ -12,7 +12,7 @@ useHead({
   meta: [
     {
       name: 'description',
-      content: `최대 ${MAX_SEAT_COLUMN_SIZE}×${MAX_SEAT_ROW_SIZE} 크기의 자리를 무작위로 배치해 보세요.`,
+      content: `최대 ${MAX_SEAT_COLUMN_SIZE}×${MAX_SEAT_ROW_SIZE} 크기의 자리를 무작위로 배치해 보세요. 직관적인 UI를 통한 손쉬운 사용과 깔끔한 디자인을 통한 시각적 즐거움을 누려보세요.`,
     },
   ],
 })
