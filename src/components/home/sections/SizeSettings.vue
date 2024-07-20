@@ -14,7 +14,7 @@ import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
 import { useSectionStore } from '@/stores/useSectionStore'
 import { storeToRefs } from 'pinia'
 import PersonIcon from '../PersonIcon.vue'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 import XShape from '../XShape.vue'
 import MouseGuide from '../MouseGuide.vue'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
@@ -31,7 +31,7 @@ const { columnSize, rowSize, isFirstTime, seatData, getSeatData, totalSeatNumber
  * Update this in order to reshow the mouse guide pop-up.
  */
 const mouseGuideKey = ref<number>(0)
-const showMouseGuide = ref<boolean>(true)
+const showMouseGuide = ref<boolean>(false)
 
 const reshowMouseGuide = () => mouseGuideKey.value++
 
@@ -41,6 +41,8 @@ onMounted(() => {
   // before actually changing the `isFirstTime` value.
 
   showMouseGuide.value = isFirstTime.value
+  if (isFirstTime.value) reshowMouseGuide() // Show tooltip if first time
+
   isFirstTime.value = false
 })
 

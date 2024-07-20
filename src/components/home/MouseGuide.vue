@@ -18,16 +18,28 @@ const props = withDefaults(
   },
 )
 
-const reshowUpdates = ref<number>(0)
+const reshowUpdates = ref<number>(0),
+  /**
+   * Whether the tooltip component has unmounted.
+   *
+   * Default value is the `immediate` prop value because if `immediate` value is set to `false`,
+   * it should be not mounted anyways.
+   */
+  isUnmounted = ref<boolean>(!props.immediate)
 
 watch(
   () => props.reshowKey,
-  () => reshowUpdates.value++,
+  () => {
+    reshowUpdates.value++
+    isUnmounted.value = false
+  },
 )
+
+const onAnimationEnd = () => (isUnmounted.value = true)
 </script>
 
 <template>
-  <div :class="$style.container">
+  <div :class="$style.container" v-if="!isUnmounted" @animationend="onAnimationEnd">
     <div :class="$style.tooltip" :key="$props.reshowKey" v-if="immediate || reshowUpdates !== 0">
       <span>{{ $props.text }}</span>
     </div>
