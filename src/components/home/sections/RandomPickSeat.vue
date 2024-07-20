@@ -371,6 +371,7 @@ useEventListener(document, 'fullscreenchange', () => {
   text {
     font-size: 2rem;
     font-weight: 700;
+    font-variant: proportional-nums;
   }
 }
 

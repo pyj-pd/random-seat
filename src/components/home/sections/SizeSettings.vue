@@ -352,6 +352,8 @@ $table-width: 880px;
   color: palette.$blackish;
   border: solid value.$border-slim-width palette.$dark-gray;
 
+  font-variant: proportional-nums;
+
   cursor: pointer;
 
   transition: 0.08s value.$animation-ease;
