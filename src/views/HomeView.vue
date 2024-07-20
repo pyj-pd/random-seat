@@ -15,13 +15,6 @@ useHead({
       content: `최대 ${MAX_SEAT_COLUMN_SIZE}×${MAX_SEAT_ROW_SIZE} 크기의 자리를 무작위로 배치해 보세요.`,
     },
   ],
-
-  link: [
-    {
-      rel: 'icon',
-      href: '/favicon.svg',
-    },
-  ],
 })
 
 const sectionStore = useSectionStore()
