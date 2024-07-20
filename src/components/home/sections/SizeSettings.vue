@@ -17,6 +17,7 @@ import PersonIcon from '../PersonIcon.vue'
 import { onMounted, ref, watch } from 'vue'
 import XShape from '../XShape.vue'
 import MouseGuide from '../MouseGuide.vue'
+import ButtonContainer from '@/components/common/ButtonContainer.vue'
 
 const seatSizeStore = useSeatSizeStore()
 const { setSize, resetData, setSeatData, removeSeatLine } = seatSizeStore
@@ -216,11 +217,11 @@ const removeRow = (index: number) => {
         </table>
       </div>
     </div>
-    <div :class="$style['action-button-container']">
+    <ButtonContainer>
       <CustomButton @click="resetSeatData" warning>초기화</CustomButton>
       <CustomButton @click="() => reshowMouseGuide()">도움말 보기</CustomButton>
       <CustomButton @click="() => setCurrentSectionId('random-pick-seat')">다음으로</CustomButton>
-    </div>
+    </ButtonContainer>
   </main>
 </template>
 
@@ -296,16 +297,28 @@ $table-width: 880px;
 
 .table-top {
   display: flex;
+  gap: 5px;
   justify-content: center;
   align-items: center;
 
-  width: 100px;
+  width: 150px;
   height: 30px;
 
   font-weight: bold;
 
-  background-color: palette.$black;
-  color: white;
+  &::before,
+  &::after {
+    content: '';
+
+    width: 100%;
+    height: value.$border-width;
+
+    background-color: currentColor;
+  }
+
+  > span {
+    white-space: nowrap;
+  }
 }
 
 .table {
@@ -433,11 +446,5 @@ $line-button-size: 30px;
       height: 100%;
     }
   }
-}
-
-// Action buttons
-.action-button-container {
-  display: flex;
-  gap: value.$button-container-gap;
 }
 </style>

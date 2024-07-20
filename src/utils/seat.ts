@@ -93,3 +93,18 @@ export const getShuffledSeatData = (data: SeatRowData): SeatRowData => {
 
   return newData
 }
+
+/**
+ * Get seat size from seat row data.
+ * @param data Seat row data
+ * @returns Object that contains column and row size
+ */
+export const getSeatSize = (
+  data: SeatRowData,
+): {
+  columnSize: number
+  rowSize: number
+} => ({
+  columnSize: data[0].length,
+  rowSize: data.length,
+})

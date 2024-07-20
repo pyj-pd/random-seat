@@ -2,12 +2,12 @@
 import CustomButton from '@/components/common/ShadowButton.vue'
 import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
 import { waitMs } from '@/utils/time'
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import confetti from 'canvas-confetti'
 import { useEventListener } from '@/composables/useEventListener'
 import { storeToRefs } from 'pinia'
-
-/** @todo add button click number */
+import { SEAT_GAP, SeatSvg, SVG_VIEWBOX_WIDTH, type SvgSeatSize } from '@/utils/seat-svg'
+import ButtonContainer from '@/components/common/ButtonContainer.vue'
 
 /**
  * Initial delay between each shuffle in milliseconds.
@@ -41,19 +41,51 @@ let isUnmounted: boolean = false
 
 const seatSizeStore = useSeatSizeStore()
 const { shuffleSeats, resetData } = seatSizeStore
-const { columnSize, rowSize } = storeToRefs(seatSizeStore)
+const { columnSize, rowSize, seatData } = storeToRefs(seatSizeStore)
 
 type PickingState = 'initial' | 'picking' | 'idle' | 'done'
 
 const pickingState = ref<PickingState>('initial')
 
 // Set SVG size based on column and row size
-const svgSize = ref<{
-  width: number
-  height: number
-}>({ width: 0, height: 0 })
+const svgRef = ref<HTMLOrSVGElement | null>(null)
 
-watch([columnSize, rowSize], () => {}, { immediate: true })
+const svgHeight = ref<number>(0),
+  svgSeatSize = reactive<SvgSeatSize>({ width: 0, height: 0 })
+
+watch(
+  [columnSize, rowSize],
+  (newSize) => {
+    const svgInstance = new SeatSvg(...newSize)
+
+    svgHeight.value = svgInstance.getSvgHeight()
+
+    const { width, height } = svgInstance.getSeatSize()
+    svgSeatSize.width = width
+    svgSeatSize.height = height
+  },
+  {
+    immediate: true,
+  },
+)
+
+// Control buttons handling
+const isControlHidden = ref<boolean>(false)
+
+const CONTROL_BUTTONS_HIDE_AFTER = 3_000 //ms
+
+let buttonHiddenTimer: number
+
+const startButtonHiddenTimer = () => {
+  // Show button controls
+  isControlHidden.value = false
+
+  // Start timer
+  clearTimeout(buttonHiddenTimer)
+  buttonHiddenTimer = setTimeout(() => (isControlHidden.value = true), CONTROL_BUTTONS_HIDE_AFTER)
+}
+
+useEventListener(window, ['pointermove', 'pointerdown'], startButtonHiddenTimer, true)
 
 // Confetti handling
 const confettiCanvas = ref<HTMLCanvasElement | null>(null)
@@ -96,6 +128,7 @@ const startRandomPick = async () => {
 
   pickingState.value = 'picking'
   howManyPicks.value++
+  isControlHidden.value = true
 
   let shuffleDelay: number = DEFAULT_SHUFFLE_DELAY_MS,
     /**
@@ -174,7 +207,7 @@ onBeforeUnmount(() => (isUnmounted = true))
  * Reset seat data and random pick counts.
  */
 const resetSeatData = () => {
-  resetData()
+  resetData(undefined, undefined, true)
   howManyPicks.value = 0
 }
 
@@ -203,9 +236,38 @@ useEventListener(document, 'fullscreenchange', () => {
         <div :class="$style['random-pick-counter']">
           <span :key="howManyPicks" v-if="howManyPicks > 0">{{ howManyPicks }}번째 추첨</span>
         </div>
-        <canvas ref="tableCanvasRef" :class="$style['table-canvas']"></canvas>
+        <svg
+          ref="svgRef"
+          :class="$style['table-svg']"
+          :viewBox="`0 0 ${SVG_VIEWBOX_WIDTH} ${svgHeight}`"
+          preserveAspectRatio="xMidYMid"
+        >
+          <!--Row -->
+          <g v-for="(row, rowIndex) in seatData" :key="rowIndex">
+            <!-- Seat -->
+            <template v-for="(column, columnIndex) in row" :key="`${rowIndex},${columnIndex}`">
+              <g v-if="!column.isExcluded" :class="$style.seat">
+                <rect
+                  :x="(svgSeatSize.width + SEAT_GAP) * columnIndex"
+                  :y="(svgSeatSize.height + SEAT_GAP) * rowIndex"
+                  :width="svgSeatSize.width"
+                  :height="svgSeatSize.height"
+                />
+                <text
+                  :x="(svgSeatSize.width + SEAT_GAP) * columnIndex + svgSeatSize.width / 2"
+                  :y="(svgSeatSize.height + SEAT_GAP) * rowIndex + svgSeatSize.height / 2"
+                  text-anchor="middle"
+                  dominant-baseline="middle"
+                  font-size="1.8rem"
+                >
+                  {{ column.assignedNumber }}
+                </text>
+              </g>
+            </template>
+          </g>
+        </svg>
       </div>
-      <div :class="$style['button-container']">
+      <ButtonContainer :class="[$style['button-container'], { [$style.hidden]: isControlHidden }]">
         <CustomButton @click="toggleFullscreen">{{
           !isFullscreen ? '전체화면으로 보기' : '전체화면 나가기'
         }}</CustomButton>
@@ -218,7 +280,7 @@ useEventListener(document, 'fullscreenchange', () => {
           :loading="pickingState === 'picking'"
           >뽑기</CustomButton
         >
-      </div>
+      </ButtonContainer>
     </div>
   </main>
 </template>
@@ -259,17 +321,49 @@ useEventListener(document, 'fullscreenchange', () => {
   gap: 30px;
 
   width: 100%;
+  height: 100%;
 }
 
 .table-container {
   position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
 }
 
-.table-canvas {
-  background-color: red;
+.table-svg {
+  .container:not(:fullscreen) & {
+    width: 100%;
+    max-width: 800px;
+  }
+
+  .container:fullscreen & {
+    width: 70%;
+    height: 70%;
+  }
+
+  overflow: visible;
 
   .done & {
     animation: roulette-done-animation 0.2s value.$ease-in-out both;
+  }
+}
+
+.seat {
+  rect {
+    stroke: palette.$darker-gray;
+    stroke-width: 2.5px;
+
+    fill: palette.$dark-gray;
+  }
+
+  text {
+    font-size: 2rem;
+    font-weight: 700;
   }
 }
 
@@ -320,20 +414,32 @@ useEventListener(document, 'fullscreenchange', () => {
     transform: scaleY(1);
   }
 }
+
 .button-container {
-  display: flex;
-  gap: value.$button-container-gap;
+  .container:fullscreen & {
+    position: absolute;
+    bottom: 0;
+    left: 0;
 
-  margin: auto;
+    width: 100%;
 
-  flex: 0 0 auto;
-  white-space: nowrap;
+    padding: 50px;
 
-  @media screen and (max-width: 650px) {
-    & {
-      flex-direction: column;
-      align-items: center;
+    transition: value.$animation-duration value.$animation-ease;
+    transition-property: opacity, transform;
+
+    button {
+      backdrop-filter: blur(2px);
+    }
+
+    &.hidden {
+      transform: translateY(10px);
+      opacity: 0;
+
+      pointer-events: none;
     }
   }
+
+  flex: 0 0 auto;
 }
 </style>

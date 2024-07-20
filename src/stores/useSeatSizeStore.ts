@@ -63,7 +63,7 @@ export const useSeatSizeStore = defineStore('seatSize', {
      * Set seat data size.
      * @param columnSize
      * @param rowSize
-     * @param modify Whether to modify the original data or initialize again.
+     * @param modify Whether to modify the original data or initialize again. Default value is `false`.
      * @returns An object that indicates whether setting seat size was successful.
      */
     setSize(columnSize: number, rowSize: number, modify: boolean = false): SetSeatSizeResult {
@@ -90,9 +90,19 @@ export const useSeatSizeStore = defineStore('seatSize', {
      * Reset seat data.
      * @param columnSize Column size to reset to. If not provided, it will use current column size.
      * @param rowSize Row size to reset to. If not provided, it will use current row size.
+     * @param preserveExcludedState Whether to preserve excluded state of the seats. Default value is `false`.
      */
-    resetData(columnSize?: number, rowSize?: number) {
-      this.setSize(columnSize ?? this.columnSize, rowSize ?? this.rowSize, false)
+    resetData(columnSize?: number, rowSize?: number, preserveExcludedState = false) {
+      this.setSize(columnSize ?? this.columnSize, rowSize ?? this.rowSize, true) // Set size first
+
+      this.seatData = this.seatData.map((row) =>
+        row.map(
+          (seat) =>
+            preserveExcludedState
+              ? { ...seat, assignedNumber: null } // Only remove assigned number to preserve other states
+              : { isExcluded: false, assignedNumber: null }, // Reset all data
+        ),
+      )
     },
     /**
      * Remove certain column or row.
