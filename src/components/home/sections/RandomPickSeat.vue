@@ -70,10 +70,29 @@ watch(
   },
 )
 
+// Fullscreen handling
+const containerRef = ref<HTMLDivElement | null>(null),
+  isFullscreen = ref<boolean>(false)
+
+const toggleFullscreen = () => {
+  if (document.fullscreenElement === null)
+    containerRef.value?.requestFullscreen({
+      navigationUI: 'hide',
+    })
+  else document.exitFullscreen()
+}
+
+useEventListener(document, 'fullscreenchange', () => {
+  isFullscreen.value = document.fullscreenElement !== null
+})
+
 // Control buttons handling
 const isControlHidden = ref<boolean>(false)
 
-watch(isControlHidden, (newState) => (document.body.style.cursor = newState ? 'none' : 'unset')) // Hide cursor after inactivity
+watch(isControlHidden, (newStateHidden) => {
+  // Hide cursor after inactivity
+  document.body.style.cursor = newStateHidden && isFullscreen.value ? 'none' : 'unset'
+})
 onBeforeUnmount(() => (document.body.style.cursor = 'unset')) // Reset cursor state before unmounting
 
 const CONTROL_BUTTONS_HIDE_AFTER = 3_000 //ms
@@ -214,22 +233,6 @@ const resetSeatData = () => {
   resetData(undefined, undefined, true)
   howManyPicks.value = 0
 }
-
-// Fullscreen handling
-const containerRef = ref<HTMLDivElement | null>(null),
-  isFullscreen = ref<boolean>(false)
-
-const toggleFullscreen = () => {
-  if (document.fullscreenElement === null)
-    containerRef.value?.requestFullscreen({
-      navigationUI: 'hide',
-    })
-  else document.exitFullscreen()
-}
-
-useEventListener(document, 'fullscreenchange', () => {
-  isFullscreen.value = document.fullscreenElement !== null
-})
 </script>
 
 <template>
