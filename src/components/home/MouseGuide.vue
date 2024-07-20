@@ -27,8 +27,10 @@ watch(
 </script>
 
 <template>
-  <div :class="$style.container" :key="$props.reshowKey" v-if="immediate || reshowUpdates !== 0">
-    <span>{{ $props.text }}</span>
+  <div :class="$style.container">
+    <div :class="$style.tooltip" :key="$props.reshowKey" v-if="immediate || reshowUpdates !== 0">
+      <span>{{ $props.text }}</span>
+    </div>
   </div>
 </template>
 
@@ -40,12 +42,17 @@ $background-color: palette.$black;
 
 .container {
   position: absolute;
-  top: 50%;
-  left: 90%;
+  top: calc(100% - 5px);
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 10;
+}
 
+.tooltip {
+  position: relative;
   display: flex;
 
+  text-align: center;
   white-space: nowrap;
 
   padding: 7px 12px;
@@ -54,7 +61,7 @@ $background-color: palette.$black;
   color: palette.$white;
 
   pointer-events: none;
-  transform-origin: 0% 0%;
+  transform-origin: 50% 0%;
   animation: tooltip-pop-up-animation 5s value.$ease-in-out both;
 
   &::before {
@@ -63,15 +70,15 @@ $background-color: palette.$black;
 
     position: absolute;
     top: 0;
-    left: 0;
-    transform: translateX(-100%);
+    left: 50%;
+    transform: translateX(-50%) translateY(-100%);
 
     width: $arrow-size;
     height: $arrow-size;
 
     background-color: $background-color;
 
-    clip-path: polygon(0% 0%, 100% 0%, 100% 100%);
+    clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
   }
 }
 
