@@ -1,6 +1,6 @@
 export const SVG_VIEWBOX_WIDTH = 1_000
 
-export const SEAT_GAP = 10,
+export const SEAT_GAP = 15,
   SEAT_ASPECT_RATIO = 10 / 7
 
 export type SvgSeatSize = {

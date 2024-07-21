@@ -2,13 +2,14 @@
 import CustomButton from '@/components/common/ShadowButton.vue'
 import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
 import { waitMs } from '@/utils/time'
-import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import confetti from 'canvas-confetti'
 import { useEventListener } from '@/composables/useEventListener'
 import { storeToRefs } from 'pinia'
 import { SEAT_GAP, SeatSvg, SVG_VIEWBOX_WIDTH, type SvgSeatSize } from '@/utils/seat-svg'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import MouseGuide from '../MouseGuide.vue'
+import screenfull from 'screenfull'
 
 /**
  * Initial delay between each shuffle in milliseconds.
@@ -75,24 +76,31 @@ const containerRef = ref<HTMLDivElement | null>(null),
   isFullscreen = ref<boolean>(false)
 
 const toggleFullscreen = () => {
-  if (document.fullscreenElement === null)
-    containerRef.value?.requestFullscreen({
+  if (screenfull.isEnabled && !screenfull.isFullscreen && containerRef.value)
+    screenfull.request(containerRef.value, {
       navigationUI: 'hide',
     })
-  else document.exitFullscreen()
+  else screenfull.exit()
 }
 
-useEventListener(document, 'fullscreenchange', () => {
-  isFullscreen.value = document.fullscreenElement !== null
-})
+const onFullscreenChange = () => {
+  isFullscreen.value = screenfull.isFullscreen
+  isControlHidden.value = false
+}
+
+screenfull.on('change', onFullscreenChange)
+
+onBeforeUnmount(() => screenfull.off('change', onFullscreenChange))
 
 // Control buttons handling
 const isControlHidden = ref<boolean>(false)
 
-watch(isControlHidden, (newStateHidden) => {
-  // Hide cursor after inactivity
-  document.body.style.cursor = newStateHidden && isFullscreen.value ? 'none' : 'unset'
-})
+watch(
+  isControlHidden,
+  (newStateHidden) =>
+    // Hide cursor after inactivity
+    (document.body.style.cursor = newStateHidden ? 'none' : 'unset'),
+)
 onBeforeUnmount(() => (document.body.style.cursor = 'unset')) // Reset cursor state before unmounting
 
 const CONTROL_BUTTONS_HIDE_AFTER = 3_000 //ms
@@ -105,7 +113,9 @@ const startButtonHiddenTimer = () => {
 
   // Start timer
   clearTimeout(buttonHiddenTimer)
-  buttonHiddenTimer = setTimeout(() => (isControlHidden.value = true), CONTROL_BUTTONS_HIDE_AFTER)
+  buttonHiddenTimer = setTimeout(() => {
+    if (isFullscreen.value) isControlHidden.value = true
+  }, CONTROL_BUTTONS_HIDE_AFTER)
 }
 
 useEventListener(window, ['pointermove', 'pointerdown'], startButtonHiddenTimer, true)
@@ -151,7 +161,7 @@ const startRandomPick = async () => {
 
   pickingState.value = 'picking'
   howManyPicks.value++
-  isControlHidden.value = true
+  if (isFullscreen.value) isControlHidden.value = true
 
   let shuffleDelay: number = DEFAULT_SHUFFLE_DELAY_MS,
     /**
@@ -274,23 +284,26 @@ const resetSeatData = () => {
           </g>
         </svg>
       </div>
-      <ButtonContainer :class="[$style['button-container'], { [$style.hidden]: isControlHidden }]">
-        <CustomButton @click="toggleFullscreen">{{
-          !isFullscreen ? '전체화면으로 보기' : '전체화면 나가기'
-        }}</CustomButton>
-        <div :style="{ position: 'relative' }">
-          <CustomButton @click="resetSeatData" :disabled="pickingState === 'picking'" warning
-            >초기화</CustomButton
+      <div :class="[$style['control-container'], { [$style.hidden]: isControlHidden }]">
+        <span :class="$style['tap-info']">화면 탭 또는 마우스 움직여 버튼 보이기</span>
+        <ButtonContainer :class="$style['button-container']">
+          <CustomButton @click="toggleFullscreen">{{
+            !isFullscreen ? '전체화면으로 보기' : '전체화면 나가기'
+          }}</CustomButton>
+          <div :style="{ position: 'relative' }">
+            <CustomButton @click="resetSeatData" :disabled="pickingState === 'picking'" warning
+              >초기화</CustomButton
+            >
+            <MouseGuide text="완전히 새로 뽑는다면 먼저 눌러주세요." />
+          </div>
+          <CustomButton
+            @click="startRandomPick"
+            :disabled="pickingState === 'picking'"
+            :loading="pickingState === 'picking'"
+            >뽑기</CustomButton
           >
-          <MouseGuide text="완전히 새로 뽑는다면 먼저 눌러주세요." />
-        </div>
-        <CustomButton
-          @click="startRandomPick"
-          :disabled="pickingState === 'picking'"
-          :loading="pickingState === 'picking'"
-          >뽑기</CustomButton
-        >
-      </ButtonContainer>
+        </ButtonContainer>
+      </div>
     </div>
   </main>
 </template>
@@ -334,6 +347,7 @@ const resetSeatData = () => {
   height: 100%;
 }
 
+// Table
 .table-container {
   position: relative;
 
@@ -388,6 +402,7 @@ const resetSeatData = () => {
   }
 }
 
+// Counter
 .random-pick-counter {
   position: absolute;
   top: 50%;
@@ -426,28 +441,40 @@ const resetSeatData = () => {
   }
 }
 
-.button-container {
+// Controls
+.control-container {
   .container:fullscreen & {
     position: absolute;
-    bottom: 0;
+    bottom: 50px;
     left: 0;
+  }
 
-    width: 100%;
+  width: 100%;
 
-    padding: 50px;
+  display: flex;
+  gap: value.$button-container-gap;
+  flex-direction: column;
+  align-items: center;
 
-    transition: value.$animation-duration value.$animation-ease;
-    transition-property: opacity, transform;
+  transition: value.$animation-duration value.$animation-ease;
+  transition-property: opacity, transform;
 
+  .container:not(:fullscreen) & > .tap-info {
+    display: none;
+  }
+
+  &.hidden {
+    transform: translateY(10px);
+    opacity: 0;
+
+    pointer-events: none;
+  }
+}
+
+.button-container {
+  .container:fullscreen & {
     button {
       backdrop-filter: blur(2px);
-    }
-
-    &.hidden {
-      transform: translateY(10px);
-      opacity: 0;
-
-      pointer-events: none;
     }
   }
 

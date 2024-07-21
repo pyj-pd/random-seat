@@ -53,9 +53,10 @@ const rowUpdateRefresh = ref<number | null>(null),
 /**
  * Exclude or include a seat at certain position based on current state.
  * @param position Position of the seat
+ * @param isExcluded Whether the seat is excluded or not
  */
-const toggleSeat = (position: SeatPosition) => {
-  if (totalSeatNumber.value <= MIN_SEAT_NUMBER) return // Seat number reached minimum
+const toggleSeat = (position: SeatPosition, isExcluded: boolean) => {
+  if (totalSeatNumber.value <= MIN_SEAT_NUMBER && !isExcluded) return // Seat number reached minimum
 
   const currentSeatData = getSeatData.value(position)
   setSeatData(position, { ...currentSeatData, isExcluded: !currentSeatData.isExcluded })
@@ -171,7 +172,7 @@ const removeRow = (index: number) => {
             <!-- Seat button -->
             <td v-for="(column, columnIndex) in row" :key="`${rowIndex},${columnIndex}`">
               <NormalButton
-                @click="() => toggleSeat([columnIndex, rowIndex])"
+                @click="() => toggleSeat([columnIndex, rowIndex], column.isExcluded)"
                 :class="[
                   $style['seat-button'],
                   {
