@@ -17,7 +17,7 @@
   left: 0;
 
   display: flex;
-  justify-items: center;
+  justify-content: center;
   align-items: center;
 
   width: 100%;
@@ -28,11 +28,13 @@ $shape-size: 10px;
 $shape-gap: 3px;
 
 .shape-container {
-  diplay: flex;
+  display: flex;
   gap: $shape-gap;
+
+  width: fit-content;
 }
 
-$animation-delay: 0.5s;
+$animation-delay: calc(value.$animation-duration / 1.5);
 
 .shape {
   display: block;
@@ -56,10 +58,10 @@ $animation-delay: 0.5s;
 @keyframes loading-animation {
   0%,
   100% {
-    transform: scaleY(1);
+    transform: translateY(-2px);
   }
   50% {
-    transform: scaleY(1.3);
+    transform: translateY(2px);
   }
 }
 </style>

@@ -4,7 +4,6 @@ import { useSectionStore } from '@/stores/useSectionStore'
 import GitHubIcon from '../GitHubIcon.vue'
 import { PROJECT_REPO_URL } from '@/constants/project'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
-import LoadingIndicator from '@/components/common/LoadingIndicator.vue'
 
 const { setCurrentSectionId } = useSectionStore()
 </script>
@@ -20,7 +19,6 @@ const { setCurrentSectionId } = useSectionStore()
         <GitHubIcon :height="17" />
       </a>
     </div>
-    <LoadingIndicator />
   </main>
 </template>
 

@@ -53,7 +53,7 @@ const pickingState = ref<PickingState>('initial')
 const svgRef = ref<HTMLOrSVGElement | null>(null)
 
 const svgHeight = ref<number>(0),
-  svgSeatSize = reactive<SvgSeatSize>({ width: 0, height: 0 })
+  svgSeatSize = reactive<SvgSeatSize>({ width: 0, height: 0, fontSize: '0rem' })
 
 watch(
   [columnSize, rowSize],
@@ -95,7 +95,9 @@ onMounted(() => {
 onBeforeUnmount(() => {
   try {
     screenfull.off('change', onFullscreenChange)
-  } catch { /* empty */ }
+  } catch {
+    /* empty */
+  }
 })
 
 // Control buttons handling
@@ -281,7 +283,7 @@ const resetSeatData = () => {
                   :y="(svgSeatSize.height + SEAT_GAP) * rowIndex + svgSeatSize.height / 2"
                   text-anchor="middle"
                   dominant-baseline="middle"
-                  font-size="1.8rem"
+                  :font-size="svgSeatSize.fontSize"
                 >
                   {{ column.assignedNumber }}
                 </text>

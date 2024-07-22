@@ -1,11 +1,19 @@
+import type { FontSize } from '@/types/seat-svg'
+
 export const SVG_VIEWBOX_WIDTH = 1_000
 
 export const SEAT_GAP = 15,
-  SEAT_ASPECT_RATIO = 10 / 7
+  SEAT_ASPECT_RATIO = 10 / 7,
+  /**
+   * Seat font size should be calculated by following expression:
+   * `(SVG seat width) * (This value)`
+   */
+  SEAT_FONT_SIZE_RATIO = 0.015
 
 export type SvgSeatSize = {
   width: number
   height: number
+  fontSize: FontSize
 }
 
 export class SeatSvg {
@@ -21,10 +29,11 @@ export class SeatSvg {
    * @returns Object that contains width and height
    */
   getSeatSize(): SvgSeatSize {
-    const width = (SVG_VIEWBOX_WIDTH - SEAT_GAP * (this.columnSize - 1)) / this.columnSize
-    const height = width / SEAT_ASPECT_RATIO
+    const width = (SVG_VIEWBOX_WIDTH - SEAT_GAP * (this.columnSize - 1)) / this.columnSize,
+      height = width / SEAT_ASPECT_RATIO,
+      fontSize: FontSize = `${width * SEAT_FONT_SIZE_RATIO}rem`
 
-    return { width, height }
+    return { width, height, fontSize }
   }
 
   /**
