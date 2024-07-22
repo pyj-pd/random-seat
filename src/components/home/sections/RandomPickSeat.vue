@@ -11,7 +11,7 @@ import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import MouseGuide from '../MouseGuide.vue'
 import screenfull from 'screenfull'
 
-/**
+/**nvm u
  * Initial delay between each shuffle in milliseconds.
  */
 const DEFAULT_SHUFFLE_DELAY_MS = 50,
@@ -53,7 +53,7 @@ const pickingState = ref<PickingState>('initial')
 const svgRef = ref<HTMLOrSVGElement | null>(null)
 
 const svgHeight = ref<number>(0),
-  svgSeatSize = reactive<SvgSeatSize>({ width: 0, height: 0, fontSize: '0rem' })
+  svgSeatSize = reactive<SvgSeatSize>({ width: 0, height: 0, fontSize: '0px' })
 
 watch(
   [columnSize, rowSize],
@@ -62,9 +62,10 @@ watch(
 
     svgHeight.value = svgInstance.getSvgHeight()
 
-    const { width, height } = svgInstance.getSeatSize()
+    const { width, height, fontSize } = svgInstance.getSeatSize()
     svgSeatSize.width = width
     svgSeatSize.height = height
+    svgSeatSize.fontSize = fontSize
   },
   {
     immediate: true,
@@ -394,7 +395,6 @@ const resetSeatData = () => {
   }
 
   text {
-    font-size: 2rem;
     font-weight: 700;
     font-variant: proportional-nums;
   }

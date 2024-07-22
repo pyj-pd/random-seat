@@ -1,1 +1,1 @@
-export type FontSize = `${number}rem`
+export type FontSizePx = `${number}px`
