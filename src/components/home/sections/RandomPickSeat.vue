@@ -92,7 +92,11 @@ onMounted(() => {
   if (screenfull.isEnabled) screenfull.on('change', onFullscreenChange)
 })
 
-onBeforeUnmount(() => screenfull.off('change', onFullscreenChange))
+onBeforeUnmount(() => {
+  try {
+    screenfull.off('change', onFullscreenChange)
+  } catch { /* empty */ }
+})
 
 // Control buttons handling
 const isControlHidden = ref<boolean>(false)
