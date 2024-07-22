@@ -1,6 +1,10 @@
 <template>
   <div :class="$style.container">
-    <span :class="$style.indicator"></span>
+    <div :class="$style['shape-container']">
+      <span :class="$style.shape"></span>
+      <span :class="$style.shape"></span>
+      <span :class="$style.shape"></span>
+    </div>
   </div>
 </template>
 
@@ -13,37 +17,49 @@
   left: 0;
 
   display: flex;
-  justify-content: center;
+  justify-items: center;
   align-items: center;
 
   width: 100%;
   height: 100%;
 }
 
-$indicator-size: 10px;
+$shape-size: 10px;
+$shape-gap: 3px;
 
-.indicator {
-  position: absolute;
+.shape-container {
+  diplay: flex;
+  gap: $shape-gap;
+}
 
+$animation-delay: 0.5s;
+
+.shape {
   display: block;
 
-  width: $indicator-size;
-  height: $indicator-size;
+  width: $shape-size;
+  height: $shape-size;
 
   background-color: currentColor;
 
-  border-radius: 100%;
-
   animation: loading-animation 1s value.$ease-out infinite;
+
+  &:nth-child(2) {
+    animation-delay: $animation-delay;
+  }
+
+  &:nth-child(3) {
+    animation-delay: calc($animation-delay * 2);
+  }
 }
 
 @keyframes loading-animation {
   0%,
   100% {
-    transform: translateX(-5px);
+    transform: scaleY(1);
   }
   50% {
-    transform: translateX(5px);
+    transform: scaleY(1.3);
   }
 }
 </style>

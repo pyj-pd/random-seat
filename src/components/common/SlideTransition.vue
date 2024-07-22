@@ -17,7 +17,7 @@ withDefaults(
   </Transition>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 @use '@/styles/value' as value;
 
 .slide-transition {

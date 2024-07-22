@@ -1,5 +1,6 @@
 import { defineAsyncComponent, type Component } from 'vue'
 import MainView from '@/components/home/sections/MainView.vue'
+import LoadingSection from '@/components/home/sections/LoadingSection.vue'
 
 export const DEFAULT_SHOW_TITLE = true,
   DEFAULT_FULLSCREEN = true
@@ -26,11 +27,18 @@ export const sections = {
   },
   'size-settings': {
     title: '행과 열 설정',
-    component: defineAsyncComponent(() => import('@/components/home/sections/SizeSettings.vue')),
+    component: defineAsyncComponent({
+      /** @todo use Suspense instead of repeating the same code */
+      loader: () => import('@/components/home/sections/SizeSettings.vue'),
+      loadingComponent: LoadingSection
+    }),
   },
   'random-pick-seat': {
     title: '무작위 자리 뽑기',
-    component: defineAsyncComponent(() => import('@/components/home/sections/RandomPickSeat.vue')),
+    component: defineAsyncComponent({
+      loader: () => import('@/components/home/sections/RandomPickSeat.vue'),
+      loadingComponent: LoadingSection
+    }),
   },
 } as const
 

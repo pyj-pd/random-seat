@@ -32,8 +32,8 @@ watch(currentSectionId, () => {
   <div :class="$style.container">
     <NavigationBar />
     <div :class="$style['view-container']">
-      <SlideTransition :class="$style.view">
-        <component :is="currentSectionData.component"></component>
+      <SlideTransition>
+        <component :class="$style.view" :is="currentSectionData.component"></component>
       </SlideTransition>
     </div>
   </div>
