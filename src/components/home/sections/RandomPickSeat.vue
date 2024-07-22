@@ -88,7 +88,9 @@ const onFullscreenChange = () => {
   isControlHidden.value = false
 }
 
-screenfull.on('change', onFullscreenChange)
+onMounted(() => {
+  if (screenfull.isEnabled) screenfull.on('change', onFullscreenChange)
+})
 
 onBeforeUnmount(() => screenfull.off('change', onFullscreenChange))
 
@@ -287,7 +289,7 @@ const resetSeatData = () => {
       <div :class="[$style['control-container'], { [$style.hidden]: isControlHidden }]">
         <span :class="$style['tap-info']">화면 탭 또는 마우스 움직여 버튼 보이기</span>
         <ButtonContainer :class="$style['button-container']">
-          <CustomButton @click="toggleFullscreen">{{
+          <CustomButton @click="toggleFullscreen" v-if="screenfull.isEnabled">{{
             !isFullscreen ? '전체화면으로 보기' : '전체화면 나가기'
           }}</CustomButton>
           <div :style="{ position: 'relative' }">
