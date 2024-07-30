@@ -19,6 +19,8 @@ import XShape from '../XShape.vue'
 import MouseGuide from '../MouseGuide.vue'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 
+/** @todo add top indicator */
+
 const seatSizeStore = useSeatSizeStore()
 const { setSize, resetData, setSeatData, removeSeatLine } = seatSizeStore
 

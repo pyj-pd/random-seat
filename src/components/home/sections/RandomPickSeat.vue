@@ -85,6 +85,8 @@ const toggleFullscreen = () => {
 }
 
 const onFullscreenChange = () => {
+  if (screenfull.isFullscreen) startButtonHiddenTimer() // Start timer every time user goes into fullscreen
+
   isFullscreen.value = screenfull.isFullscreen
   isControlHidden.value = false
 }
@@ -116,6 +118,7 @@ const CONTROL_BUTTONS_HIDE_AFTER = 3_000 //ms
 
 let buttonHiddenTimer: number
 
+/** @todo prevent button clicking after `pointerdown` event on firefox */
 const startButtonHiddenTimer = () => {
   // Show button controls
   isControlHidden.value = false
@@ -127,7 +130,7 @@ const startButtonHiddenTimer = () => {
   }, CONTROL_BUTTONS_HIDE_AFTER)
 }
 
-useEventListener(window, ['pointermove', 'pointerdown'], startButtonHiddenTimer, true)
+useEventListener(window, ['pointerup', 'pointermove'], startButtonHiddenTimer, false)
 
 // Confetti handling
 const confettiCanvas = ref<HTMLCanvasElement | null>(null)
@@ -255,7 +258,10 @@ const resetSeatData = () => {
 </script>
 
 <template>
-  <main :class="$style.container" ref="containerRef">
+  <main
+    :class="[$style.container, { [$style['control-hidden']]: isControlHidden }]"
+    ref="containerRef"
+  >
     <canvas ref="confettiCanvas" :class="$style['confetti-canvas']"></canvas>
     <div :class="$style['view-container']" ref="viewContainerRef">
       <div :class="[$style['table-container'], { [$style.done]: pickingState === 'done' }]">
@@ -293,7 +299,7 @@ const resetSeatData = () => {
           </g>
         </svg>
       </div>
-      <div :class="[$style['control-container'], { [$style.hidden]: isControlHidden }]">
+      <div :class="$style['control-container']">
         <span :class="$style['tap-info']">화면 탭 또는 마우스 움직여 버튼 보이기</span>
         <ButtonContainer :class="$style['button-container']">
           <CustomButton @click="toggleFullscreen" v-if="screenfull.isEnabled">{{
@@ -471,11 +477,9 @@ const resetSeatData = () => {
     display: none;
   }
 
-  &.hidden {
+  .container.control-hidden & {
     transform: translateY(10px);
     opacity: 0;
-
-    pointer-events: none;
   }
 }
 
