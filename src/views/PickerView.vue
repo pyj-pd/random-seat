@@ -1,21 +1,9 @@
 <script setup lang="ts">
 import SlideTransition from '@/components/common/SlideTransition.vue'
 import NavigationBar from '@/components/picker/NavigationBar.vue'
-import { MAX_SEAT_COLUMN_SIZE, MAX_SEAT_ROW_SIZE } from '@/constants/seat'
 import { useSectionStore } from '@/stores/useSectionStore'
 import { storeToRefs } from 'pinia'
-import { useHead } from '@unhead/vue'
 import { watch } from 'vue'
-
-useHead({
-  title: '티케팅 자리 뽑기',
-  meta: [
-    {
-      name: 'description',
-      content: `최대 ${MAX_SEAT_COLUMN_SIZE}×${MAX_SEAT_ROW_SIZE} 크기의 자리를 구성원 각자의 기기로 티케팅을 통해 뽑을 수 있습니다. 학교 등에서 재미있게 자리를 뽑아보세요.`,
-    },
-  ],
-})
 
 const sectionStore = useSectionStore()
 
@@ -33,6 +21,7 @@ watch(currentSectionId, () => {
     <NavigationBar />
     <div :class="$style['view-container']">
       <SlideTransition>
+        <!-- Sections will change here -->
         <component :class="$style.view" :is="currentSectionData.component"></component>
       </SlideTransition>
     </div>

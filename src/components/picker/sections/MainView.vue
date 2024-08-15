@@ -4,13 +4,19 @@ import { useSectionStore } from '@/stores/useSectionStore'
 import GitHubIcon from '../GitHubIcon.vue'
 import { PROJECT_REPO_URL } from '@/constants/project'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
+import type { RouteName } from '@/router'
+import { getRouteMetadata } from '@/utils/route'
+import { useRoute } from 'vue-router'
 
 const { setCurrentSectionId } = useSectionStore()
+
+const route = useRoute(),
+  { title } = getRouteMetadata(route.name as RouteName)
 </script>
 
 <template>
   <main :class="$style.container">
-    <h2 :class="$style.title">무작위 자리 뽑기</h2>
+    <h2 :class="$style.title">{{ title }}</h2>
     <ButtonContainer :responsive="false" :class="$style['button-container']">
       <ShadowButton @click="() => setCurrentSectionId('size-settings')">시작하기</ShadowButton>
     </ButtonContainer>

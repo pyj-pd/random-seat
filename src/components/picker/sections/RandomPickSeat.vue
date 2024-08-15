@@ -33,11 +33,14 @@ const SHUFFLE_SOUND_VOLUME = 5,
   SHUFFLE_DONE_SOUND_PLAYBACK_RATE = 1.5
 
 const ROULETTE_AUDIO_LOCATION = '/sounds/roulette.mp3',
-  ROULETTE_DONE_AUDIO_LOCATION = '/sounds/roulette-done.mp3'
+  ROULETTE_DONE_AUDIO_LOCATION = '/sounds/roulette-done.mp3',
+  APPLAUSE_AUDIO_LOCATION = '/sounds/applause.mp3'
 
 let audioContext: AudioContext, gainNode: GainNode
 
-let rouletteAudioBuffer: AudioBuffer, rouletteDoneAudioBuffer: AudioBuffer
+let rouletteAudioBuffer: AudioBuffer,
+  rouletteDoneAudioBuffer: AudioBuffer,
+  applauseAudioBuffer: AudioBuffer
 
 let isUnmounted: boolean = false
 
@@ -197,8 +200,9 @@ const startRandomPick = async () => {
   }
 
   if (!isUnmounted) {
-    // Play roulette done sound
+    // Play roulette done and applause sound
     playSound(rouletteDoneAudioBuffer, { playbackRate: SHUFFLE_DONE_SOUND_PLAYBACK_RATE })
+    playSound(applauseAudioBuffer, { playbackRate: SHUFFLE_DONE_SOUND_PLAYBACK_RATE })
 
     pickingState.value = 'done'
 
@@ -249,6 +253,9 @@ onMounted(async () => {
 
   // Roulette done sound
   rouletteDoneAudioBuffer = await loadAudioBuffer(ROULETTE_DONE_AUDIO_LOCATION)
+
+  // Applause sound
+  applauseAudioBuffer = await loadAudioBuffer(APPLAUSE_AUDIO_LOCATION)
 })
 
 onBeforeUnmount(() => (isUnmounted = true))
