@@ -6,7 +6,7 @@ import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import confetti from 'canvas-confetti'
 import { useEventListener } from '@/composables/useEventListener'
 import { storeToRefs } from 'pinia'
-import { SEAT_GAP, SeatSvg, SVG_VIEWBOX_WIDTH, type SvgSeatSize } from '@/utils/seat-svg'
+import { SeatSvg, SVG_VIEWBOX_WIDTH, type SvgSeatSize } from '@/utils/seat-svg'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import MouseGuide from '../MouseGuide.vue'
 import screenfull from 'screenfull'
@@ -53,7 +53,13 @@ const pickingState = ref<PickingState>('initial')
 const svgRef = ref<HTMLOrSVGElement | null>(null)
 
 const svgHeight = ref<number>(0),
-  svgSeatSize = reactive<SvgSeatSize>({ width: 0, height: 0, fontSize: '0px' })
+  svgSeatSize = reactive<SvgSeatSize>({
+    width: 0,
+    height: 0,
+    gap: 0,
+    borderWidth: '0px',
+    fontSize: '0px',
+  })
 
 watch(
   [columnSize, rowSize],
@@ -62,10 +68,12 @@ watch(
 
     svgHeight.value = svgInstance.getSvgHeight()
 
-    const { width, height, fontSize } = svgInstance.getSeatSize()
+    const { width, height, gap, fontSize, borderWidth } = svgInstance.getSeatSize()
     svgSeatSize.width = width
     svgSeatSize.height = height
+    svgSeatSize.gap = gap
     svgSeatSize.fontSize = fontSize
+    svgSeatSize.borderWidth = borderWidth
   },
   {
     immediate: true,
@@ -274,14 +282,15 @@ const resetSeatData = () => {
             <template v-for="(column, columnIndex) in row" :key="`${rowIndex},${columnIndex}`">
               <g v-if="!column.isExcluded" :class="$style.seat">
                 <rect
-                  :x="(svgSeatSize.width + SEAT_GAP) * columnIndex"
-                  :y="(svgSeatSize.height + SEAT_GAP) * rowIndex"
+                  :x="(svgSeatSize.width + svgSeatSize.gap) * columnIndex"
+                  :y="(svgSeatSize.height + svgSeatSize.gap) * rowIndex"
                   :width="svgSeatSize.width"
                   :height="svgSeatSize.height"
+                  :stroke-width="svgSeatSize.borderWidth"
                 />
                 <text
-                  :x="(svgSeatSize.width + SEAT_GAP) * columnIndex + svgSeatSize.width / 2"
-                  :y="(svgSeatSize.height + SEAT_GAP) * rowIndex + svgSeatSize.height / 2"
+                  :x="(svgSeatSize.width + svgSeatSize.gap) * columnIndex + svgSeatSize.width / 2"
+                  :y="(svgSeatSize.height + svgSeatSize.gap) * rowIndex + svgSeatSize.height / 2"
                   text-anchor="middle"
                   dominant-baseline="middle"
                   :font-size="svgSeatSize.fontSize"
@@ -389,7 +398,6 @@ const resetSeatData = () => {
 .seat {
   rect {
     stroke: palette.$darker-gray;
-    stroke-width: 2.5px;
 
     fill: palette.$dark-gray;
   }

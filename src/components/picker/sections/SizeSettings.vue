@@ -14,7 +14,7 @@ import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
 import { useSectionStore } from '@/stores/useSectionStore'
 import { storeToRefs } from 'pinia'
 import PersonIcon from '../PersonIcon.vue'
-import { onMounted, ref, watch, watchPostEffect } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import XShape from '../XShape.vue'
 import MouseGuide from '../MouseGuide.vue'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
@@ -81,7 +81,6 @@ watch(
     if (scrollViewRef.value === null) return
 
     const width = scrollViewRef.value.scrollWidth
-    console.log(width)
 
     scrollViewRef.value.scrollTo({
       left: width,

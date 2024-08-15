@@ -1,1 +1,1 @@
-export type FontSizePx = `${number}px`
+export type PxSize = `${number}px`
