@@ -1,6 +1,6 @@
 import { defineAsyncComponent, type Component } from 'vue'
-import MainView from '@/components/home/sections/MainView.vue'
-import LoadingSection from '@/components/home/sections/LoadingSection.vue'
+import MainView from '@/components/picker/sections/MainView.vue'
+import LoadingSection from '@/components/picker/sections/LoadingSection.vue'
 
 export const DEFAULT_SHOW_TITLE = true,
   DEFAULT_FULLSCREEN = true
@@ -29,20 +29,18 @@ export const sections = {
     title: '행과 열 설정',
     component: defineAsyncComponent({
       /** @todo use Suspense instead of repeating the same code */
-      loader: () => import('@/components/home/sections/SizeSettings.vue'),
-      loadingComponent: LoadingSection
+      loader: () => import('@/components/picker/sections/SizeSettings.vue'),
+      loadingComponent: LoadingSection,
     }),
   },
   'random-pick-seat': {
     title: '무작위 자리 뽑기',
     component: defineAsyncComponent({
-      loader: () => import('@/components/home/sections/RandomPickSeat.vue'),
-      loadingComponent: LoadingSection
+      loader: () => import('@/components/picker/sections/RandomPickSeat.vue'),
+      loadingComponent: LoadingSection,
     }),
   },
-} as const
-
-sections satisfies SectionList
+} as const satisfies SectionList
 
 export type SectionId = keyof typeof sections
 

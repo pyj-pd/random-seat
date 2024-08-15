@@ -14,13 +14,15 @@ import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
 import { useSectionStore } from '@/stores/useSectionStore'
 import { storeToRefs } from 'pinia'
 import PersonIcon from '../PersonIcon.vue'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch, watchPostEffect } from 'vue'
 import XShape from '../XShape.vue'
 import MouseGuide from '../MouseGuide.vue'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 
 const seatSizeStore = useSeatSizeStore()
 const { setSize, resetData, setSeatData, removeSeatLine } = seatSizeStore
+
+const scrollViewRef = ref<HTMLDivElement | null>(null)
 
 const { setCurrentSectionId } = useSectionStore()
 
@@ -69,6 +71,25 @@ const resetSeatData = () => {
   columnUpdateRefresh.value = null
 }
 
+/**
+ * Scroll to edge of scroll view for better UX.
+ * Users won't have to scroll every time they add a column. That's painful af.
+ */
+watch(
+  [columnSize],
+  () => {
+    if (scrollViewRef.value === null) return
+
+    const width = scrollViewRef.value.scrollWidth
+    console.log(width)
+
+    scrollViewRef.value.scrollTo({
+      left: width,
+    })
+  },
+  { flush: 'post' },
+)
+
 // Line add buttons
 const addRow = () => {
     setSize(columnSize.value, rowSize.value + 1, true)
@@ -106,7 +127,7 @@ const removeRow = (index: number) => {
       <h2>자리 설정을 진행해 주세요.</h2>
     </div>
     <!-- Table scroll view -->
-    <div :class="$style['table-scroll-view-container']">
+    <div :class="$style['table-scroll-view-container']" ref="scrollViewRef">
       <div :class="$style['table-container']">
         <!-- Table info -->
         <div :class="$style['table-info-container']">
@@ -279,7 +300,7 @@ $table-width: 880px;
 .table-scroll-view-container {
   display: flex;
 
-  width: 100%;
+  width: fit-content;
   max-width: $table-width;
 
   overflow-x: auto;
@@ -292,7 +313,7 @@ $table-width: 880px;
   align-items: center;
   flex: 0 0 auto;
 
-  width: $table-width;
+  white-space: nowrap;
 
   padding: 10px 15px;
   border: solid value.$border-width palette.$black;
