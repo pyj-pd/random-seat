@@ -4,14 +4,14 @@ import { useSectionStore } from '@/stores/useSectionStore'
 import GitHubIcon from '../GitHubIcon.vue'
 import { PROJECT_REPO_URL } from '@/constants/project'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
-import type { RouteName } from '@/router'
+import type { PickerRouteName } from '@/router'
 import { getRouteMetadata } from '@/utils/route'
 import { useRoute } from 'vue-router'
 
 const { setCurrentSectionId } = useSectionStore()
 
 const route = useRoute(),
-  { title } = getRouteMetadata(route.name as RouteName)
+  { title } = getRouteMetadata(route.name as PickerRouteName)
 </script>
 
 <template>

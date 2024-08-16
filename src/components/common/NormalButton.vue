@@ -61,7 +61,9 @@ withDefaults(defineProps<ButtonProps>(), {
     transform-origin: center bottom;
   }
 
-  transition: color value.$animation-duration value.$animation-ease;
+  & {
+    transition: color value.$animation-duration value.$animation-ease;
+  }
 
   &:hover {
     color: palette.$white;

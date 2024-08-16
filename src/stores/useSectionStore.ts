@@ -1,5 +1,13 @@
-import { defaultSectionId, sections, type PickerType, type SectionData, type SectionId } from '@/constants/section'
+import {
+  defaultSectionId,
+  sections,
+  type PickerType,
+  type SectionData,
+  type SectionId,
+} from '@/constants/section'
 import { defineStore } from 'pinia'
+
+type HistoryActions = 'save' | 'no-save' | 'clear-all'
 
 export const useSectionStore = defineStore('section', {
   state: () => ({
@@ -14,12 +22,13 @@ export const useSectionStore = defineStore('section', {
     /**
      * Set section id, and add the section id to navigation history.
      * @param sectionId Section id to set to.
-     * @param history Whether to save into the navigation history.
+     * @param historyAction What to do with history when navigating through sections. `save` means saving as history(as normal), `no-save` is quietly move to the section by not saving as history, `clear-all` means clearing all existing history.
      */
-    setCurrentSectionId(sectionId: SectionId, history: boolean = true) {
-      if (history)
+    setCurrentSectionId(sectionId: SectionId, historyAction: HistoryActions = 'save') {
+      if (historyAction === 'save')
         // Save navigation history
         this.sectionHistory.push(this.currentSectionId)
+      else if (historyAction === 'clear-all') this.sectionHistory = []
 
       this.currentSectionId = sectionId
     },
@@ -33,7 +42,7 @@ export const useSectionStore = defineStore('section', {
 
       this.sectionHistory.splice(this.sectionHistory.length - 1, 1) // Remove the last section from the history
 
-      this.setCurrentSectionId(lastSectionId, false)
+      this.setCurrentSectionId(lastSectionId, 'no-save')
     },
   },
 })

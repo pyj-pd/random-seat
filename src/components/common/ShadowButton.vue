@@ -44,12 +44,14 @@ $animation-duration: 0.1s;
     --v-shadow-depth: 0px;
   }
 
-  transform: translate(
-    calc($initial-shadow-depth - var(--v-shadow-depth)),
-    calc($initial-shadow-depth - var(--v-shadow-depth))
-  );
+  & {
+    transform: translate(
+      calc($initial-shadow-depth - var(--v-shadow-depth)),
+      calc($initial-shadow-depth - var(--v-shadow-depth))
+    );
 
-  transition: transform value.$animation-duration value.$animation-ease;
+    transition: transform value.$animation-duration value.$animation-ease;
+  }
 }
 
 .button {

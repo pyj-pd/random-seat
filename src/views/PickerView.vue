@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import SlideTransition from '@/components/common/SlideTransition.vue'
 import NavigationBar from '@/components/picker/NavigationBar.vue'
-import type { RouteName } from '@/router'
+import { defaultClientSectionId } from '@/constants/section'
+import type { PickerRouteName } from '@/router'
 import { useSectionStore } from '@/stores/useSectionStore'
 import { storeToRefs } from 'pinia'
 import { onBeforeMount, watch } from 'vue'
@@ -13,7 +14,11 @@ const router = useRouter()
 const { currentSectionId, currentSectionData, pickerType } = storeToRefs(sectionStore)
 
 onBeforeMount(() => {
-  pickerType.value = router.currentRoute.value.name as RouteName
+  pickerType.value = router.currentRoute.value.name as PickerRouteName
+
+  // Ticketing clients should see different first section
+  if (pickerType.value === 'ticketing-client')
+    sectionStore.setCurrentSectionId(defaultClientSectionId, 'clear-all')
 })
 
 watch(currentSectionId, () => {

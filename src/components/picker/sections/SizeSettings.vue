@@ -246,7 +246,12 @@ const removeRow = (index: number) => {
       <CustomButton @click="resetSeatData" warning>초기화</CustomButton>
       <CustomButton @click="() => reshowMouseGuide()">도움말 보기</CustomButton>
 
-      <CustomButton  @click="() => setCurrentSectionId(pickerType === 'home' ? 'random-pick-seat' : 'connect-p2p')">다음으로</CustomButton>
+      <CustomButton
+        @click="
+          () => setCurrentSectionId(pickerType === 'home' ? 'random-pick-seat' : 'wait-for-clients')
+        "
+        >다음으로</CustomButton
+      >
     </ButtonContainer>
   </main>
 </template>
