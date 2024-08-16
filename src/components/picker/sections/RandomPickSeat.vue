@@ -395,7 +395,9 @@ const resetSeatData = () => {
     height: 70%;
   }
 
-  overflow: visible;
+  & {
+    overflow: visible;
+  }
 
   .done & {
     animation: roulette-done-animation 0.2s value.$ease-in-out both;
@@ -427,11 +429,6 @@ const resetSeatData = () => {
 
 // Counter
 .random-pick-counter {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
   & > span {
     display: flex;
     justify-content: center;
@@ -450,7 +447,14 @@ const resetSeatData = () => {
     animation: random-pick-counter-animation 2s value.$ease-in-out both;
   }
 
-  pointer-events: none;
+  & {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    pointer-events: none;
+  }
 }
 
 @keyframes random-pick-counter-animation {
@@ -472,15 +476,17 @@ const resetSeatData = () => {
     left: 0;
   }
 
-  width: 100%;
+  & {
+    width: 100%;
 
-  display: flex;
-  gap: value.$button-container-gap;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    gap: value.$button-container-gap;
+    flex-direction: column;
+    align-items: center;
 
-  transition: value.$animation-duration value.$animation-ease;
-  transition-property: opacity, transform;
+    transition: value.$animation-duration value.$animation-ease;
+    transition-property: opacity, transform;
+  }
 
   .container:not(:fullscreen) & > .tap-info {
     display: none;
@@ -501,6 +507,8 @@ const resetSeatData = () => {
     }
   }
 
-  flex: 0 0 auto;
+  & {
+    flex: 0 0 auto;
+  }
 }
 </style>
