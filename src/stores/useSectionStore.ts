@@ -1,8 +1,9 @@
-import { defaultSectionId, sections, type SectionData, type SectionId } from '@/constants/section'
+import { defaultSectionId, sections, type PickerType, type SectionData, type SectionId } from '@/constants/section'
 import { defineStore } from 'pinia'
 
 export const useSectionStore = defineStore('section', {
   state: () => ({
+    pickerType: undefined as PickerType | undefined,
     currentSectionId: defaultSectionId as SectionId,
     sectionHistory: [] as SectionId[],
   }),

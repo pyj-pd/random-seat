@@ -1,9 +1,12 @@
 import { defineAsyncComponent, type Component } from 'vue'
 import MainView from '@/components/picker/sections/MainView.vue'
 import LoadingSection from '@/components/picker/sections/LoadingSection.vue'
+import type { RouteName } from '@/router'
 
 export const DEFAULT_SHOW_TITLE = true,
   DEFAULT_FULLSCREEN = true
+
+export type PickerType = Extract<RouteName, 'home' | 'ticketing'>
 
 export type SectionData = {
   title: string
@@ -26,7 +29,7 @@ export const sections = {
     fullscreen: false,
   },
   'size-settings': {
-    title: '행과 열 설정',
+    title: '행과 열 설정하기',
     component: defineAsyncComponent({
       /** @todo use Suspense instead of repeating the same code */
       loader: () => import('@/components/picker/sections/SizeSettings.vue'),
@@ -40,6 +43,15 @@ export const sections = {
       loadingComponent: LoadingSection,
     }),
   },
+  
+  // Ticketing
+  'connect-p2p': {
+    title: '사용자 접속시키기',
+    component: defineAsyncComponent({
+      loader: () => import('@/components/picker/sections/ticketing/ConnectP2PSection.vue'),
+      loadingComponent: LoadingSection,
+    }),
+  }
 } as const satisfies SectionList
 
 export type SectionId = keyof typeof sections

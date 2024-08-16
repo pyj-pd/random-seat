@@ -1,13 +1,20 @@
 <script setup lang="ts">
 import SlideTransition from '@/components/common/SlideTransition.vue'
 import NavigationBar from '@/components/picker/NavigationBar.vue'
+import type { RouteName } from '@/router'
 import { useSectionStore } from '@/stores/useSectionStore'
 import { storeToRefs } from 'pinia'
-import { watch } from 'vue'
+import { onBeforeMount, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 const sectionStore = useSectionStore()
+const router = useRouter()
 
-const { currentSectionId, currentSectionData } = storeToRefs(sectionStore)
+const { currentSectionId, currentSectionData, pickerType } = storeToRefs(sectionStore)
+
+onBeforeMount(() => {
+  pickerType.value = router.currentRoute.value.name as RouteName
+})
 
 watch(currentSectionId, () => {
   window.scrollTo({
