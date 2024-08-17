@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // @todo fix meta tags not working
-// import { useHead } from '@unhead/vue'
+// import { useHead } from '@unhead/vue'r
 // import { useRoute } from 'vue-router'
 // import { getRouteMetadata } from './utils/route'
 // import type { RouteName } from './router'
