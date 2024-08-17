@@ -10,18 +10,6 @@ export const routes = [
     component: PickerView,
   },
 
-  // Ticketing
-  {
-    path: '/ticketing',
-    name: 'ticketing',
-    component: PickerView,
-  },
-  {
-    path: '/ticketing/:id',
-    name: 'ticketing-client',
-    component: PickerView,
-  },
-
   // Other
   {
     path: '/:pathMatch(.*)*',
@@ -31,7 +19,7 @@ export const routes = [
 ] as const satisfies RouteRecordRaw[]
 
 export type RouteName = (typeof routes)[number]['name']
-export type PickerRouteName = Extract<RouteName, 'home' | 'ticketing' | 'ticketing-client'>
+export type PickerRouteName = Extract<RouteName, 'home'>
 
 export type RouteMetadata = {
   name: RouteName
@@ -49,24 +37,14 @@ export const routeMetadata = [
   },
 
   {
-    name: 'ticketing',
-    title: '티케팅 자리 뽑기',
-    description: `최대 ${MAX_SEAT_COLUMN_SIZE}×${MAX_SEAT_ROW_SIZE} 크기의 자리를 구성원 각자의 기기로 티케팅을 통해 뽑을 수 있습니다. 학교 등에서 재미있게 자리를 뽑아보세요.`,
-    visibleToSearchEngines: true,
-  },
-  {
-    name: 'ticketing-client',
-    title: '티케팅 자리 뽑기에 연결하기',
-    description: '주최자에게 해당 링크를 받았나요? 연결하여 자리 뽑기에 참여해 보세요!',
-    visibleToSearchEngines: false,
-  },
-
-  {
     name: '404-not-found',
     title: '404 Not Found',
     visibleToSearchEngines: false,
   },
 ] as const satisfies RouteMetadata[]
+
+/** @todo add support for dynamic metadata */
+export const defaultMetadata = routeMetadata.find((value) => value.name === 'home') as RouteMetadata
 
 // Validation
 

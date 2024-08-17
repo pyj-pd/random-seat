@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite-ssg build",
     "preview": "vite preview",
     "test:unit": "vitest",
     "build-only": "vite build",
@@ -14,15 +14,13 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@unhead/vue": "^1.9.16",
     "canvas-confetti": "^1.9.3",
     "peerjs": "^1.5.4",
     "pinia": "^2.2.2",
     "pinia-plugin-persistedstate": "^3.2.1",
     "qrcode": "^1.5.4",
     "screenfull": "^6.0.2",
-    "vue": "^3.4.38",
-    "vue-router": "^4.4.3"
+    "vue": "^3.4.38"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.10.4",
@@ -31,6 +29,7 @@
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22.3.0",
     "@types/qrcode": "^1.5.5",
+    "@unhead/vue": "^1.9.16",
     "@vitejs/plugin-vue": "^5.1.2",
     "@vue/eslint-config-prettier": "^9.0.0",
     "@vue/eslint-config-typescript": "^13.0.0",
@@ -46,7 +45,9 @@
     "typescript": "~5.5.4",
     "vite": "^5.4.1",
     "vite-plugin-vue-devtools": "^7.3.8",
+    "vite-ssg": "^0.23.8",
     "vitest": "^2.0.5",
+    "vue-router": "^4.4.3",
     "vue-tsc": "^2.0.29"
   }
 }

@@ -5,29 +5,13 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
-import { createApp } from 'vue'
-import { createRouter } from 'vue-router'
-import { createWebHistory } from 'vue-router'
-import { createHead } from '@unhead/vue'
 
-const app = createApp(App)
+import { ViteSSG } from 'vite-ssg'
 
-// Router
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
+export const createApp = ViteSSG(App, { routes }, ({ app }) => {
+  // Pinia
+  const pinia = createPinia()
+  pinia.use(piniaPluginPersistedstate)
+
+  app.use(pinia)
 })
-app.use(router)
-
-// Pinia
-const pinia = createPinia()
-pinia.use(piniaPluginPersistedstate)
-
-app.use(pinia)
-
-// Unhead
-const head = createHead()
-app.use(head)
-
-// Mount
-app.mount('#app')

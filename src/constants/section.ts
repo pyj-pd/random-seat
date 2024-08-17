@@ -6,7 +6,7 @@ import type { RouteName } from '@/router'
 export const DEFAULT_SHOW_TITLE = true,
   DEFAULT_FULLSCREEN = true
 
-export type PickerType = Extract<RouteName, 'home' | 'ticketing' | 'ticketing-client'>
+export type PickerType = Extract<RouteName, 'home'>
 
 export type SectionData = {
   title: string
@@ -43,29 +43,8 @@ export const sections = {
       loadingComponent: LoadingSection,
     }),
   },
-
-  // Ticketing
-  'wait-for-clients': {
-    title: '사용자 접속시키기',
-    component: defineAsyncComponent({
-      loader: () => import('@/components/picker/sections/ticketing/WaitForClients.vue'),
-      loadingComponent: LoadingSection,
-    }),
-  },
-
-  // Ticketing clients
-  'wait-for-start': {
-    title: '티케팅 참여하기',
-    component: defineAsyncComponent({
-      loader: () => import('@/components/picker/sections/ticketing/client/WaitForStart.vue'),
-      loadingComponent: LoadingSection,
-      suspensible: false,
-    }),
-  },
 } as const satisfies SectionList
 
 export type SectionId = keyof typeof sections
 
-export const defaultSectionId: SectionId = 'main-view',
-  /** For clients who are joining ticketing */
-  defaultClientSectionId: SectionId = 'wait-for-start'
+export const defaultSectionId: SectionId = 'main-view'

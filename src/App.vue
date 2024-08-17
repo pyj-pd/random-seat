@@ -1,29 +1,24 @@
 <script setup lang="ts">
-// @todo fix meta tags not working
-// import { useHead } from '@unhead/vue'r
-// import { useRoute } from 'vue-router'
-// import { getRouteMetadata } from './utils/route'
-// import type { RouteName } from './router'
+import { useHead } from '@unhead/vue'
+import { defaultMetadata } from './router'
 
-// const route = useRoute()
+useHead(() => {
+  const { title, description, visibleToSearchEngines } = defaultMetadata
 
-// useHead(() => {
-//   const { title, description, visibleToSearchEngines } = getRouteMetadata(route.name as RouteName)
-
-//   return {
-//     title,
-//     meta: [
-//       {
-//         name: 'description',
-//         content: description,
-//       },
-//       {
-//         name: 'robots',
-//         content: visibleToSearchEngines ? 'all' : 'none',
-//       },
-//     ],
-//   }
-// })
+  return {
+    title,
+    meta: [
+      {
+        name: 'description',
+        content: description,
+      },
+      {
+        name: 'robots',
+        content: visibleToSearchEngines ? 'all' : 'none',
+      },
+    ],
+  }
+})
 </script>
 
 <template>
