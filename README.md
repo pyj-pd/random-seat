@@ -9,6 +9,7 @@ The project is made with [Vue](https://vuejs.org/) on [Vite](https://vitejs.dev/
 # Assets
 
 - Sound effects are from [Ubuntu Yaru GNOME Theme](https://github.com/ubuntu/yaru).
+ - Applause sound effect is [made by gladkiy uploaded at Freesound](https://freesound.org/s/347033/).
 - Font used is [Happiness Sans](https://thehyundaifont.com/).
 - Paper texture image in background is [made by ArtsyBee and uploaded on Pixabay](https://pixabay.com/illustrations/paper-texture-background-white-951489/).
 
