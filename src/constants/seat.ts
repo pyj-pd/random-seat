@@ -1,15 +1,10 @@
+import type { SeatNameData, SeatRowData } from '@/types/seat'
 import { initializeSeatData } from '@/utils/seat'
 
-export type SeatData = {
-  assignedNumber: number | null
-  isExcluded: boolean
-}
+// Name data
+export const DEFAULT_NAME_DATA: SeatNameData = {}
 
-export type SeatColumnData = SeatData[]
-export type SeatRowData = SeatColumnData[]
-
-export type SeatPosition = [columnPos: number, rowPos: number]
-
+// Seat size
 export const DEFAULT_COLUMN_SIZE = 6,
   DEFAULT_ROW_SIZE = 5,
   DEFAULT_SEAT_ROW_DATA: SeatRowData = initializeSeatData(DEFAULT_COLUMN_SIZE, DEFAULT_ROW_SIZE)

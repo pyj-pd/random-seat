@@ -1,5 +1,6 @@
 import {
   DEFAULT_COLUMN_SIZE,
+  DEFAULT_NAME_DATA,
   DEFAULT_ROW_SIZE,
   DEFAULT_SEAT_ROW_DATA,
   MAX_SEAT_COLUMN_SIZE,
@@ -7,10 +8,8 @@ import {
   MIN_SEAT_COLUMN_SIZE,
   MIN_SEAT_ROW_SIZE,
   SEAT_DATA_LOCAL_STORAGE_KEY,
-  type SeatData,
-  type SeatPosition,
-  type SeatRowData,
 } from '@/constants/seat'
+import { type SeatData, type SeatNameData, type SeatPosition, type SeatRowData } from '@/types/seat'
 import { getShuffledSeatData, getTotalNumberOfSeats, initializeSeatData } from '@/utils/seat'
 import { defineStore } from 'pinia'
 
@@ -40,7 +39,10 @@ export const useSeatSizeStore = defineStore('seatSize', {
   state: () => ({
     columnSize: DEFAULT_COLUMN_SIZE,
     rowSize: DEFAULT_ROW_SIZE,
+
+    nameData: DEFAULT_NAME_DATA as SeatNameData,
     seatData: DEFAULT_SEAT_ROW_DATA as SeatRowData,
+
     /**
      * Whether user used the website first time.
      * Used for showing tooltip guides.

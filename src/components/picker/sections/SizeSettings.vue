@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import NormalButton from '@/components/common/NormalButton.vue'
-import CustomButton from '@/components/common/ShadowButton.vue'
+import ShadowButton from '@/components/common/ShadowButton.vue'
 import {
   DEFAULT_COLUMN_SIZE,
   DEFAULT_ROW_SIZE,
@@ -8,7 +8,6 @@ import {
   MAX_SEAT_ROW_SIZE,
   MIN_SEAT_COLUMN_SIZE,
   MIN_SEAT_NUMBER,
-  type SeatPosition,
 } from '@/constants/seat'
 import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
 import { useSectionStore } from '@/stores/useSectionStore'
@@ -18,6 +17,8 @@ import { onMounted, ref, watch } from 'vue'
 import XShape from '../XShape.vue'
 import MouseGuide from '../MouseGuide.vue'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
+import SectionTitle from '../SectionTitle.vue'
+import type { SeatPosition } from '@/types/seat'
 
 const seatSizeStore = useSeatSizeStore()
 const { setSize, resetData, setSeatData, removeSeatLine } = seatSizeStore
@@ -26,7 +27,6 @@ const scrollViewRef = ref<HTMLDivElement | null>(null)
 
 const sectionStore = useSectionStore()
 const { setCurrentSectionId } = sectionStore
-const { pickerType } = storeToRefs(sectionStore)
 
 const { columnSize, rowSize, isFirstTime, seatData, getSeatData, totalSeatNumber } =
   storeToRefs(seatSizeStore)
@@ -124,9 +124,7 @@ const removeRow = (index: number) => {
 
 <template>
   <main :class="$style.container">
-    <div :class="$style.title">
-      <h2>자리 설정을 진행해 주세요.</h2>
-    </div>
+    <SectionTitle title="자리 배치를 설정해 주세요." />
     <!-- Table scroll view -->
     <div :class="$style['table-scroll-view-container']" ref="scrollViewRef">
       <div :class="$style['table-container']">
@@ -243,15 +241,10 @@ const removeRow = (index: number) => {
       </div>
     </div>
     <ButtonContainer>
-      <CustomButton @click="resetSeatData" warning>초기화</CustomButton>
-      <CustomButton @click="() => reshowMouseGuide()">도움말 보기</CustomButton>
+      <ShadowButton @click="resetSeatData" warning>초기화</ShadowButton>
+      <ShadowButton @click="() => reshowMouseGuide()">도움말 보기</ShadowButton>
 
-      <CustomButton
-        @click="
-          () => setCurrentSectionId(pickerType === 'home' ? 'random-pick-seat' : 'wait-for-clients')
-        "
-        >다음으로</CustomButton
-      >
+      <ShadowButton @click="() => setCurrentSectionId('name-settings')">다음으로</ShadowButton>
     </ButtonContainer>
   </main>
 </template>
@@ -264,19 +257,10 @@ const removeRow = (index: number) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 50px;
+  gap: value.$container-gap;
 
   width: 100%;
   min-height: 700px;
-}
-
-.title {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 5px;
-
-  width: 100%;
 }
 
 // Table info

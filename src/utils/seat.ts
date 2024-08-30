@@ -1,4 +1,5 @@
-import { type SeatData, type SeatRowData } from '@/constants/seat'
+import { type SeatData, type SeatRowData } from '@/types/seat'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { getCryptoRandomValue, getMathRandomValue } from './random'
 
 const DEFAULT_SEAT_DATA: SeatData = {

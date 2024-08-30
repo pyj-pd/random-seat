@@ -36,6 +36,14 @@ export const sections = {
       loadingComponent: LoadingSection,
     }),
   },
+  'name-settings': {
+    title: '이름 설정하기',
+    component: defineAsyncComponent({
+      /** @todo use Suspense instead of repeating the same code */
+      loader: () => import('@/components/picker/sections/NameSettings.vue'),
+      loadingComponent: LoadingSection,
+    }),
+  },
   'random-pick-seat': {
     title: '무작위 자리 뽑기',
     component: defineAsyncComponent({

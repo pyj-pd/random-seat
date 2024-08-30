@@ -11,6 +11,9 @@
 // Padding
 $view-padding: 60px;
 
+$container-gap: 50px;
+$button-container-gap: 10px;
+
 // For small screens
 $small-screen-width: 650px;
 $small-screen-view-padding: 20px;
@@ -27,6 +30,3 @@ $ease-out: cubic-bezier(0.4, 0.8, 0.5, 1);
 
 $animation-duration: 0.2s;
 $animation-ease: $ease-in-out;
-
-// Others
-$button-container-gap: 10px;
