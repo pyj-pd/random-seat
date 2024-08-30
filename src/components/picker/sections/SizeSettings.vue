@@ -292,7 +292,7 @@ $table-width: 880px;
   display: flex;
 
   width: fit-content;
-  max-width: $table-width;
+  max-width: min($table-width, 100%);
 
   overflow-x: auto;
 }

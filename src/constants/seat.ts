@@ -2,6 +2,7 @@ import type { SeatNameData, SeatRowData } from '@/types/seat'
 import { initializeSeatData } from '@/utils/seat'
 
 // Name data
+export const NAME_LINE_BREAK = '\n'
 export const DEFAULT_NAME_DATA: SeatNameData = {}
 
 // Seat size

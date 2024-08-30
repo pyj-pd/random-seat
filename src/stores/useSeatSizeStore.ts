@@ -7,6 +7,7 @@ import {
   MAX_SEAT_ROW_SIZE,
   MIN_SEAT_COLUMN_SIZE,
   MIN_SEAT_ROW_SIZE,
+  NAME_LINE_BREAK,
   SEAT_DATA_LOCAL_STORAGE_KEY,
 } from '@/constants/seat'
 import { type SeatData, type SeatNameData, type SeatPosition, type SeatRowData } from '@/types/seat'
@@ -60,8 +61,22 @@ export const useSeatSizeStore = defineStore('seatSize', {
     /**
      * Total number of seats included.
      */
-    totalSeatNumber(state) {
+    totalSeatNumber(state): number {
       return getTotalNumberOfSeats(state.seatData)
+    },
+    /**
+     * Name data into string which contains line break.
+     */
+    nameDataString(state): string[] {
+      const data: string[] = [...Array(state.)].fill('')
+
+      for (const seatNumber in this.nameData) {
+        const seatIndex = Number(seatNumber) - 1
+
+        data[seatIndex] = this.nameData[seatIndex]
+      }
+
+      return data
     },
   },
   actions: {
@@ -179,6 +194,35 @@ export const useSeatSizeStore = defineStore('seatSize', {
      */
     shuffleSeats() {
       this.seatData = getShuffledSeatData(this.seatData)
+    },
+    /**
+     * Set name data from plain string.
+     * @param data Pure string including line breaks.
+     */
+    setNameData(data: string) {
+      // Trim lines
+      const lines = data.split(NAME_LINE_BREAK)
+      lines.splice(this.totalSeatNumber)
+
+      const trimmedLines = lines.map((value) => value.trim())
+
+      // Name data
+      const newNameData = trimmedLines.reduce<SeatNameData>((prev, curr, index) => {
+        if (curr.length < 1) {
+          // If empty, don't add to name data
+          return prev
+        }
+        // Add current name to data
+        else
+          return {
+            ...prev,
+            [index + 1]: curr,
+          }
+      }, {})
+
+      console.log(newNameData)
+
+      this.nameData = newNameData
     },
   },
   persist: {

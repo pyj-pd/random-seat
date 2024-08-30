@@ -5,23 +5,32 @@ import { storeToRefs } from 'pinia'
 import { useSectionStore } from '@/stores/useSectionStore'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import ShadowButton from '@/components/common/ShadowButton.vue'
+import { NAME_LINE_BREAK } from '@/constants/seat'
 
 const seatSizeStore = useSeatSizeStore()
+const { setNameData } = seatSizeStore
 const { totalSeatNumber, nameData } = storeToRefs(seatSizeStore)
 
 const { setCurrentSectionId } = useSectionStore()
 
-const validateTextarea = (event: KeyboardEvent) => {
+/**
+ * Detect if text input exceeds max line
+ * and trim if it does.
+ * @param event
+ */
+const validateTextarea = (event: Event) => {
   const target = event.target as HTMLTextAreaElement
 
   // If line exceeds total seat number, don't.
-  const lineSplit = target.value.split('\n')
+  const lineSplit = target.value.split(NAME_LINE_BREAK)
 
   if (lineSplit.length > totalSeatNumber.value) {
     lineSplit.splice(totalSeatNumber.value)
-    target.value = lineSplit.join('\n')
+    target.value = lineSplit.join(NAME_LINE_BREAK)
   }
 }
+
+const updateNameData = (event: Event) => setNameData((event.target as HTMLInputElement).value)
 </script>
 
 <template>
@@ -31,7 +40,7 @@ const validateTextarea = (event: KeyboardEvent) => {
       <div :class="$style['textarea-line-number-container']">
         <span v-for="i in totalSeatNumber" :key="i" :class="$style['textarea-line-number']" />
       </div>
-      <textarea :class="$style.textarea" @keydown="validateTextarea" />
+      <textarea :class="$style.textarea" @input="validateTextarea" @change="updateNameData" />
     </div>
     <ButtonContainer>
       <ShadowButton @click="() => setCurrentSectionId('random-pick-seat')"
@@ -56,6 +65,8 @@ const validateTextarea = (event: KeyboardEvent) => {
 
 // Textarea
 .textarea-container {
+  position: relative;
+
   display: flex;
   gap: 10px;
 
@@ -68,7 +79,7 @@ const validateTextarea = (event: KeyboardEvent) => {
   max-width: 300px;
 }
 
-$line-number-height: 25px;
+$line-number-height: 35px;
 
 .textarea-line-number-container {
   display: flex;
@@ -79,15 +90,33 @@ $line-number-height: 25px;
 }
 
 .textarea-line-number {
-  display: flex;
-  align-items: center;
+  & {
+    display: flex;
+    align-items: center;
 
-  height: $line-number-height;
+    height: $line-number-height;
 
-  counter-increment: line-number;
+    counter-increment: line-number;
+  }
+
+  &::before {
+    content: counter(line-number);
+
+    font-weight: bold;
+  }
 
   &::after {
-    content: counter(line-number);
+    content: '';
+
+    position: absolute;
+    left: 0;
+
+    width: 100%;
+    height: $line-number-height;
+
+    pointer-events: none;
+
+    border-bottom: solid value.$border-slim-width palette.$darker-gray;
   }
 }
 

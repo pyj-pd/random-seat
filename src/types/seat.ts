@@ -1,5 +1,9 @@
 // Name data
 export type SeatNameData = {
+  /**
+   * Key should be seat 'number', not index(starting from 0).
+   * Therefore it should start from 1.
+   */
   [key: number]: string
 }
 
