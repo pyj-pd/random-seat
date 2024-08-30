@@ -1,4 +1,5 @@
 import { type SeatData, type SeatRowData } from '@/constants/seat'
+import { getCryptoRandomValue, getMathRandomValue } from './random'
 
 const DEFAULT_SEAT_DATA: SeatData = {
   assignedNumber: null,
@@ -69,8 +70,16 @@ export const getShuffledSeatData = (data: SeatRowData): SeatRowData => {
   /**
    * Array containing random numbers from 1 to `totalNumber`.
    */
-  const randomNumbers: number[] = Array.from(Array(totalNumber).keys(), (n) => n + 1)
-  randomNumbers.sort(() => Math.random() - 0.5)
+  const numbers: number[] = Array.from(Array(totalNumber).keys(), (n) => n + 1),
+    randomNumbers: number[] = []
+
+  for (let i = 0; i < totalNumber; i++) {
+    const numberLength = numbers.length
+    const randomIndex = Math.floor(getCryptoRandomValue() * numberLength)
+
+    randomNumbers.push(numbers[randomIndex])
+    numbers.splice(randomIndex, 1)
+  }
 
   let currentIndex: number = 0
 
