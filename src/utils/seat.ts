@@ -75,7 +75,10 @@ export const getShuffledSeatData = (data: SeatRowData): SeatRowData => {
 
   for (let i = 0; i < totalNumber; i++) {
     const numberLength = numbers.length
-    const randomIndex = Math.floor(getCryptoRandomValue() * numberLength)
+    const randomIndex = Math.floor(
+      getMathRandomValue() /* or `getCryptoRandomValue()` if it really matters to you */ *
+        numberLength,
+    )
 
     randomNumbers.push(numbers[randomIndex])
     numbers.splice(randomIndex, 1)

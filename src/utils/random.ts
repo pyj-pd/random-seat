@@ -6,4 +6,5 @@ export const getCryptoRandomValue = () => {
 
   return value
 }
+
 export const getMathRandomValue = () => Math.random()

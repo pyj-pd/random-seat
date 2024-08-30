@@ -41,6 +41,10 @@ export const useSeatSizeStore = defineStore('seatSize', {
     columnSize: DEFAULT_COLUMN_SIZE,
     rowSize: DEFAULT_ROW_SIZE,
     seatData: DEFAULT_SEAT_ROW_DATA as SeatRowData,
+    /**
+     * Whether user used the website first time.
+     * Used for showing tooltip guides.
+     */
     isFirstTime: true,
   }),
   getters: {
