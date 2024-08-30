@@ -26,7 +26,6 @@ const scrollViewRef = ref<HTMLDivElement | null>(null)
 
 const sectionStore = useSectionStore()
 const { setCurrentSectionId } = sectionStore
-const { pickerType } = storeToRefs(sectionStore)
 
 const { columnSize, rowSize, isFirstTime, seatData, getSeatData, totalSeatNumber } =
   storeToRefs(seatSizeStore)
@@ -246,12 +245,7 @@ const removeRow = (index: number) => {
       <CustomButton @click="resetSeatData" warning>초기화</CustomButton>
       <CustomButton @click="() => reshowMouseGuide()">도움말 보기</CustomButton>
 
-      <CustomButton
-        @click="
-          () => setCurrentSectionId(pickerType === 'home' ? 'random-pick-seat' : 'wait-for-clients')
-        "
-        >다음으로</CustomButton
-      >
+      <CustomButton @click="() => setCurrentSectionId('random-pick-seat')">다음으로</CustomButton>
     </ButtonContainer>
   </main>
 </template>
@@ -308,7 +302,7 @@ $table-width: 880px;
   display: flex;
 
   width: fit-content;
-  max-width: $table-width;
+  max-width: min($table-width, 100%);
 
   overflow-x: auto;
 }
