@@ -9,7 +9,7 @@ import { NAME_LINE_BREAK } from '@/constants/seat'
 
 const seatSizeStore = useSeatSizeStore()
 const { setNameData } = seatSizeStore
-const { totalSeatNumber, nameData } = storeToRefs(seatSizeStore)
+const { totalSeatNumber, nameDataString } = storeToRefs(seatSizeStore)
 
 const { setCurrentSectionId } = useSectionStore()
 
@@ -21,12 +21,16 @@ const { setCurrentSectionId } = useSectionStore()
 const validateTextarea = (event: Event) => {
   const target = event.target as HTMLTextAreaElement
 
-  // If line exceeds total seat number, don't.
-  const lineSplit = target.value.split(NAME_LINE_BREAK)
+  const lineSplit: string[] = target.value.split(NAME_LINE_BREAK)
 
+  // If line exceeds total seat number, don't.
   if (lineSplit.length > totalSeatNumber.value) {
+    const { selectionStart, selectionEnd } = target
+
     lineSplit.splice(totalSeatNumber.value)
+
     target.value = lineSplit.join(NAME_LINE_BREAK)
+    target.setSelectionRange(selectionStart, selectionEnd)
   }
 }
 
@@ -40,9 +44,14 @@ const updateNameData = (event: Event) => setNameData((event.target as HTMLInputE
       <div :class="$style['textarea-line-number-container']">
         <span v-for="i in totalSeatNumber" :key="i" :class="$style['textarea-line-number']" />
       </div>
-      <textarea :class="$style.textarea" @input="validateTextarea" @change="updateNameData" />
+      <textarea
+        :class="$style.textarea"
+        :value="nameDataString"
+        @input="validateTextarea"
+        @change="updateNameData"
+      />
     </div>
-    <ButtonContainer>
+    <ButtonContainer sticky>
       <ShadowButton @click="() => setCurrentSectionId('random-pick-seat')"
         >뽑기 화면으로</ShadowButton
       >
@@ -129,5 +138,7 @@ $line-number-height: 35px;
   border: none;
 
   width: 100%;
+
+  white-space: pre;
 }
 </style>

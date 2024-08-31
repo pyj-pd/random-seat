@@ -3,6 +3,8 @@ import { initializeSeatData } from '@/utils/seat'
 
 // Name data
 export const NAME_LINE_BREAK = '\n'
+/** @todo support for long names */
+export const MAX_NAME_LENGTH = 4
 export const DEFAULT_NAME_DATA: SeatNameData = {}
 
 // Seat size

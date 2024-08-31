@@ -3,6 +3,7 @@ import {
   DEFAULT_NAME_DATA,
   DEFAULT_ROW_SIZE,
   DEFAULT_SEAT_ROW_DATA,
+  MAX_NAME_LENGTH,
   MAX_SEAT_COLUMN_SIZE,
   MAX_SEAT_ROW_SIZE,
   MIN_SEAT_COLUMN_SIZE,
@@ -41,8 +42,8 @@ export const useSeatSizeStore = defineStore('seatSize', {
     columnSize: DEFAULT_COLUMN_SIZE,
     rowSize: DEFAULT_ROW_SIZE,
 
-    nameData: DEFAULT_NAME_DATA as SeatNameData,
-    seatData: DEFAULT_SEAT_ROW_DATA as SeatRowData,
+    nameData: { ...DEFAULT_NAME_DATA } as SeatNameData,
+    seatData: [...DEFAULT_SEAT_ROW_DATA] as SeatRowData,
 
     /**
      * Whether user used the website first time.
@@ -67,16 +68,16 @@ export const useSeatSizeStore = defineStore('seatSize', {
     /**
      * Name data into string which contains line break.
      */
-    nameDataString(state): string[] {
-      const data: string[] = [...Array(state.)].fill('')
+    nameDataString(state): string {
+      const data: string[] = [...Array(this.totalSeatNumber)].fill('')
 
       for (const seatNumber in this.nameData) {
         const seatIndex = Number(seatNumber) - 1
 
-        data[seatIndex] = this.nameData[seatIndex]
+        data[seatIndex] = state.nameData[seatNumber]
       }
 
-      return data
+      return data.join(NAME_LINE_BREAK)
     },
   },
   actions: {
@@ -114,8 +115,10 @@ export const useSeatSizeStore = defineStore('seatSize', {
      * @param preserveExcludedState Whether to preserve excluded state of the seats. Default value is `false`.
      */
     resetData(columnSize?: number, rowSize?: number, preserveExcludedState = false) {
-      this.setSize(columnSize ?? this.columnSize, rowSize ?? this.rowSize, true) // Set size first
+      // Set size first
+      this.setSize(columnSize ?? this.columnSize, rowSize ?? this.rowSize, true)
 
+      // Reset seat data
       this.seatData = this.seatData.map((row) =>
         row.map(
           (seat) =>
@@ -124,6 +127,9 @@ export const useSeatSizeStore = defineStore('seatSize', {
               : { isExcluded: false, assignedNumber: null }, // Reset all data
         ),
       )
+
+      // Reset name data
+      this.nameData = { ...DEFAULT_NAME_DATA }
     },
     /**
      * Remove certain column or row.
@@ -204,7 +210,7 @@ export const useSeatSizeStore = defineStore('seatSize', {
       const lines = data.split(NAME_LINE_BREAK)
       lines.splice(this.totalSeatNumber)
 
-      const trimmedLines = lines.map((value) => value.trim())
+      const trimmedLines = lines.map((value) => value.trim().slice(0, MAX_NAME_LENGTH))
 
       // Name data
       const newNameData = trimmedLines.reduce<SeatNameData>((prev, curr, index) => {
@@ -219,8 +225,6 @@ export const useSeatSizeStore = defineStore('seatSize', {
             [index + 1]: curr,
           }
       }, {})
-
-      console.log(newNameData)
 
       this.nameData = newNameData
     },

@@ -240,7 +240,7 @@ const removeRow = (index: number) => {
         </table>
       </div>
     </div>
-    <ButtonContainer>
+    <ButtonContainer sticky>
       <ShadowButton @click="resetSeatData" warning>초기화</ShadowButton>
       <ShadowButton @click="() => reshowMouseGuide()">도움말 보기</ShadowButton>
 
@@ -292,7 +292,7 @@ $table-width: 880px;
   display: flex;
 
   width: fit-content;
-  max-width: min($table-width, 100%);
+  max-width: 100%;
 
   overflow-x: auto;
 }
@@ -308,6 +308,8 @@ $table-width: 880px;
 
   padding: 10px 15px;
   border: solid value.$border-width palette.$black;
+
+  min-width: 600px;
 }
 
 .table-top {

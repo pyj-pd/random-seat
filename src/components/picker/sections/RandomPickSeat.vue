@@ -33,20 +33,17 @@ const SHUFFLE_SOUND_VOLUME = 5,
   SHUFFLE_DONE_SOUND_PLAYBACK_RATE = 1.5
 
 const ROULETTE_AUDIO_LOCATION = '/sounds/roulette.mp3',
-  ROULETTE_DONE_AUDIO_LOCATION = '/sounds/roulette-done.mp3',
-  APPLAUSE_AUDIO_LOCATION = '/sounds/applause.mp3'
+  ROULETTE_DONE_AUDIO_LOCATION = '/sounds/roulette-done.mp3'
 
 let audioContext: AudioContext, gainNode: GainNode
 
-let rouletteAudioBuffer: AudioBuffer,
-  rouletteDoneAudioBuffer: AudioBuffer,
-  applauseAudioBuffer: AudioBuffer
+let rouletteAudioBuffer: AudioBuffer, rouletteDoneAudioBuffer: AudioBuffer
 
 let isUnmounted: boolean = false
 
 const seatSizeStore = useSeatSizeStore()
 const { shuffleSeats, resetData } = seatSizeStore
-const { columnSize, rowSize, seatData } = storeToRefs(seatSizeStore)
+const { columnSize, rowSize, seatData, nameData } = storeToRefs(seatSizeStore)
 
 type PickingState = 'initial' | 'picking' | 'idle' | 'done'
 
@@ -200,9 +197,8 @@ const startRandomPick = async () => {
   }
 
   if (!isUnmounted) {
-    // Play roulette done and applause sound
+    // Play roulette done sound
     playSound(rouletteDoneAudioBuffer, { playbackRate: SHUFFLE_DONE_SOUND_PLAYBACK_RATE })
-    playSound(applauseAudioBuffer, { playbackRate: SHUFFLE_DONE_SOUND_PLAYBACK_RATE })
 
     pickingState.value = 'done'
 
@@ -253,9 +249,6 @@ onMounted(async () => {
 
   // Roulette done sound
   rouletteDoneAudioBuffer = await loadAudioBuffer(ROULETTE_DONE_AUDIO_LOCATION)
-
-  // Applause sound
-  applauseAudioBuffer = await loadAudioBuffer(APPLAUSE_AUDIO_LOCATION)
 })
 
 onBeforeUnmount(() => (isUnmounted = true))
@@ -301,8 +294,9 @@ const resetSeatData = () => {
                   text-anchor="middle"
                   dominant-baseline="middle"
                   :font-size="svgSeatSize.fontSize"
+                  v-if="column.assignedNumber"
                 >
-                  {{ column.assignedNumber }}
+                  {{ nameData[column.assignedNumber] ?? column.assignedNumber }}
                 </text>
               </g>
             </template>
@@ -472,7 +466,7 @@ const resetSeatData = () => {
 .control-container {
   .container:fullscreen & {
     position: absolute;
-    bottom: 50px;
+    bottom: value.$button-container-margin;
     left: 0;
   }
 
@@ -503,7 +497,7 @@ const resetSeatData = () => {
 .button-container {
   .container:fullscreen & {
     button {
-      backdrop-filter: blur(2px);
+      backdrop-filter: blur(value.$button-backdrop-blur);
     }
   }
 
