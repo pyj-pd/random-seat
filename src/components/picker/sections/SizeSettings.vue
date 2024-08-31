@@ -241,7 +241,7 @@ const removeRow = (index: number) => {
       </div>
     </div>
     <ButtonContainer sticky>
-      <ShadowButton @click="resetSeatData" warning>초기화</ShadowButton>
+      <ShadowButton @click="resetSeatData" warning>자리 및 이름 초기화</ShadowButton>
       <ShadowButton @click="() => reshowMouseGuide()">도움말 보기</ShadowButton>
 
       <ShadowButton @click="() => setCurrentSectionId('name-settings')">다음으로</ShadowButton>

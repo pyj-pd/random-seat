@@ -39,7 +39,10 @@ const updateNameData = (event: Event) => setNameData((event.target as HTMLInputE
 
 <template>
   <main :class="$style.container">
-    <SectionTitle title="이름을 입력해 주세요(선택)." />
+    <SectionTitle
+      title="이름을 입력해 주세요(선택)."
+      :description="'각 번호에 이름은 최대 4글자까지만 입력할 수 있습니다.\n모든 번호에 이름이 대응되지 않아도 됩니다.'"
+    />
     <div :class="$style['textarea-container']">
       <div :class="$style['textarea-line-number-container']">
         <span v-for="i in totalSeatNumber" :key="i" :class="$style['textarea-line-number']" />
