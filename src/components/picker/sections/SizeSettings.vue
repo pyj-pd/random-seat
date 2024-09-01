@@ -2,6 +2,7 @@
 import NormalButton from '@/components/common/NormalButton.vue'
 import ShadowButton from '@/components/common/ShadowButton.vue'
 import {
+  DATA_ARE_SAVED_TEXT,
   DEFAULT_COLUMN_SIZE,
   DEFAULT_ROW_SIZE,
   MAX_SEAT_COLUMN_SIZE,
@@ -124,7 +125,7 @@ const removeRow = (index: number) => {
 
 <template>
   <main :class="$style.container">
-    <SectionTitle title="자리 배치를 설정해 주세요." />
+    <SectionTitle title="자리 배치를 설정해 주세요." :description="DATA_ARE_SAVED_TEXT" />
     <!-- Table scroll view -->
     <div :class="$style['table-scroll-view-container']" ref="scrollViewRef">
       <div :class="$style['table-container']">

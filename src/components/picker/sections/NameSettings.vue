@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia'
 import { useSectionStore } from '@/stores/useSectionStore'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import ShadowButton from '@/components/common/ShadowButton.vue'
-import { NAME_LINE_BREAK } from '@/constants/seat'
+import { DATA_ARE_SAVED_TEXT, NAME_LINE_BREAK } from '@/constants/seat'
 
 const seatSizeStore = useSeatSizeStore()
 const { setNameData } = seatSizeStore
@@ -41,7 +41,7 @@ const updateNameData = (event: Event) => setNameData((event.target as HTMLInputE
   <main :class="$style.container">
     <SectionTitle
       title="이름을 입력해 주세요(선택)."
-      :description="'각 번호에 이름은 최대 4글자까지만 입력할 수 있습니다.\n모든 번호에 이름이 대응되지 않아도 됩니다.'"
+      :description="`각 번호에 이름은 최대 4글자까지만 입력할 수 있습니다.\n모든 번호에 이름이 대응되지 않아도 됩니다.\n${DATA_ARE_SAVED_TEXT}`"
     />
     <div :class="$style['textarea-container']">
       <div :class="$style['textarea-line-number-container']">

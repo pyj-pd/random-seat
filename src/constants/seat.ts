@@ -1,6 +1,8 @@
 import type { SeatNameData, SeatRowData } from '@/types/seat'
 import { initializeSeatData } from '@/utils/seat'
 
+export const DATA_ARE_SAVED_TEXT = '자리 배치와 이름 정보, 뽑힌 자리는 모두 저장됩니다.'
+
 // Name data
 export const NAME_LINE_BREAK = '\n'
 /** @todo support for long names */
