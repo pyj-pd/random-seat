@@ -48,6 +48,7 @@ withDefaults(
   &.sticky {
     position: sticky;
     bottom: 0;
+    z-index: 100;
 
     width: 100%;
 
