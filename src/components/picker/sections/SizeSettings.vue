@@ -22,7 +22,7 @@ import SectionTitle from '../SectionTitle.vue'
 import type { SeatPosition } from '@/types/seat'
 
 const seatSizeStore = useSeatSizeStore()
-const { setSize, resetData, setSeatData, removeSeatLine } = seatSizeStore
+const { setSize, clearSeatData, clearNameData, setSeatData, removeSeatLine } = seatSizeStore
 
 const scrollViewRef = ref<HTMLDivElement | null>(null)
 
@@ -68,7 +68,8 @@ const toggleSeat = (position: SeatPosition, isExcluded: boolean) => {
 }
 
 const resetSeatData = () => {
-  resetData(DEFAULT_COLUMN_SIZE, DEFAULT_ROW_SIZE)
+  clearSeatData(DEFAULT_COLUMN_SIZE, DEFAULT_ROW_SIZE)
+  clearNameData()
 
   rowUpdateRefresh.value = null
   columnUpdateRefresh.value = null

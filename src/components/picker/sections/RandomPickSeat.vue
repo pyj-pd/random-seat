@@ -42,7 +42,7 @@ let rouletteAudioBuffer: AudioBuffer, rouletteDoneAudioBuffer: AudioBuffer
 let isUnmounted: boolean = false
 
 const seatSizeStore = useSeatSizeStore()
-const { shuffleSeats, resetData } = seatSizeStore
+const { shuffleSeats, clearSeatData } = seatSizeStore
 const { columnSize, rowSize, seatData, nameData } = storeToRefs(seatSizeStore)
 
 type PickingState = 'initial' | 'picking' | 'idle' | 'done'
@@ -257,7 +257,7 @@ onBeforeUnmount(() => (isUnmounted = true))
  * Reset seat data and random pick counts.
  */
 const resetSeatData = () => {
-  resetData(undefined, undefined, true)
+  clearSeatData(undefined, undefined, true)
   howManyPicks.value = 0
 }
 </script>
@@ -311,7 +311,7 @@ const resetSeatData = () => {
           }}</CustomButton>
           <div :style="{ position: 'relative' }">
             <CustomButton @click="resetSeatData" :disabled="pickingState === 'picking'" warning
-              >초기화</CustomButton
+              >자리 초기화</CustomButton
             >
             <MouseGuide text="완전히 새로 뽑는다면 먼저 눌러주세요." />
           </div>

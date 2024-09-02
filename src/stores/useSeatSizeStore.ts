@@ -114,7 +114,7 @@ export const useSeatSizeStore = defineStore('seatSize', {
      * @param rowSize Row size to reset to. If not provided, it will use current row size.
      * @param preserveExcludedState Whether to preserve excluded state of the seats. Default value is `false`.
      */
-    resetData(columnSize?: number, rowSize?: number, preserveExcludedState = false) {
+    clearSeatData(columnSize?: number, rowSize?: number, preserveExcludedState = false) {
       // Set size first
       this.setSize(columnSize ?? this.columnSize, rowSize ?? this.rowSize, true)
 
@@ -127,8 +127,8 @@ export const useSeatSizeStore = defineStore('seatSize', {
               : { isExcluded: false, assignedNumber: null }, // Reset all data
         ),
       )
-
-      // Reset name data
+    },
+    clearNameData() {
       this.nameData = { ...DEFAULT_NAME_DATA }
     },
     /**
