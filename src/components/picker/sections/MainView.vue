@@ -7,6 +7,7 @@ import { getRouteMetadata } from '@/utils/route'
 import { useRoute } from 'vue-router'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { getMathRandomValue } from '@/utils/random'
+import { MAX_SEAT_ROW_SIZE, MAX_SEAT_COLUMN_SIZE } from '@/constants/seat'
 
 const { setCurrentSectionId } = useSectionStore()
 
@@ -57,8 +58,11 @@ onBeforeUnmount(
   <main :class="$style.container">
     <div :class="$style['title-container']">
       <h2 :class="$style.title">{{ title }}</h2>
-      <p>학교나 회사의 자리 배치를 바꿀 예정이신가요?</p>
-      <p>간편한 설정으로 손쉽게 자리를 뽑아보세요.</p>
+      <p>학교 등의 자리 배치를 바꿀 예정이신가요?</p>
+      <p>
+        간편한 설정으로 손쉽게 최대 {{ `${MAX_SEAT_COLUMN_SIZE}×${MAX_SEAT_ROW_SIZE}` }} 크기의
+        자리를 뽑아보세요.
+      </p>
     </div>
     <div :class="$style['seat-container']">
       <div v-for="(row, rowIndex) in seatShapes" :key="rowIndex" :class="$style['seat-row']">
