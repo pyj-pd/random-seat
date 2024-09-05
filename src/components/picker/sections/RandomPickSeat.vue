@@ -8,7 +8,6 @@ import { useEventListener } from '@/composables/useEventListener'
 import { storeToRefs } from 'pinia'
 import { SeatSvg, SVG_VIEWBOX_WIDTH, type SvgSeatSize } from '@/utils/seat-svg'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
-import MouseGuide from '../MouseGuide.vue'
 import screenfull from 'screenfull'
 
 /**nvm u
@@ -309,12 +308,9 @@ const resetSeatData = () => {
           <CustomButton @click="toggleFullscreen" v-if="screenfull.isEnabled">{{
             !isFullscreen ? '전체화면으로 보기' : '전체화면 나가기'
           }}</CustomButton>
-          <div :style="{ position: 'relative' }">
-            <CustomButton @click="resetSeatData" :disabled="pickingState === 'picking'" warning
-              >자리 초기화</CustomButton
-            >
-            <MouseGuide text="완전히 새로 뽑는다면 먼저 눌러주세요." />
-          </div>
+          <CustomButton @click="resetSeatData" :disabled="pickingState === 'picking'" warning
+            >자리 초기화</CustomButton
+          >
           <CustomButton
             @click="startRandomPick"
             :disabled="pickingState === 'picking'"
@@ -400,9 +396,8 @@ const resetSeatData = () => {
 
 .seat {
   rect {
-    stroke: palette.$darker-gray;
-
-    fill: palette.$dark-gray;
+    stroke: palette.$seat-border-color;
+    fill: palette.$seat-background-color;
   }
 
   text {
