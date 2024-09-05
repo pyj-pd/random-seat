@@ -97,6 +97,9 @@ $seat-gap: 5px;
   display: flex;
   gap: $seat-gap;
   flex-direction: column;
+
+  width: 100%;
+  max-width: 400px;
 }
 
 .seat-row {
@@ -113,7 +116,7 @@ $seat-gap: 5px;
 
   border: solid value.$border-slim-width palette.$seat-border-color;
 
-  width: 120px;
+  width: 100%;
   aspect-ratio: 2 / 1;
 
   &::after {
@@ -142,6 +145,8 @@ $seat-gap: 5px;
   flex-direction: column;
   align-items: center;
 
+  text-align: center;
+
   > p {
     font-size: 1rem;
   }
@@ -152,6 +157,10 @@ $seat-gap: 5px;
   letter-spacing: -0.05em;
 
   animation: title-animation 0.5s value.$ease-out 0.2s 1 both;
+
+  @media screen and (max-width: value.$small-screen-width) {
+    font-size: 2rem;
+  }
 }
 
 @keyframes title-animation {
