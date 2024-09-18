@@ -144,101 +144,100 @@ const removeRow = (index: number) => {
         </div>
         <!-- Table content -->
         <table :class="$style.table">
-          <tr>
-            <!-- For spacing -->
-            <th scope="col" :class="$style['no-style']"></th>
-
-            <!-- Column number headers -->
-            <th scope="col" v-for="column in columnSize" :key="column">
-              <NormalButton
-                @click="() => removeColumn(column - 1)"
-                :class="$style['header-button']"
-                :animation="false"
-              >
-                {{ column }}
-              </NormalButton>
-              <MouseGuide
-                v-if="column === MIN_SEAT_COLUMN_SIZE"
-                text="숫자를 클릭해서 해당 줄을 없앨 수 있어요."
-                :reshowKey="mouseGuideKey"
-                :immediate="showMouseGuide"
-              />
-            </th>
-          </tr>
-          <tr>
-            <!-- For spacing -->
-            <td :class="$style['no-style']"></td>
-
-            <!-- Row add button -->
-            <td
-              v-if="rowSize < MAX_SEAT_ROW_SIZE"
-              :colspan="columnSize"
-              :class="$style['line-button-container']"
-            >
-              <NormalButton @click="addRow" :class="$style['line-button']">+</NormalButton>
-            </td>
-          </tr>
-          <!-- Row content -->
-          <tr v-for="(row, rowIndex) in seatData" :key="rowIndex">
-            <!-- Row number headers -->
-            <th scope="row">
-              <NormalButton
-                @click="() => removeRow(rowIndex)"
-                :class="$style['header-button']"
-                :animation="false"
-              >
-                {{ rowIndex + 1 }}
-              </NormalButton>
-            </th>
-
-            <!-- Seat button -->
-            <td v-for="(column, columnIndex) in row" :key="`${rowIndex},${columnIndex}`">
-              <NormalButton
-                @click="() => toggleSeat([columnIndex, rowIndex], column.isExcluded)"
-                :class="[
-                  $style['seat-button'],
-                  {
-                    [$style.new]:
-                      (rowIndex === 0 && rowUpdateRefresh !== null) ||
-                      (columnIndex === columnSize - 1 && columnUpdateRefresh !== null),
-                  },
-                  {
-                    [$style.excluded]: column.isExcluded,
-                  },
-                ]"
-                :key="rowUpdateRefresh ?? columnUpdateRefresh ?? 0"
-                :animation="false"
-              >
-                <template v-if="column.assignedNumber">{{ column.assignedNumber }}</template>
-                <PersonIcon v-else-if="!column.isExcluded" />
-                <XShape v-else :class="$style['x-shape']" />
-              </NormalButton>
-              <MouseGuide
-                v-if="
-                  columnIndex === MIN_SEAT_COLUMN_SIZE - 1 && rowIndex === MIN_SEAT_COLUMN_SIZE - 1
-                "
-                text="자리를 클릭해서 해당 자리를 제외할 수 있어요."
-                :reshowKey="mouseGuideKey"
-                :immediate="showMouseGuide"
-              />
-            </td>
-
-            <!-- Column add button on first row and make it full height -->
-            <td
-              v-if="rowIndex === 0 && columnSize < MAX_SEAT_COLUMN_SIZE"
-              rowspan="0"
-              :class="[$style['line-button-container'], $style.vertical]"
-            >
-              <div>
+          <tbody>
+            <tr>
+              <!-- For spacing -->
+              <th scope="col" :class="$style['no-style']"></th>
+              <!-- Column number headers -->
+              <th scope="col" v-for="column in columnSize" :key="column">
                 <NormalButton
-                  @click="addColumn"
-                  :class="[$style['line-button'], $style.vertical]"
-                  vertical
-                  >+</NormalButton
+                  @click="() => removeColumn(column - 1)"
+                  :class="$style['header-button']"
+                  :animation="false"
                 >
-              </div>
-            </td>
-          </tr>
+                  {{ column }}
+                </NormalButton>
+                <MouseGuide
+                  v-if="column === MIN_SEAT_COLUMN_SIZE"
+                  text="숫자를 클릭해서 해당 줄을 없앨 수 있어요."
+                  :reshowKey="mouseGuideKey"
+                  :immediate="showMouseGuide"
+                />
+              </th>
+            </tr>
+            <tr>
+              <!-- For spacing -->
+              <td :class="$style['no-style']"></td>
+              <!-- Row add button -->
+              <td
+                v-if="rowSize < MAX_SEAT_ROW_SIZE"
+                :colspan="columnSize"
+                :class="$style['line-button-container']"
+              >
+                <NormalButton @click="addRow" :class="$style['line-button']">+</NormalButton>
+              </td>
+            </tr>
+            <!-- Row content -->
+            <tr v-for="(row, rowIndex) in seatData" :key="rowIndex">
+              <!-- Row number headers -->
+              <th scope="row">
+                <NormalButton
+                  @click="() => removeRow(rowIndex)"
+                  :class="$style['header-button']"
+                  :animation="false"
+                >
+                  {{ rowIndex + 1 }}
+                </NormalButton>
+              </th>
+              <!-- Seat button -->
+              <td v-for="(column, columnIndex) in row" :key="`${rowIndex},${columnIndex}`">
+                <NormalButton
+                  @click="() => toggleSeat([columnIndex, rowIndex], column.isExcluded)"
+                  :class="[
+                    $style['seat-button'],
+                    {
+                      [$style.new]:
+                        (rowIndex === 0 && rowUpdateRefresh !== null) ||
+                        (columnIndex === columnSize - 1 && columnUpdateRefresh !== null),
+                    },
+                    {
+                      [$style.excluded]: column.isExcluded,
+                    },
+                  ]"
+                  :key="rowUpdateRefresh ?? columnUpdateRefresh ?? 0"
+                  :animation="false"
+                >
+                  <template v-if="column.assignedNumber">{{ column.assignedNumber }}</template>
+                  <PersonIcon v-else-if="!column.isExcluded" />
+                  <XShape v-else :class="$style['x-shape']" />
+                </NormalButton>
+                <MouseGuide
+                  v-if="
+                    columnIndex === MIN_SEAT_COLUMN_SIZE - 1 &&
+                    rowIndex === MIN_SEAT_COLUMN_SIZE - 1
+                  "
+                  text="자리를 클릭해서 해당 자리를 제외할 수 있어요."
+                  :reshowKey="mouseGuideKey"
+                  :immediate="showMouseGuide"
+                />
+              </td>
+              <!-- Column add button on first row and make it full height -->
+              <td
+                v-if="rowIndex === 0 && columnSize < MAX_SEAT_COLUMN_SIZE"
+                rowspan="0"
+                :class="[$style['line-button-container'], $style.vertical]"
+              >
+                <div>
+                  <NormalButton
+                    @click="addColumn"
+                    :class="[$style['line-button'], $style.vertical]"
+                    vertical
+                    >+</NormalButton
+                  >
+                </div>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </div>

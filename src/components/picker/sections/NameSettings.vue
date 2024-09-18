@@ -8,7 +8,7 @@ import ShadowButton from '@/components/common/ShadowButton.vue'
 import { DATA_ARE_SAVED_TEXT, NAME_LINE_BREAK } from '@/constants/seat'
 
 const seatSizeStore = useSeatSizeStore()
-const { setNameData } = seatSizeStore
+const { setNameData, clearNameData } = seatSizeStore
 const { totalSeatNumber, nameDataString } = storeToRefs(seatSizeStore)
 
 const { setCurrentSectionId } = useSectionStore()
@@ -55,6 +55,7 @@ const updateNameData = (event: Event) => setNameData((event.target as HTMLInputE
       />
     </div>
     <ButtonContainer sticky>
+      <ShadowButton @click="clearNameData" warning>이름 초기화</ShadowButton>
       <ShadowButton @click="() => setCurrentSectionId('random-pick-seat')"
         >뽑기 화면으로</ShadowButton
       >
