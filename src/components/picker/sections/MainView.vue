@@ -77,9 +77,15 @@ onBeforeUnmount(
     </div>
     <ButtonContainer :responsive="false" :class="$style['button-container']">
       <ShadowButton @click="() => setCurrentSectionId('size-settings')">시작하기</ShadowButton>
-      <a aria-label="GitHub 레포지토리" :href="GITHUB_REPO_URL" target="_blank">
-        <GitHubIcon :width="20" />
-      </a>
+      <!-- @todo find some good spot for github link -->
+      <!-- <a
+        aria-label="GitHub 레포지토리"
+        :href="GITHUB_REPO_URL"
+        target="_blank"
+        :class="$style['github-link']"
+      >
+        <GitHubIcon :width="15" />
+      </a> -->
     </ButtonContainer>
   </main>
 </template>
@@ -183,5 +189,10 @@ $seat-gap: 5px;
 .button-container {
   align-items: center;
   flex-direction: column;
+  gap: value.$container-gap;
+}
+
+.github-link {
+  display: flex;
 }
 </style>
