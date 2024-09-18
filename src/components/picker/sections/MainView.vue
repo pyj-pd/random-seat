@@ -8,6 +8,8 @@ import { useRoute } from 'vue-router'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { getMathRandomValue } from '@/utils/random'
 import { MAX_SEAT_ROW_SIZE, MAX_SEAT_COLUMN_SIZE } from '@/constants/seat'
+import GitHubIcon from '../icons/GitHubIcon.vue'
+import { GITHUB_REPO_URL } from '@/constants/project'
 
 const { setCurrentSectionId } = useSectionStore()
 
@@ -75,6 +77,9 @@ onBeforeUnmount(
     </div>
     <ButtonContainer :responsive="false" :class="$style['button-container']">
       <ShadowButton @click="() => setCurrentSectionId('size-settings')">시작하기</ShadowButton>
+      <a aria-label="GitHub 레포지토리" :href="GITHUB_REPO_URL" target="_blank">
+        <GitHubIcon :width="20" />
+      </a>
     </ButtonContainer>
   </main>
 </template>
@@ -153,7 +158,7 @@ $seat-gap: 5px;
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   letter-spacing: -0.05em;
 
   animation: title-animation 0.5s value.$ease-out 0.2s 1 both;
@@ -172,5 +177,11 @@ $seat-gap: 5px;
     transform: translateY(0px);
     opacity: 1;
   }
+}
+
+// Button
+.button-container {
+  align-items: flex-start;
+  flex-direction: column;
 }
 </style>

@@ -31,3 +31,6 @@ coverage
 
 # Node
 node_modules
+
+# Vite
+.vite-ssg-temp/*
