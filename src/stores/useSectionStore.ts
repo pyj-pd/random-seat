@@ -1,48 +1,34 @@
 import {
+  defaultRouteHash,
   defaultSectionId,
+  sectionIds,
   sections,
   type PickerType,
   type SectionData,
   type SectionId,
 } from '@/constants/section'
+import { getSectionIdFromHash } from '@/utils/section'
 import { defineStore } from 'pinia'
-
-type HistoryActions = 'save' | 'no-save' | 'clear-all'
 
 export const useSectionStore = defineStore('section', {
   state: () => ({
     pickerType: undefined as PickerType | undefined,
-    currentSectionId: defaultSectionId as SectionId,
-    sectionHistory: [] as SectionId[],
+    /**
+     * Current hash. Should be only modified by `router` from `PickerVue` component.
+     */
+    _currentRouteHash: defaultRouteHash as string,
   }),
   getters: {
-    currentSectionData: (state) => sections[state.currentSectionId] as SectionData,
-  },
-  actions: {
-    /**
-     * Set section id, and add the section id to navigation history.
-     * @param sectionId Section id to set to.
-     * @param historyAction What to do with history when navigating through sections. `save` means saving as history(as normal), `no-save` is quietly move to the section by not saving as history, `clear-all` means clearing all existing history.
-     */
-    setCurrentSectionId(sectionId: SectionId, historyAction: HistoryActions = 'save') {
-      if (historyAction === 'save')
-        // Save navigation history
-        this.sectionHistory.push(this.currentSectionId)
-      else if (historyAction === 'clear-all') this.sectionHistory = []
-
-      this.currentSectionId = sectionId
+    currentSectionId(state): SectionId {
+      return getSectionIdFromHash(state._currentRouteHash) ?? defaultSectionId
     },
-    /**
-     * Navigate to the last section saved in the navigation history.
-     */
-    navigateToLastSection() {
-      if (this.sectionHistory.length < 1) return
+    currentSectionIndex(): number {
+      const index = sectionIds.indexOf(this.currentSectionId)
 
-      const lastSectionId = this.sectionHistory[this.sectionHistory.length - 1]
-
-      this.sectionHistory.splice(this.sectionHistory.length - 1, 1) // Remove the last section from the history
-
-      this.setCurrentSectionId(lastSectionId, 'no-save')
+      return index
+    },
+    currentSectionData(): SectionData {
+      return sections[this.currentSectionId]
     },
   },
 })

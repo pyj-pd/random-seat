@@ -11,7 +11,6 @@ import {
   MIN_SEAT_NUMBER,
 } from '@/constants/seat'
 import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
-import { useSectionStore } from '@/stores/useSectionStore'
 import { storeToRefs } from 'pinia'
 import PersonIcon from '../icons/PersonIcon.vue'
 import { onMounted, ref, watch } from 'vue'
@@ -20,14 +19,14 @@ import MouseGuide from '../MouseGuide.vue'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import SectionTitle from '../SectionTitle.vue'
 import type { SeatPosition } from '@/types/seat'
+import { useSectionNavigation } from '@/composables/useSectionNavigation'
 
 const seatSizeStore = useSeatSizeStore()
 const { setSize, clearSeatData, clearNameData, setSeatData, removeSeatLine } = seatSizeStore
 
 const scrollViewRef = ref<HTMLDivElement | null>(null)
 
-const sectionStore = useSectionStore()
-const { setCurrentSectionId } = sectionStore
+const { setCurrentSectionId } = useSectionNavigation()
 
 const { columnSize, rowSize, isFirstTime, seatData, getSeatData, totalSeatNumber } =
   storeToRefs(seatSizeStore)

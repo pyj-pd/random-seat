@@ -5,8 +5,8 @@ withDefaults(
     duration?: number
   }>(),
   {
-    enterY: '10px',
-    duration: 0.4,
+    enterY: '7px',
+    duration: 0.35,
   },
 )
 </script>

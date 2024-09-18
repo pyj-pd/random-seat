@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import ShadowButton from '@/components/common/ShadowButton.vue'
-import { useSectionStore } from '@/stores/useSectionStore'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import type { PickerRouteName } from '@/router'
 import { getRouteMetadata } from '@/utils/route'
@@ -10,8 +9,9 @@ import { getMathRandomValue } from '@/utils/random'
 import { MAX_SEAT_ROW_SIZE, MAX_SEAT_COLUMN_SIZE } from '@/constants/seat'
 import GitHubIcon from '../icons/GitHubIcon.vue'
 import { GITHUB_REPO_URL } from '@/constants/project'
+import { useSectionNavigation } from '@/composables/useSectionNavigation'
 
-const { setCurrentSectionId } = useSectionStore()
+const { setCurrentSectionId } = useSectionNavigation()
 
 const route = useRoute(),
   { title } = getRouteMetadata(route.name as PickerRouteName)

@@ -20,6 +20,11 @@ export type SectionList = {
   [id: string]: SectionData
 }
 
+/**
+ * Section list.
+ *
+ * **The order of sections matter!** It will be used on navigation bar back button.
+ */
 export const sections = {
   'main-view': {
     title: '메인 화면',
@@ -55,4 +60,9 @@ export const sections = {
 
 export type SectionId = keyof typeof sections
 
-export const defaultSectionId: SectionId = 'main-view'
+export const sectionIds = Object.keys(sections) as SectionId[]
+
+export const defaultSectionId: SectionId = 'main-view',
+  defaultRouteHash: string = ''
+
+export const ROUTE_HASH_PREFIX = '#' as const

@@ -10,10 +10,19 @@ import { useRouter } from 'vue-router'
 const sectionStore = useSectionStore()
 const router = useRouter()
 
-const { currentSectionId, currentSectionData, pickerType } = storeToRefs(sectionStore)
+const { _currentRouteHash, currentSectionId, currentSectionData, pickerType } =
+  storeToRefs(sectionStore)
 
 onBeforeMount(() => {
   pickerType.value = router.currentRoute.value.name as PickerRouteName
+})
+
+/**
+ * Interact with section store after each navigation.
+ */
+router.afterEach((to) => {
+  // Set current section hash
+  _currentRouteHash.value = to.hash
 })
 
 watch(currentSectionId, () => {

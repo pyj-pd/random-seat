@@ -2,16 +2,16 @@
 import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
 import SectionTitle from '../SectionTitle.vue'
 import { storeToRefs } from 'pinia'
-import { useSectionStore } from '@/stores/useSectionStore'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import ShadowButton from '@/components/common/ShadowButton.vue'
 import { DATA_ARE_SAVED_TEXT, NAME_LINE_BREAK } from '@/constants/seat'
+import { useSectionNavigation } from '@/composables/useSectionNavigation'
 
 const seatSizeStore = useSeatSizeStore()
 const { setNameData, clearNameData } = seatSizeStore
 const { totalSeatNumber, nameDataString } = storeToRefs(seatSizeStore)
 
-const { setCurrentSectionId } = useSectionStore()
+const { setCurrentSectionId } = useSectionNavigation()
 
 /**
  * Detect if text input exceeds max line

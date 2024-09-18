@@ -4,13 +4,20 @@ import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import SlideTransition from '../common/SlideTransition.vue'
 import NormalButton from '../common/NormalButton.vue'
+import { useSectionNavigation } from '@/composables/useSectionNavigation'
 
 const sectionStore = useSectionStore()
-const { navigateToLastSection } = sectionStore
+const { currentSectionId, currentSectionData, currentSectionIndex } = storeToRefs(sectionStore)
 
-const { currentSectionId, currentSectionData, sectionHistory } = storeToRefs(sectionStore)
+const { setCurrentSectionIndex } = useSectionNavigation()
 
-const isBackButtonVisible = computed<boolean>(() => sectionHistory.value.length >= 1)
+const isBackButtonVisible = computed(() => currentSectionIndex.value > 0)
+watch(
+  () => currentSectionIndex.value,
+  () => console.log(currentSectionIndex.value),
+)
+
+const navigateToLastSection = () => setCurrentSectionIndex(currentSectionIndex.value - 1)
 
 /**
  * Slide transition each time section changes
