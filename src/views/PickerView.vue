@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import SlideTransition from '@/components/common/SlideTransition.vue'
-import NavigationBar from '@/components/picker/navigation/NavigationBar.vue'
+import NavigationBar from '@/components/picker/NavigationBar.vue'
+import { defaultRouteHash } from '@/constants/section'
 import type { PickerRouteName } from '@/router'
 import { useSectionStore } from '@/stores/useSectionStore'
 import { storeToRefs } from 'pinia'
-import { onBeforeMount, watch } from 'vue'
+import { onBeforeMount, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 const sectionStore = useSectionStore()
@@ -15,6 +16,15 @@ const { _currentRouteHash, currentSectionId, currentSectionData, pickerType } =
 
 onBeforeMount(() => {
   pickerType.value = router.currentRoute.value.name as PickerRouteName
+})
+
+/**
+ * Reset hash on first load.
+ */
+onMounted(() => {
+  router.push({
+    hash: defaultRouteHash,
+  })
 })
 
 /**

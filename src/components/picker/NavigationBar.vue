@@ -1,19 +1,28 @@
 <script setup lang="ts">
 import { useSectionStore } from '@/stores/useSectionStore'
 import { storeToRefs } from 'pinia'
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import NormalButton from '@/components/common/NormalButton.vue'
 import { useSectionNavigation } from '@/composables/useSectionNavigation'
-import SmallScreen from './title-container/TitleOnly.vue'
+import SlideTransition from '../common/SlideTransition.vue'
 
 const sectionStore = useSectionStore()
-const { currentSectionIndex } = storeToRefs(sectionStore)
+const { currentSectionIndex, currentSectionId, currentSectionData } = storeToRefs(sectionStore)
 
 const { setCurrentSectionIndex } = useSectionNavigation()
 
 const isBackButtonVisible = computed(() => currentSectionIndex.value > 0)
 
 const navigateToLastSection = () => setCurrentSectionIndex(currentSectionIndex.value - 1)
+
+/**
+ * Slide transition each time section changes
+ */
+const titleRefresh = ref<number>(0)
+
+watch(currentSectionId, () => {
+  titleRefresh.value++
+})
 </script>
 
 <template>
@@ -32,7 +41,9 @@ const navigateToLastSection = () => setCurrentSectionIndex(currentSectionIndex.v
       </Transition>
     </div>
     <div :class="$style['title-container']">
-      <SmallScreen />
+      <SlideTransition enter-y="5px">
+        <span :key="titleRefresh" :class="$style.title">{{ currentSectionData.title }}</span>
+      </SlideTransition>
     </div>
   </div>
 </template>
@@ -85,7 +96,15 @@ const navigateToLastSection = () => setCurrentSectionIndex(currentSectionIndex.v
 }
 
 .title-container {
-  position: relative;
+  & {
+    position: relative;
+  }
+
+  .title {
+    display: block;
+
+    font-weight: bold;
+  }
 }
 </style>
 

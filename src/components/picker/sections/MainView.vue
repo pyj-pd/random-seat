@@ -181,7 +181,7 @@ $seat-gap: 5px;
 
 // Button
 .button-container {
-  align-items: flex-start;
+  align-items: center;
   flex-direction: column;
 }
 </style>
