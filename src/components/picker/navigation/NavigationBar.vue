@@ -1,32 +1,19 @@
 <script setup lang="ts">
 import { useSectionStore } from '@/stores/useSectionStore'
 import { storeToRefs } from 'pinia'
-import { computed, ref, watch } from 'vue'
-import SlideTransition from '../common/SlideTransition.vue'
-import NormalButton from '../common/NormalButton.vue'
+import { computed } from 'vue'
+import NormalButton from '@/components/common/NormalButton.vue'
 import { useSectionNavigation } from '@/composables/useSectionNavigation'
+import SmallScreen from './title-container/TitleOnly.vue'
 
 const sectionStore = useSectionStore()
-const { currentSectionId, currentSectionData, currentSectionIndex } = storeToRefs(sectionStore)
+const { currentSectionIndex } = storeToRefs(sectionStore)
 
 const { setCurrentSectionIndex } = useSectionNavigation()
 
 const isBackButtonVisible = computed(() => currentSectionIndex.value > 0)
-watch(
-  () => currentSectionIndex.value,
-  () => console.log(currentSectionIndex.value),
-)
 
 const navigateToLastSection = () => setCurrentSectionIndex(currentSectionIndex.value - 1)
-
-/**
- * Slide transition each time section changes
- */
-const titleRefresh = ref<number>(0)
-
-watch(currentSectionId, () => {
-  titleRefresh.value++
-})
 </script>
 
 <template>
@@ -45,11 +32,7 @@ watch(currentSectionId, () => {
       </Transition>
     </div>
     <div :class="$style['title-container']">
-      <SlideTransition enter-y="5px">
-        <span :key="titleRefresh" :class="$style['section-title']">{{
-          currentSectionData.title
-        }}</span>
-      </SlideTransition>
+      <SmallScreen />
     </div>
   </div>
 </template>
@@ -68,6 +51,10 @@ watch(currentSectionId, () => {
   padding: 15px value.$view-padding;
 
   width: 100%;
+
+  @media screen and (max-width: value.$small-screen-width) {
+    padding: 15px value.$small-screen-view-padding;
+  }
 }
 
 .back-button-container {
@@ -99,12 +86,6 @@ watch(currentSectionId, () => {
 
 .title-container {
   position: relative;
-}
-
-.section-title {
-  display: block;
-
-  font-weight: bold;
 }
 </style>
 

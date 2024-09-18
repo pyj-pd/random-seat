@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import SlideTransition from '@/components/common/SlideTransition.vue'
-import NavigationBar from '@/components/picker/NavigationBar.vue'
+import NavigationBar from '@/components/picker/navigation/NavigationBar.vue'
 import type { PickerRouteName } from '@/router'
 import { useSectionStore } from '@/stores/useSectionStore'
 import { storeToRefs } from 'pinia'
