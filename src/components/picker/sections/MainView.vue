@@ -7,8 +7,6 @@ import { useRoute } from 'vue-router'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { getMathRandomValue } from '@/utils/random'
 import { MAX_SEAT_ROW_SIZE, MAX_SEAT_COLUMN_SIZE } from '@/constants/seat'
-import GitHubIcon from '../icons/GitHubIcon.vue'
-import { GITHUB_REPO_URL } from '@/constants/project'
 import { useSectionNavigation } from '@/composables/useSectionNavigation'
 
 const { setCurrentSectionId } = useSectionNavigation()
