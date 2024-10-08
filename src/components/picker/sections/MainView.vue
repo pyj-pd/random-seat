@@ -1,18 +1,13 @@
 <script setup lang="ts">
 import ShadowButton from '@/components/common/ShadowButton.vue'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
-import type { PickerRouteName } from '@/router'
-import { getRouteMetadata } from '@/utils/route'
-import { useRoute } from 'vue-router'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { getMathRandomValue } from '@/utils/random'
 import { MAX_SEAT_ROW_SIZE, MAX_SEAT_COLUMN_SIZE } from '@/constants/seat'
 import { useSectionNavigation } from '@/composables/useSectionNavigation'
+import { SITE_NAME } from '@/constants/project'
 
 const { setCurrentSectionId } = useSectionNavigation()
-
-const route = useRoute(),
-  { title } = getRouteMetadata(route.name as PickerRouteName)
 
 // Seat animation
 const SEAT_ROW_NUMBER = 2,
@@ -57,7 +52,7 @@ onBeforeUnmount(
 <template>
   <main :class="$style.container">
     <div :class="$style['title-container']">
-      <h1 :class="$style.title">{{ title }}</h1>
+      <h1 :class="$style.title">{{ SITE_NAME }}</h1>
       <p>학교 등의 자리 배치를 바꿀 예정이신가요?</p>
       <p>
         간편한 설정으로 손쉽게 최대 {{ `${MAX_SEAT_COLUMN_SIZE}×${MAX_SEAT_ROW_SIZE}` }} 크기의
