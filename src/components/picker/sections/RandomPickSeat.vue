@@ -262,12 +262,12 @@ const resetSeatData = () => {
 </script>
 
 <template>
-  <main :class="$style.container" ref="containerRef">
+  <main ref="containerRef" :class="$style.container">
     <canvas ref="confettiCanvas" :class="$style['confetti-canvas']"></canvas>
-    <div :class="$style['view-container']" ref="viewContainerRef">
+    <div ref="viewContainerRef" :class="$style['view-container']">
       <div :class="[$style['table-container'], { [$style.done]: pickingState === 'done' }]">
         <div :class="$style['random-pick-counter']">
-          <span :key="howManyPicks" v-if="howManyPicks > 0">{{ howManyPicks }}번째 추첨</span>
+          <span v-if="howManyPicks > 0" :key="howManyPicks">{{ howManyPicks }}번째 추첨</span>
         </div>
         <svg
           ref="svgRef"
@@ -288,12 +288,12 @@ const resetSeatData = () => {
                   :stroke-width="svgSeatSize.borderWidth"
                 />
                 <text
+                  v-if="column.assignedNumber"
                   :x="(svgSeatSize.width + svgSeatSize.gap) * columnIndex + svgSeatSize.width / 2"
                   :y="(svgSeatSize.height + svgSeatSize.gap) * rowIndex + svgSeatSize.height / 2"
                   text-anchor="middle"
                   dominant-baseline="middle"
                   :font-size="svgSeatSize.fontSize"
-                  v-if="column.assignedNumber"
                 >
                   {{ nameData[column.assignedNumber] ?? column.assignedNumber }}
                 </text>
@@ -305,16 +305,16 @@ const resetSeatData = () => {
       <div :class="[$style['control-container'], { [$style.hidden]: isControlHidden }]">
         <span :class="$style['tap-info']">화면 탭 또는 마우스 움직여 버튼 보이기</span>
         <ButtonContainer :class="$style['button-container']">
-          <CustomButton @click="toggleFullscreen" v-if="screenfull.isEnabled">{{
+          <CustomButton v-if="screenfull.isEnabled" @click="toggleFullscreen">{{
             !isFullscreen ? '전체화면으로 보기' : '전체화면 나가기'
           }}</CustomButton>
-          <CustomButton @click="resetSeatData" :disabled="pickingState === 'picking'" warning
+          <CustomButton :disabled="pickingState === 'picking'" warning @click="resetSeatData"
             >자리 초기화</CustomButton
           >
           <CustomButton
-            @click="startRandomPick"
             :disabled="pickingState === 'picking'"
             :loading="pickingState === 'picking'"
+            @click="startRandomPick"
             >뽑기</CustomButton
           >
         </ButtonContainer>

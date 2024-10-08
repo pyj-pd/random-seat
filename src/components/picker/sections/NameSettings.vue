@@ -55,7 +55,7 @@ const updateNameData = (event: Event) => setNameData((event.target as HTMLInputE
       />
     </div>
     <ButtonContainer sticky>
-      <ShadowButton @click="clearNameData" warning>이름 초기화</ShadowButton>
+      <ShadowButton warning @click="clearNameData">이름 초기화</ShadowButton>
       <ShadowButton @click="() => setCurrentSectionId('random-pick-seat')"
         >뽑기 화면으로</ShadowButton
       >

@@ -127,7 +127,7 @@ const removeRow = (index: number) => {
   <main :class="$style.container">
     <SectionTitle title="자리 배치를 설정해 주세요." :description="DATA_ARE_SAVED_TEXT" />
     <!-- Table scroll view -->
-    <div :class="$style['table-scroll-view-container']" ref="scrollViewRef">
+    <div ref="scrollViewRef" :class="$style['table-scroll-view-container']">
       <div :class="$style['table-container']">
         <!-- Table info -->
         <div :class="$style['table-info-container']">
@@ -148,18 +148,18 @@ const removeRow = (index: number) => {
               <!-- For spacing -->
               <th scope="col" :class="$style['no-style']"></th>
               <!-- Column number headers -->
-              <th scope="col" v-for="column in columnSize" :key="column">
+              <th v-for="column in columnSize" :key="column" scope="col">
                 <NormalButton
-                  @click="() => removeColumn(column - 1)"
                   :class="$style['header-button']"
                   :animation="false"
+                  @click="() => removeColumn(column - 1)"
                 >
                   {{ column }}
                 </NormalButton>
                 <MouseGuide
                   v-if="column === MIN_SEAT_COLUMN_SIZE"
                   text="숫자를 클릭해서 해당 줄을 없앨 수 있어요."
-                  :reshowKey="mouseGuideKey"
+                  :reshow-key="mouseGuideKey"
                   :immediate="showMouseGuide"
                 />
               </th>
@@ -173,7 +173,7 @@ const removeRow = (index: number) => {
                 :colspan="columnSize"
                 :class="$style['line-button-container']"
               >
-                <NormalButton @click="addRow" :class="$style['line-button']">+</NormalButton>
+                <NormalButton :class="$style['line-button']" @click="addRow">+</NormalButton>
               </td>
             </tr>
             <!-- Row content -->
@@ -181,9 +181,9 @@ const removeRow = (index: number) => {
               <!-- Row number headers -->
               <th scope="row">
                 <NormalButton
-                  @click="() => removeRow(rowIndex)"
                   :class="$style['header-button']"
                   :animation="false"
+                  @click="() => removeRow(rowIndex)"
                 >
                   {{ rowIndex + 1 }}
                 </NormalButton>
@@ -191,7 +191,7 @@ const removeRow = (index: number) => {
               <!-- Seat button -->
               <td v-for="(column, columnIndex) in row" :key="`${rowIndex},${columnIndex}`">
                 <NormalButton
-                  @click="() => toggleSeat([columnIndex, rowIndex], column.isExcluded)"
+                  :key="rowUpdateRefresh ?? columnUpdateRefresh ?? 0"
                   :class="[
                     $style['seat-button'],
                     {
@@ -203,8 +203,8 @@ const removeRow = (index: number) => {
                       [$style.excluded]: column.isExcluded,
                     },
                   ]"
-                  :key="rowUpdateRefresh ?? columnUpdateRefresh ?? 0"
                   :animation="false"
+                  @click="() => toggleSeat([columnIndex, rowIndex], column.isExcluded)"
                 >
                   <template v-if="column.assignedNumber">{{ column.assignedNumber }}</template>
                   <PersonIcon v-else-if="!column.isExcluded" />
@@ -216,7 +216,7 @@ const removeRow = (index: number) => {
                     rowIndex === MIN_SEAT_COLUMN_SIZE - 1
                   "
                   text="자리를 클릭해서 해당 자리를 제외할 수 있어요."
-                  :reshowKey="mouseGuideKey"
+                  :reshow-key="mouseGuideKey"
                   :immediate="showMouseGuide"
                 />
               </td>
@@ -228,9 +228,9 @@ const removeRow = (index: number) => {
               >
                 <div>
                   <NormalButton
-                    @click="addColumn"
                     :class="[$style['line-button'], $style.vertical]"
                     vertical
+                    @click="addColumn"
                     >+</NormalButton
                   >
                 </div>
@@ -241,7 +241,7 @@ const removeRow = (index: number) => {
       </div>
     </div>
     <ButtonContainer sticky>
-      <ShadowButton @click="resetSeatData" warning>자리 및 이름 초기화</ShadowButton>
+      <ShadowButton warning @click="resetSeatData">자리 및 이름 초기화</ShadowButton>
       <ShadowButton @click="() => reshowMouseGuide()">도움말 보기</ShadowButton>
 
       <ShadowButton @click="() => setCurrentSectionId('name-settings')">다음으로</ShadowButton>

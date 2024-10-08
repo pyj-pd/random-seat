@@ -48,7 +48,7 @@ watch(currentSectionId, () => {
     <div :class="$style['view-container']">
       <SlideTransition>
         <!-- Sections will change here -->
-        <component :class="$style.view" :is="currentSectionData.component"></component>
+        <component :is="currentSectionData.component" :class="$style.view"></component>
       </SlideTransition>
     </div>
   </div>

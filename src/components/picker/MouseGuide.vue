@@ -39,8 +39,8 @@ const onAnimationEnd = () => (isUnmounted.value = true)
 </script>
 
 <template>
-  <div :class="$style.container" v-if="!isUnmounted" @animationend="onAnimationEnd">
-    <div :class="$style.tooltip" :key="$props.reshowKey" v-if="immediate || reshowUpdates !== 0">
+  <div v-if="!isUnmounted" :class="$style.container" @animationend="onAnimationEnd">
+    <div v-if="immediate || reshowUpdates !== 0" :key="$props.reshowKey" :class="$style.tooltip">
       <span>{{ $props.text }}</span>
     </div>
   </div>

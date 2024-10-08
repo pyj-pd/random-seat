@@ -31,10 +31,10 @@ watch(currentSectionId, () => {
       <Transition name="back-button">
         <NormalButton
           v-if="isBackButtonVisible"
-          @click="navigateToLastSection"
           aria-label="뒤로가기"
           :class="$style['back-button']"
           :animation="false"
+          @click="navigateToLastSection"
         >
           <span :class="$style['back-arrow-icon']"></span>
         </NormalButton>
@@ -42,7 +42,7 @@ watch(currentSectionId, () => {
     </div>
     <div :class="$style['title-container']">
       <SlideTransition enter-y="5px">
-        <span :key="titleRefresh" :class="$style.title">{{ currentSectionData.title }}</span>
+        <h2 :key="titleRefresh" :class="$style.title">{{ currentSectionData.title }}</h2>
       </SlideTransition>
     </div>
   </div>
@@ -104,6 +104,7 @@ watch(currentSectionId, () => {
     display: block;
 
     font-weight: bold;
+    font-size: 1rem;
   }
 }
 </style>

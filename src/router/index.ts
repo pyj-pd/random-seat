@@ -31,8 +31,8 @@ export type RouteMetadata = {
 export const routeMetadata = [
   {
     name: 'home',
-    title: '무작위 자리 뽑기',
-    description: `최대 ${MAX_SEAT_COLUMN_SIZE}×${MAX_SEAT_ROW_SIZE} 크기의 자리를 무작위로 배치해 보세요. 직관적인 UI와 깔끔한 디자인을 갖추고 있습니다.`,
+    title: '무작위 자리 뽑기 — 편리하고 공정한 자리 배치',
+    description: `최대 ${MAX_SEAT_COLUMN_SIZE}×${MAX_SEAT_ROW_SIZE} 크기의 자리 배치를 랜덤하게 바꾸어 보세요. TV에 연결하여 같이 보면 더욱 좋습니다. 직관적인 UI와 깔끔한 디자인을 갖추고 있습니다.`,
     visibleToSearchEngines: true,
   },
 
