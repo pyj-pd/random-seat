@@ -1,23 +1,19 @@
 <script setup lang="ts">
-import { useHead } from '@unhead/vue'
+import { useSeoMeta } from '@unhead/vue'
 import { defaultMetadata } from './router'
+import { SITE_NAME, SITE_URL } from './constants/project'
 
-useHead(() => {
-  const { title, description, visibleToSearchEngines } = defaultMetadata
+const { title, description, visibleToSearchEngines } = defaultMetadata
 
-  return {
-    title,
-    meta: [
-      {
-        name: 'description',
-        content: description,
-      },
-      {
-        name: 'robots',
-        content: visibleToSearchEngines ? 'all' : 'none',
-      },
-    ],
-  }
+useSeoMeta({
+  title,
+  ogTitle: title,
+  description,
+  ogDescription: description,
+  ogSiteName: SITE_NAME,
+  ogUrl: SITE_URL,
+  robots: visibleToSearchEngines ? 'all' : 'none',
+  ogImage: `${SITE_URL}/apple-icon.png`,
 })
 </script>
 
