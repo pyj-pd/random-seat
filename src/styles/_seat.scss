@@ -1,0 +1,23 @@
+@use 'sass:math';
+@use './value' as value;
+@use './palette' as palette;
+
+$border-width: value.$border-slim-width;
+
+$small-gap: 3px;
+$gap: 5px;
+
+$font-size: 1.2rem;
+
+$aspect-ratio: math.div(1.8, 1);
+
+// Colors
+$border-color: palette.$darker-gray;
+
+$background-color: palette.$dark-gray;
+$text-color: palette.$blackish;
+
+@mixin excluded-style {
+  background-color: palette.$white;
+  border-color: palette.$gray;
+}

@@ -250,6 +250,7 @@ const removeRow = (index: number) => {
 </template>
 
 <style module lang="scss">
+@use '@/styles/seat' as seat;
 @use '@/styles/palette' as palette;
 @use '@/styles/value' as value;
 
@@ -339,6 +340,10 @@ $table-width: 880px;
 }
 
 .table {
+  & {
+    border-spacing: seat.$small-gap;
+  }
+
   td,
   th {
     position: relative;
@@ -365,7 +370,7 @@ $table-width: 880px;
 
   background-color: palette.$gray;
   color: palette.$blackish;
-  border: solid value.$border-slim-width palette.$dark-gray;
+  border: solid seat.$border-width palette.$dark-gray;
 
   font-variant: proportional-nums;
 
@@ -380,10 +385,7 @@ $table-width: 880px;
 
   &.excluded {
     transform: scale(0.9);
-    filter: grayscale(1);
-
-    background-color: palette.$white;
-    border-color: palette.$gray;
+    @include seat.excluded-style;
   }
 
   .table tr:nth-child(even) &:not(.excluded) {

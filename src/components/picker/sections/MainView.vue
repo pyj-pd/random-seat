@@ -86,6 +86,7 @@ onBeforeUnmount(
 <style module lang="scss">
 @use '@/styles/value' as value;
 @use '@/styles/palette' as palette;
+@use '@/styles/seat' as seat;
 
 .container {
   display: grid;
@@ -94,12 +95,10 @@ onBeforeUnmount(
   align-content: center;
 }
 
-$seat-gap: 5px;
-
 // Seat
 .seat-container {
   display: flex;
-  gap: $seat-gap;
+  gap: seat.$gap;
   flex-direction: column;
 
   width: 100%;
@@ -108,7 +107,7 @@ $seat-gap: 5px;
 
 .seat-row {
   display: flex;
-  gap: $seat-gap;
+  gap: seat.$gap;
 }
 
 .seat-row > span {
@@ -116,12 +115,12 @@ $seat-gap: 5px;
   justify-content: center;
   align-items: center;
 
-  background-color: palette.$seat-background-color;
+  background-color: seat.$background-color;
 
-  border: solid value.$border-slim-width palette.$seat-border-color;
+  border: solid seat.$border-width seat.$border-color;
 
   width: 100%;
-  aspect-ratio: 2 / 1;
+  aspect-ratio: seat.$aspect-ratio;
 
   &::after {
     content: '';

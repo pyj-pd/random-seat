@@ -2,13 +2,13 @@
 import CustomButton from '@/components/common/ShadowButton.vue'
 import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
 import { waitMs } from '@/utils/time'
-import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import confetti from 'canvas-confetti'
 import { useEventListener } from '@/composables/useEventListener'
 import { storeToRefs } from 'pinia'
-import { SeatSvg, SVG_VIEWBOX_WIDTH, type SvgSeatSize } from '@/utils/seat-svg'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import screenfull from 'screenfull'
+import { SEAT_MAX_WIDTH, FULLSCREEN_SEAT_RATIO } from '@/constants/seat'
 
 /**nvm u
  * Initial delay between each shuffle in milliseconds.
@@ -48,36 +48,36 @@ type PickingState = 'initial' | 'picking' | 'idle' | 'done'
 
 const pickingState = ref<PickingState>('initial')
 
-// Set SVG size based on column and row size
-const svgRef = ref<HTMLOrSVGElement | null>(null)
+/**
+ * For setting SVG size based on column and row size,
+ * so that styles like border width or font size doesn't look
+ * too big in small size or too small in big size.
+ */
+const tableRef = ref<HTMLDivElement | null>(null)
 
-const svgHeight = ref<number>(0),
-  svgSeatSize = reactive<SvgSeatSize>({
-    width: 0,
-    height: 0,
-    gap: 0,
-    borderWidth: '0px',
-    fontSize: '0px',
-  })
+const tableSizeRatio = ref<number>(1)
 
-watch(
-  [columnSize, rowSize],
-  (newSize) => {
-    const svgInstance = new SeatSvg(...newSize)
+const tableWidthBasedOnScreenHeight = ref<number>(0)
 
-    svgHeight.value = svgInstance.getSvgHeight()
+const updateTableSize = () => {
+  if (tableRef.value === null) return
 
-    const { width, height, gap, fontSize, borderWidth } = svgInstance.getSeatSize()
-    svgSeatSize.width = width
-    svgSeatSize.height = height
-    svgSeatSize.gap = gap
-    svgSeatSize.fontSize = fontSize
-    svgSeatSize.borderWidth = borderWidth
-  },
-  {
-    immediate: true,
-  },
-)
+  const { width, height } = tableRef.value.getBoundingClientRect(),
+    { innerHeight } = window
+
+  tableSizeRatio.value = width / SEAT_MAX_WIDTH
+  tableWidthBasedOnScreenHeight.value = (width / height) * innerHeight * FULLSCREEN_SEAT_RATIO
+}
+
+onMounted(() => {
+  window.addEventListener('resize', updateTableSize)
+
+  updateTableSize()
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateTableSize)
+})
 
 // Fullscreen handling
 const containerRef = ref<HTMLDivElement | null>(null),
@@ -269,38 +269,31 @@ const resetSeatData = () => {
         <div :class="$style['random-pick-counter']">
           <span v-if="howManyPicks > 0" :key="howManyPicks">{{ howManyPicks }}번째 추첨</span>
         </div>
-        <svg
-          ref="svgRef"
-          :class="$style['table-svg']"
-          :viewBox="`0 0 ${SVG_VIEWBOX_WIDTH} ${svgHeight}`"
-          preserveAspectRatio="xMidYMid"
+        <div
+          ref="tableRef"
+          :class="$style.table"
+          :style="{
+            '--size-ratio': tableSizeRatio,
+
+            '--column-size': columnSize,
+            '--row-size': rowSize,
+
+            '--table-width-screen-height': `${tableWidthBasedOnScreenHeight}px`,
+          }"
         >
-          <!--Row -->
-          <g v-for="(row, rowIndex) in seatData" :key="rowIndex">
-            <!-- Seat -->
-            <template v-for="(column, columnIndex) in row" :key="`${rowIndex},${columnIndex}`">
-              <g v-if="!column.isExcluded" :class="$style.seat">
-                <rect
-                  :x="(svgSeatSize.width + svgSeatSize.gap) * columnIndex"
-                  :y="(svgSeatSize.height + svgSeatSize.gap) * rowIndex"
-                  :width="svgSeatSize.width"
-                  :height="svgSeatSize.height"
-                  :stroke-width="svgSeatSize.borderWidth"
-                />
-                <text
-                  v-if="column.assignedNumber"
-                  :x="(svgSeatSize.width + svgSeatSize.gap) * columnIndex + svgSeatSize.width / 2"
-                  :y="(svgSeatSize.height + svgSeatSize.gap) * rowIndex + svgSeatSize.height / 2"
-                  text-anchor="middle"
-                  dominant-baseline="middle"
-                  :font-size="svgSeatSize.fontSize"
-                >
-                  {{ nameData[column.assignedNumber] ?? column.assignedNumber }}
-                </text>
-              </g>
+          <div
+            v-for="(seat, seatIndex) in seatData.flat()"
+            :key="seatIndex"
+            :class="[$style.seat, seat.isExcluded && $style.excluded]"
+          >
+            <template v-if="!seat.isExcluded">
+              <!-- Seat body -->
+              <span v-if="seat.assignedNumber">
+                {{ nameData[seat.assignedNumber] ?? seat.assignedNumber }}</span
+              >
             </template>
-          </g>
-        </svg>
+          </div>
+        </div>
       </div>
       <div :class="[$style['control-container'], { [$style.hidden]: isControlHidden }]">
         <span :class="$style['tap-info']">화면 탭 또는 마우스 움직여 버튼 보이기</span>
@@ -324,6 +317,7 @@ const resetSeatData = () => {
 </template>
 
 <style module lang="scss">
+@use '@/styles/seat' as seat;
 @use '@/styles/palette' as palette;
 @use '@/styles/value' as value;
 
@@ -374,19 +368,31 @@ const resetSeatData = () => {
   height: 100%;
 }
 
-.table-svg {
+.table {
+  & {
+    // Style variables
+    --border-width: calc(#{seat.$border-width} * var(--size-ratio));
+    --gap: calc(#{seat.$gap} * var(--size-ratio));
+    --font-size: calc(#{seat.$font-size} * var(--size-ratio));
+
+    // Table styles
+    display: grid;
+    gap: var(--gap);
+    grid-template-columns: repeat(var(--column-size), 1fr);
+    grid-template-rows: repeat(var(--row-size), 1fr);
+
+    z-index: -1;
+
+    height: fit-content;
+  }
+
   .container:not(:fullscreen) & {
     width: 100%;
-    max-width: 800px;
+    max-width: calc(v-bind(SEAT_MAX_WIDTH) * 1px);
   }
 
   .container:fullscreen & {
-    width: 70%;
-    height: 70%;
-  }
-
-  & {
-    overflow: visible;
+    width: min(calc(100% * v-bind(FULLSCREEN_SEAT_RATIO)), var(--table-width-screen-height));
   }
 
   .done & {
@@ -395,14 +401,26 @@ const resetSeatData = () => {
 }
 
 .seat {
-  rect {
-    stroke: palette.$seat-border-color;
-    fill: palette.$seat-background-color;
+  & {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border: solid var(--border-width) seat.$border-color;
+    background-color: seat.$background-color;
+
+    width: 100%;
+    aspect-ratio: seat.$aspect-ratio;
   }
 
-  text {
+  &.excluded {
+    @include seat.excluded-style;
+  }
+
+  span {
     font-weight: 700;
     font-variant: proportional-nums;
+    font-size: var(--font-size);
   }
 }
 
