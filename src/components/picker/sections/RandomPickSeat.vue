@@ -474,6 +474,8 @@ const resetSeatData = () => {
     color: palette.$white;
 
     animation: random-pick-counter-animation 2s value.$ease-in-out both;
+
+    user-select: none;
   }
 
   & {

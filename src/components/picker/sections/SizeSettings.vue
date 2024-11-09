@@ -14,7 +14,7 @@ import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
 import { storeToRefs } from 'pinia'
 import PersonIcon from '../icons/PersonIcon.vue'
 import { onMounted, ref, watch } from 'vue'
-import XShape from '../icons/XIcon.vue'
+import XIcon from '../icons/XIcon.vue'
 import MouseGuide from '../MouseGuide.vue'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import SectionTitle from '../SectionTitle.vue'
@@ -211,7 +211,7 @@ const removeRow = (index: number) => {
                 >
                   <template v-if="column.assignedNumber">{{ column.assignedNumber }}</template>
                   <PersonIcon v-else-if="!column.isExcluded" />
-                  <XShape v-else :class="$style['x-shape']" />
+                  <XIcon v-else :class="$style['x-shape']" />
                 </NormalButton>
                 <MouseGuide
                   v-if="

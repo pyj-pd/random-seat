@@ -18,6 +18,11 @@
   font-weight: normal;
 }
 
+::selection {
+  background-color: palette.$black;
+  color: palette.$white;
+}
+
 body {
   font-family: 'Happiness Sans', sans-serif;
   font-size: 15px;
