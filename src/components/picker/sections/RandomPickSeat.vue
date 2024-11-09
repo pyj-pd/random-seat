@@ -19,6 +19,7 @@ import {
   TABLE_TOP_INDICATOR_HEIGHT,
   TABLE_TOP_INDICATOR_WIDTH,
 } from '@/utils/seat-svg'
+import { TOP_INDICATOR_TEXT } from '@/constants/seat'
 
 /**nvm u
  * Initial delay between each shuffle in milliseconds.
@@ -278,7 +279,7 @@ const resetSeatData = () => {
               text-anchor="middle"
               dominant-baseline="middle"
             >
-              상단
+              {{ TOP_INDICATOR_TEXT }}
             </text>
           </g>
           <!-- Seats -->

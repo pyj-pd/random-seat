@@ -9,6 +9,7 @@ import {
   MAX_SEAT_ROW_SIZE,
   MIN_SEAT_COLUMN_SIZE,
   MIN_SEAT_NUMBER,
+  TOP_INDICATOR_TEXT,
 } from '@/constants/seat'
 import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
 import { storeToRefs } from 'pinia'
@@ -138,7 +139,7 @@ const removeRow = (index: number) => {
           </div>
 
           <div :class="$style['table-top']">
-            <span>상단</span>
+            <span>{{ TOP_INDICATOR_TEXT }}</span>
           </div>
         </div>
         <!-- Table content -->
