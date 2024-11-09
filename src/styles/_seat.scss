@@ -17,7 +17,6 @@ $border-color: palette.$darker-gray;
 $background-color: palette.$dark-gray;
 $text-color: palette.$blackish;
 
-@mixin excluded-style {
-  background-color: palette.$white;
-  border-color: palette.$gray;
-}
+$excluded-background-color: palette.$white;
+$excluded-border-color: palette.$gray;
+$excluded-scale: 0.9;

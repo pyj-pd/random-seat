@@ -379,7 +379,11 @@ const resetSeatData = () => {
 
 .seat {
   &.excluded {
-    @include seat.excluded-style;
+    rect {
+      fill: seat.$excluded-background-color;
+
+      stroke: seat.$excluded-border-color;
+    }
   }
 
   rect {

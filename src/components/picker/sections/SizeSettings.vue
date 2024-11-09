@@ -345,6 +345,8 @@ $table-width: 880px;
 .table {
   & {
     border-spacing: seat.$small-gap;
+
+    touch-action: manipulation;
   }
 
   td,
@@ -387,8 +389,9 @@ $table-width: 880px;
   }
 
   &.excluded {
-    transform: scale(0.9);
-    @include seat.excluded-style;
+    transform: scale(seat.$excluded-scale);
+    background-color: seat.$excluded-background-color;
+    border-color: seat.$excluded-border-color;
   }
 
   .table tr:nth-child(even) &:not(.excluded) {
