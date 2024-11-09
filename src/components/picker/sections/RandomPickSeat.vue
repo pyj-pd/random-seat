@@ -9,10 +9,15 @@ import { storeToRefs } from 'pinia'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import screenfull from 'screenfull'
 import {
+  getTableSvgSeatTransform,
+  getTableSvgTopIndicatorTransform,
   getTableSvgViewbox,
-  TABLE_SEAT_GAP,
+  TABLE_BORDER_WIDTH,
   TABLE_SEAT_HEIGHT,
   TABLE_SEAT_WIDTH,
+  TABLE_TOP_INDICATOR_BORDER_WIDTH,
+  TABLE_TOP_INDICATOR_HEIGHT,
+  TABLE_TOP_INDICATOR_WIDTH,
 } from '@/utils/seat-svg'
 
 /**nvm u
@@ -257,18 +262,42 @@ const resetSeatData = () => {
           :viewBox="`0 0 ${tableSvgViewbox.width} ${tableSvgViewbox.height}`"
           preserveAspectRatio="xMidYMid"
         >
+          <!-- Table top indicator -->
+          <g
+            :transform="getTableSvgTopIndicatorTransform(tableSvgViewbox.width)"
+            :class="$style['top-indicator']"
+          >
+            <rect
+              :width="TABLE_TOP_INDICATOR_WIDTH"
+              :height="TABLE_TOP_INDICATOR_HEIGHT"
+              :stroke-width="TABLE_TOP_INDICATOR_BORDER_WIDTH"
+            />
+            <text
+              :x="TABLE_TOP_INDICATOR_WIDTH / 2"
+              :y="TABLE_TOP_INDICATOR_HEIGHT / 2 + TABLE_TOP_INDICATOR_BORDER_WIDTH"
+              text-anchor="middle"
+              dominant-baseline="middle"
+            >
+              상단
+            </text>
+          </g>
+          <!-- Seats -->
           <template v-for="(row, rowIndex) in seatData" :key="rowIndex">
             <g
               v-for="(seat, columnIndex) in row"
               :key="`${rowIndex},${columnIndex}`"
-              :transform="`translate(${/* x */ columnIndex * (TABLE_SEAT_WIDTH + TABLE_SEAT_GAP)}, ${/* y */ rowIndex * (TABLE_SEAT_HEIGHT + TABLE_SEAT_GAP)})`"
+              :transform="getTableSvgSeatTransform({ columnPos: columnIndex, rowPos: rowIndex })"
               :class="[$style.seat, seat.isExcluded && $style.excluded]"
             >
-              <rect :width="TABLE_SEAT_WIDTH" :height="TABLE_SEAT_HEIGHT" />
+              <rect
+                :width="TABLE_SEAT_WIDTH"
+                :height="TABLE_SEAT_HEIGHT"
+                :stroke-width="TABLE_BORDER_WIDTH"
+              />
               <text
                 v-if="seat.assignedNumber"
                 :x="TABLE_SEAT_WIDTH / 2"
-                :y="TABLE_SEAT_HEIGHT / 2"
+                :y="TABLE_SEAT_HEIGHT / 2 + TABLE_BORDER_WIDTH"
                 text-anchor="middle"
                 dominant-baseline="middle"
               >
@@ -373,10 +402,30 @@ const resetSeatData = () => {
   .done & {
     animation: roulette-done-animation 0.2s value.$ease-in-out both;
   }
+
+  text {
+    font-weight: 700;
+    font-variant: proportional-nums;
+    font-size: seat.$font-size;
+  }
 }
 
-// Seats
+// Table top indicator
+.top-indicator {
+  rect {
+    fill: seat.$top-indicator-background-color;
 
+    stroke: seat.$top-indicator-border-color;
+  }
+
+  text {
+    font-size: seat.$top-indicator-font-size;
+
+    fill: seat.$top-indicator-text-color;
+  }
+}
+
+// Seat
 .seat {
   &.excluded {
     rect {
@@ -390,14 +439,9 @@ const resetSeatData = () => {
     fill: seat.$background-color;
 
     stroke: seat.$border-color;
-    stroke-width: seat.$border-width;
   }
 
   text {
-    font-weight: 700;
-    font-variant: proportional-nums;
-    font-size: seat.$font-size;
-
     fill: seat.$text-color;
   }
 }

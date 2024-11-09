@@ -2,6 +2,7 @@
 @use './value' as value;
 @use './palette' as palette;
 
+// Values
 $border-width: value.$border-slim-width;
 
 $small-gap: 3px;
@@ -16,6 +17,11 @@ $border-color: palette.$darker-gray;
 
 $background-color: palette.$dark-gray;
 $text-color: palette.$blackish;
+
+$top-indicator-background-color: palette.$gray;
+$top-indicator-border-color: palette.$dark-gray;
+$top-indicator-text-color: palette.$blackish;
+$top-indicator-font-size: 0.9rem;
 
 $excluded-background-color: palette.$white;
 $excluded-border-color: palette.$gray;
