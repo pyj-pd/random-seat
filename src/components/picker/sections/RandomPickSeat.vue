@@ -2,12 +2,18 @@
 import CustomButton from '@/components/common/ShadowButton.vue'
 import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
 import { waitMs } from '@/utils/time'
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import confetti from 'canvas-confetti'
 import { useEventListener } from '@/composables/useEventListener'
 import { storeToRefs } from 'pinia'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import screenfull from 'screenfull'
+import {
+  getTableSvgViewbox,
+  TABLE_SEAT_GAP,
+  TABLE_SEAT_HEIGHT,
+  TABLE_SEAT_WIDTH,
+} from '@/utils/seat-svg'
 
 /**nvm u
  * Initial delay between each shuffle in milliseconds.
@@ -52,6 +58,9 @@ const pickingState = ref<PickingState>('initial')
  * so that styles like border width or font size doesn't look
  * too big in small size or too small in big size.
  */
+const tableSvgViewbox = computed(() =>
+  getTableSvgViewbox({ columnSize: columnSize.value, rowSize: rowSize.value }),
+)
 
 // Fullscreen handling
 const containerRef = ref<HTMLDivElement | null>(null),
@@ -243,7 +252,31 @@ const resetSeatData = () => {
         <div :class="$style['random-pick-counter']">
           <span v-if="howManyPicks > 0" :key="howManyPicks">{{ howManyPicks }}번째 추첨</span>
         </div>
-        <svg></svg>
+        <svg
+          :class="$style.table"
+          :viewBox="`0 0 ${tableSvgViewbox.width} ${tableSvgViewbox.height}`"
+          preserveAspectRatio="xMidYMid"
+        >
+          <template v-for="(row, rowIndex) in seatData" :key="rowIndex">
+            <g
+              v-for="(seat, columnIndex) in row"
+              :key="`${rowIndex},${columnIndex}`"
+              :transform="`translate(${/* x */ columnIndex * (TABLE_SEAT_WIDTH + TABLE_SEAT_GAP)}, ${/* y */ rowIndex * (TABLE_SEAT_HEIGHT + TABLE_SEAT_GAP)})`"
+              :class="[$style.seat, seat.isExcluded && $style.excluded]"
+            >
+              <rect :width="TABLE_SEAT_WIDTH" :height="TABLE_SEAT_HEIGHT" />
+              <text
+                v-if="seat.assignedNumber"
+                :x="TABLE_SEAT_WIDTH / 2"
+                :y="TABLE_SEAT_HEIGHT / 2"
+                text-anchor="middle"
+                dominant-baseline="middle"
+              >
+                {{ nameData[seat.assignedNumber] ?? seat.assignedNumber }}
+              </text>
+            </g>
+          </template>
+        </svg>
       </div>
       <div :class="[$style['control-container'], { [$style.hidden]: isControlHidden }]">
         <span :class="$style['tap-info']">화면 탭 또는 마우스 움직여 버튼 보이기</span>
@@ -320,24 +353,11 @@ const resetSeatData = () => {
 
 .table {
   & {
-    // Style variables
-    // Dynamic size based on screen width
-    --border-width: calc(#{seat.$border-width} * var(--size-ratio));
-    --gap: calc(#{seat.$gap} * var(--size-ratio));
-
-    // Table styles
     z-index: -1;
 
-    display: flex;
-    gap: var(--gap);
-    flex-direction: column;
-    align-items: center;
-
-    font-size: calc(#{seat.$font-size} * var(--size-ratio));
-
-    height: fit-content;
-
     user-select: none;
+
+    overflow: visible;
   }
 
   .container:not(:fullscreen) & {
@@ -347,6 +367,7 @@ const resetSeatData = () => {
 
   .container:fullscreen & {
     width: 70%;
+    height: 70%;
   }
 
   .done & {
@@ -355,37 +376,25 @@ const resetSeatData = () => {
 }
 
 // Seats
-.seat-container {
-  display: grid;
-  gap: var(--gap);
-  grid-template-columns: repeat(var(--column-size), 1fr);
-  grid-template-rows: repeat(var(--row-size), 1fr);
-
-  width: 100%;
-  height: fit-content;
-}
 
 .seat {
-  & {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    border: solid var(--border-width) seat.$border-color;
-    background-color: seat.$background-color;
-
-    width: 100%;
-    aspect-ratio: seat.$aspect-ratio;
-  }
-
   &.excluded {
     @include seat.excluded-style;
   }
 
-  span {
+  rect {
+    fill: seat.$background-color;
+
+    stroke: seat.$border-color;
+    stroke-width: seat.$border-width;
+  }
+
+  text {
     font-weight: 700;
     font-variant: proportional-nums;
-    font-size: 1em;
+    font-size: seat.$font-size;
+
+    fill: seat.$text-color;
   }
 }
 
