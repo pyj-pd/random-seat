@@ -8,7 +8,7 @@ import { useEventListener } from '@/composables/useEventListener'
 import { storeToRefs } from 'pinia'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import screenfull from 'screenfull'
-import { SEAT_MAX_WIDTH, FULLSCREEN_SEAT_RATIO } from '@/constants/seat'
+import { SEAT_MAX_WIDTH, FULLSCREEN_SEAT_RATIO, DEFAULT_COLUMN_SIZE } from '@/constants/seat'
 
 /**nvm u
  * Initial delay between each shuffle in milliseconds.
@@ -65,8 +65,13 @@ const updateTableSize = () => {
   const { width, height } = tableRef.value.getBoundingClientRect(),
     { innerHeight } = window
 
-  tableSizeRatio.value = width / SEAT_MAX_WIDTH
+  /**
+   * Used for fullscreen because table should not overflow outside the screen.
+   */
   tableWidthBasedOnScreenHeight.value = (width / height) * innerHeight * FULLSCREEN_SEAT_RATIO
+  tableSizeRatio.value = (width / SEAT_MAX_WIDTH) * (DEFAULT_COLUMN_SIZE / columnSize.value)
+
+  console.log('resize!')
 }
 
 onMounted(() => {
@@ -281,17 +286,22 @@ const resetSeatData = () => {
             '--table-width-screen-height': `${tableWidthBasedOnScreenHeight}px`,
           }"
         >
-          <div
-            v-for="(seat, seatIndex) in seatData.flat()"
-            :key="seatIndex"
-            :class="[$style.seat, seat.isExcluded && $style.excluded]"
-          >
-            <template v-if="!seat.isExcluded">
-              <!-- Seat body -->
-              <span v-if="seat.assignedNumber">
-                {{ nameData[seat.assignedNumber] ?? seat.assignedNumber }}</span
-              >
-            </template>
+          <span>
+            <template v-for="i in 100" :key="i"> ㅎㅇㅎㅇ ㅋㅋ<br /> </template>
+          </span>
+          <div :class="$style['seat-container']">
+            <div
+              v-for="(seat, seatIndex) in seatData.flat()"
+              :key="seatIndex"
+              :class="[$style.seat, seat.isExcluded && $style.excluded]"
+            >
+              <template v-if="!seat.isExcluded">
+                <!-- Seat body -->
+                <span v-if="seat.assignedNumber">
+                  {{ nameData[seat.assignedNumber] ?? seat.assignedNumber }}</span
+                >
+              </template>
+            </div>
           </div>
         </div>
       </div>
@@ -371,19 +381,23 @@ const resetSeatData = () => {
 .table {
   & {
     // Style variables
+    // Dynamic size based on screen width
     --border-width: calc(#{seat.$border-width} * var(--size-ratio));
     --gap: calc(#{seat.$gap} * var(--size-ratio));
-    --font-size: calc(#{seat.$font-size} * var(--size-ratio));
 
     // Table styles
-    display: grid;
-    gap: var(--gap);
-    grid-template-columns: repeat(var(--column-size), 1fr);
-    grid-template-rows: repeat(var(--row-size), 1fr);
-
     z-index: -1;
 
+    display: flex;
+    gap: var(--gap);
+    flex-direction: column;
+    align-items: center;
+
+    font-size: calc(#{seat.$font-size} * var(--size-ratio));
+
     height: fit-content;
+
+    user-select: none;
   }
 
   .container:not(:fullscreen) & {
@@ -398,6 +412,17 @@ const resetSeatData = () => {
   .done & {
     animation: roulette-done-animation 0.2s value.$ease-in-out both;
   }
+}
+
+// Seats
+.seat-container {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: repeat(var(--column-size), 1fr);
+  grid-template-rows: repeat(var(--row-size), 1fr);
+
+  width: 100%;
+  height: fit-content;
 }
 
 .seat {
@@ -420,7 +445,7 @@ const resetSeatData = () => {
   span {
     font-weight: 700;
     font-variant: proportional-nums;
-    font-size: var(--font-size);
+    font-size: 1em;
   }
 }
 
