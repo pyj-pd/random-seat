@@ -16,4 +16,5 @@ export type SeatData = {
 export type SeatColumnData = SeatData[]
 export type SeatRowData = SeatColumnData[]
 
-export type SeatPosition = [columnPos: number, rowPos: number]
+export type SeatPosition = { columnPos: number; rowPos: number }
+export type SeatSize = { columnSize: number; rowSize: number }

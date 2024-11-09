@@ -67,7 +67,7 @@ const toggleSeat = (position: SeatPosition, isExcluded: boolean) => {
 }
 
 const resetSeatData = () => {
-  clearSeatData(DEFAULT_COLUMN_SIZE, DEFAULT_ROW_SIZE)
+  clearSeatData({ columnSize: DEFAULT_COLUMN_SIZE, rowSize: DEFAULT_ROW_SIZE })
   clearNameData()
 
   rowUpdateRefresh.value = null
@@ -94,7 +94,7 @@ watch(
 
 // Line add buttons
 const addRow = () => {
-    setSize(columnSize.value, rowSize.value + 1, true)
+    setSize({ columnSize: columnSize.value, rowSize: rowSize.value + 1 }, true)
 
     rowUpdateRefresh.value ??= 0
     rowUpdateRefresh.value++
@@ -102,7 +102,7 @@ const addRow = () => {
     columnUpdateRefresh.value = null
   },
   addColumn = () => {
-    setSize(columnSize.value + 1, rowSize.value, true)
+    setSize({ columnSize: columnSize.value + 1, rowSize: rowSize.value }, true)
 
     rowUpdateRefresh.value = null
 
@@ -204,7 +204,10 @@ const removeRow = (index: number) => {
                     },
                   ]"
                   :animation="false"
-                  @click="() => toggleSeat([columnIndex, rowIndex], column.isExcluded)"
+                  @click="
+                    () =>
+                      toggleSeat({ columnPos: columnIndex, rowPos: rowIndex }, column.isExcluded)
+                  "
                 >
                   <template v-if="column.assignedNumber">{{ column.assignedNumber }}</template>
                   <PersonIcon v-else-if="!column.isExcluded" />

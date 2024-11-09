@@ -1,4 +1,4 @@
-import { type SeatData, type SeatRowData } from '@/types/seat'
+import { type SeatData, type SeatRowData, type SeatSize } from '@/types/seat'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { getCryptoRandomValue, getMathRandomValue } from './random'
 
@@ -15,8 +15,7 @@ const DEFAULT_SEAT_DATA: SeatData = {
  * @returns An array of seat data filled with `null`.
  */
 export const initializeSeatData = (
-  columnSize: number,
-  rowSize: number,
+  { columnSize, rowSize }: SeatSize,
   originalData?: SeatRowData,
 ): SeatRowData => {
   // Intialize new data

@@ -8,7 +8,6 @@ import { useEventListener } from '@/composables/useEventListener'
 import { storeToRefs } from 'pinia'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import screenfull from 'screenfull'
-import { SEAT_MAX_WIDTH, FULLSCREEN_SEAT_RATIO, DEFAULT_COLUMN_SIZE } from '@/constants/seat'
 
 /**nvm u
  * Initial delay between each shuffle in milliseconds.
@@ -53,36 +52,6 @@ const pickingState = ref<PickingState>('initial')
  * so that styles like border width or font size doesn't look
  * too big in small size or too small in big size.
  */
-const tableRef = ref<HTMLDivElement | null>(null)
-
-const tableSizeRatio = ref<number>(1)
-
-const tableWidthBasedOnScreenHeight = ref<number>(0)
-
-const updateTableSize = () => {
-  if (tableRef.value === null) return
-
-  const { width, height } = tableRef.value.getBoundingClientRect(),
-    { innerHeight } = window
-
-  /**
-   * Used for fullscreen because table should not overflow outside the screen.
-   */
-  tableWidthBasedOnScreenHeight.value = (width / height) * innerHeight * FULLSCREEN_SEAT_RATIO
-  tableSizeRatio.value = (width / SEAT_MAX_WIDTH) * (DEFAULT_COLUMN_SIZE / columnSize.value)
-
-  console.log('resize!')
-}
-
-onMounted(() => {
-  window.addEventListener('resize', updateTableSize)
-
-  updateTableSize()
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', updateTableSize)
-})
 
 // Fullscreen handling
 const containerRef = ref<HTMLDivElement | null>(null),
@@ -261,7 +230,7 @@ onBeforeUnmount(() => (isUnmounted = true))
  * Reset seat data and random pick counts.
  */
 const resetSeatData = () => {
-  clearSeatData(undefined, undefined, true)
+  clearSeatData(null, true)
   howManyPicks.value = 0
 }
 </script>
@@ -274,36 +243,7 @@ const resetSeatData = () => {
         <div :class="$style['random-pick-counter']">
           <span v-if="howManyPicks > 0" :key="howManyPicks">{{ howManyPicks }}번째 추첨</span>
         </div>
-        <div
-          ref="tableRef"
-          :class="$style.table"
-          :style="{
-            '--size-ratio': tableSizeRatio,
-
-            '--column-size': columnSize,
-            '--row-size': rowSize,
-
-            '--table-width-screen-height': `${tableWidthBasedOnScreenHeight}px`,
-          }"
-        >
-          <span>
-            <template v-for="i in 100" :key="i"> ㅎㅇㅎㅇ ㅋㅋ<br /> </template>
-          </span>
-          <div :class="$style['seat-container']">
-            <div
-              v-for="(seat, seatIndex) in seatData.flat()"
-              :key="seatIndex"
-              :class="[$style.seat, seat.isExcluded && $style.excluded]"
-            >
-              <template v-if="!seat.isExcluded">
-                <!-- Seat body -->
-                <span v-if="seat.assignedNumber">
-                  {{ nameData[seat.assignedNumber] ?? seat.assignedNumber }}</span
-                >
-              </template>
-            </div>
-          </div>
-        </div>
+        <svg></svg>
       </div>
       <div :class="[$style['control-container'], { [$style.hidden]: isControlHidden }]">
         <span :class="$style['tap-info']">화면 탭 또는 마우스 움직여 버튼 보이기</span>
@@ -402,11 +342,11 @@ const resetSeatData = () => {
 
   .container:not(:fullscreen) & {
     width: 100%;
-    max-width: calc(v-bind(SEAT_MAX_WIDTH) * 1px);
+    max-width: 800px;
   }
 
   .container:fullscreen & {
-    width: min(calc(100% * v-bind(FULLSCREEN_SEAT_RATIO)), var(--table-width-screen-height));
+    width: 70%;
   }
 
   .done & {

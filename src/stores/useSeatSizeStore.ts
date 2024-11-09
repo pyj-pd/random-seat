@@ -11,7 +11,13 @@ import {
   NAME_LINE_BREAK,
   SEAT_DATA_LOCAL_STORAGE_KEY,
 } from '@/constants/seat'
-import { type SeatData, type SeatNameData, type SeatPosition, type SeatRowData } from '@/types/seat'
+import {
+  type SeatData,
+  type SeatNameData,
+  type SeatPosition,
+  type SeatRowData,
+  type SeatSize,
+} from '@/types/seat'
 import { getShuffledSeatData, getTotalNumberOfSeats, initializeSeatData } from '@/utils/seat'
 import { defineStore } from 'pinia'
 
@@ -59,7 +65,7 @@ export const useSeatSizeStore = defineStore('seatSize', {
      * @returns A function that can be called to get the data.
      */
     getSeatData(state) {
-      return ([columnPos, rowPos]: SeatPosition) => state.seatData[rowPos][columnPos]
+      return ({ columnPos, rowPos }: SeatPosition) => state.seatData[rowPos][columnPos]
     },
     /**
      * Total number of seats included.
@@ -85,12 +91,13 @@ export const useSeatSizeStore = defineStore('seatSize', {
   actions: {
     /**
      * Set seat data size.
-     * @param columnSize
-     * @param rowSize
+     * @param seatSize
+     * @param seatSize.columnSize
+     * @param seatSize.rowSize
      * @param modify Whether to modify the original data or initialize again. Default value is `false`.
      * @returns An object that indicates whether setting seat size was successful.
      */
-    setSize(columnSize: number, rowSize: number, modify: boolean = false): SetSeatSizeResult {
+    setSize({ columnSize, rowSize }: SeatSize, modify: boolean = false): SetSeatSizeResult {
       const result: SetSeatSizeResult = {
         columnSize: true,
         rowSize: true,
@@ -103,8 +110,7 @@ export const useSeatSizeStore = defineStore('seatSize', {
       else this.rowSize = rowSize
 
       this.seatData = initializeSeatData(
-        this.columnSize,
-        this.rowSize,
+        { columnSize: this.columnSize, rowSize: this.rowSize },
         modify ? this.seatData : undefined,
       )
 
@@ -112,13 +118,17 @@ export const useSeatSizeStore = defineStore('seatSize', {
     },
     /**
      * Reset seat data.
+     * @param seatSize Set to `null` to use current size.
      * @param columnSize Column size to reset to. If not provided, it will use current column size.
      * @param rowSize Row size to reset to. If not provided, it will use current row size.
      * @param preserveExcludedState Whether to preserve excluded state of the seats. Default value is `false`.
      */
-    clearSeatData(columnSize?: number, rowSize?: number, preserveExcludedState = false) {
+    clearSeatData(seatSize: SeatSize | null, preserveExcludedState = false) {
+      const columnSize = seatSize?.columnSize ?? this.columnSize,
+        rowSize = seatSize?.rowSize ?? this.rowSize
+
       // Set size first
-      this.setSize(columnSize ?? this.columnSize, rowSize ?? this.rowSize, true)
+      this.setSize({ columnSize, rowSize }, true)
 
       // Reset seat data
       this.seatData = this.seatData.map((row) =>
@@ -194,7 +204,7 @@ export const useSeatSizeStore = defineStore('seatSize', {
      * @param seatPos.rowPos
      * @param data Data of the seat to modify into.
      */
-    setSeatData([columnPos, rowPos]: SeatPosition, data: SeatData) {
+    setSeatData({ columnPos, rowPos }: SeatPosition, data: SeatData) {
       this.seatData[rowPos][columnPos] = data
     },
     /**
