@@ -312,7 +312,7 @@ const resetSeatData = () => {
   padding: 20px;
 
   &:fullscreen {
-    @include value.paper-texture-background(palette.$black);
+    @include value.paper-texture-background;
   }
 }
 
