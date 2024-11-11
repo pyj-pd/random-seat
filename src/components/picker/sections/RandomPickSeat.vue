@@ -14,6 +14,7 @@ import {
   getTableSvgViewbox,
   TABLE_BORDER_WIDTH,
   TABLE_SEAT_HEIGHT,
+  TABLE_SEAT_NUMBER_PADDING,
   TABLE_SEAT_WIDTH,
   TABLE_TOP_INDICATOR_BORDER_WIDTH,
   TABLE_TOP_INDICATOR_HEIGHT,
@@ -295,15 +296,26 @@ const resetSeatData = () => {
                 :height="TABLE_SEAT_HEIGHT"
                 :stroke-width="TABLE_BORDER_WIDTH"
               />
-              <text
-                v-if="seat.assignedNumber"
-                :x="TABLE_SEAT_WIDTH / 2"
-                :y="TABLE_SEAT_HEIGHT / 2 + TABLE_BORDER_WIDTH"
-                text-anchor="middle"
-                dominant-baseline="middle"
-              >
-                {{ nameData[seat.assignedNumber] ?? seat.assignedNumber }}
-              </text>
+              <template v-if="seat.assignedNumber">
+                <text
+                  v-if="nameData[seat.assignedNumber]"
+                  :x="TABLE_SEAT_NUMBER_PADDING"
+                  :y="TABLE_SEAT_NUMBER_PADDING"
+                  text-anchor="start"
+                  dominant-baseline="hanging"
+                  :class="$style['seat-number']"
+                >
+                  {{ seat.assignedNumber }}
+                </text>
+                <text
+                  :x="TABLE_SEAT_WIDTH / 2"
+                  :y="TABLE_SEAT_HEIGHT / 2"
+                  text-anchor="middle"
+                  dominant-baseline="middle"
+                >
+                  {{ nameData[seat.assignedNumber] ?? seat.assignedNumber }}
+                </text>
+              </template>
             </g>
           </template>
         </svg>
@@ -444,6 +456,12 @@ const resetSeatData = () => {
 
   text {
     fill: seat.$text-color;
+  }
+
+  .seat-number {
+    font-size: seat.$seat-number-font-size;
+
+    fill: seat.$seat-number-text-color;
   }
 }
 
