@@ -5,7 +5,8 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { getMathRandomValue } from '@/utils/random'
 import { MAX_SEAT_ROW_SIZE, MAX_SEAT_COLUMN_SIZE } from '@/constants/seat'
 import { useSectionNavigation } from '@/composables/useSectionNavigation'
-import { SITE_NAME } from '@/constants/project'
+import { GITHUB_REPO_URL, SITE_NAME } from '@/constants/project'
+import TextLink from '@/components/common/TextLink.vue'
 
 const { setCurrentSectionId } = useSectionNavigation()
 
@@ -53,10 +54,14 @@ onBeforeUnmount(
   <main :class="$style.container">
     <div :class="$style['title-container']">
       <h1 :class="$style.title">{{ SITE_NAME }}</h1>
-      <p>학교 등의 자리 배치를 바꿀 예정이신가요?</p>
+      <p>자리 배치를 바꾸실 예정이신가요?</p>
       <p>
         간편한 설정으로 손쉽게 최대 {{ `${MAX_SEAT_COLUMN_SIZE}×${MAX_SEAT_ROW_SIZE}` }} 크기의
         자리를 뽑아보세요.
+      </p>
+      <p>
+        이 프로그램은 오픈소스 프로그램입니다.
+        <TextLink :href="GITHUB_REPO_URL">GitHub 레포지토리</TextLink>도 둘러보세요!
       </p>
     </div>
     <div :class="$style['seat-container']">

@@ -46,7 +46,7 @@ const updateNameData = () => {
   const element = textareaRef.value
   if (element === null) return
 
-  validateTextarea(element)
+  validateTextarea()
   setNameData(element.value)
 }
 
