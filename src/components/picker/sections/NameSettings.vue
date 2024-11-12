@@ -8,6 +8,7 @@ import { DATA_ARE_SAVED_TEXT, NAME_LINE_BREAK } from '@/constants/seat'
 import { useSectionNavigation } from '@/composables/useSectionNavigation'
 import CheckboxInput from '@/components/common/CheckboxInput.vue'
 import { useOptionStore } from '@/stores/useOptionStore'
+import { ref } from 'vue'
 
 const seatDataStore = useSeatDataStore(),
   { setNameData, clearNameData } = seatDataStore,
@@ -18,29 +19,40 @@ const optionStore = useOptionStore(),
 
 const { setCurrentSectionId } = useSectionNavigation()
 
+const textareaRef = ref<HTMLTextAreaElement | null>(null)
+
 /**
  * Detect if text input exceeds max line
  * and trim if it does.
- * @param event
  */
-const validateTextarea = (event: Event) => {
-  const target = event.target as HTMLTextAreaElement
-  const lineSplit: string[] = target.value.split(NAME_LINE_BREAK)
+const validateTextarea = () => {
+  const element = textareaRef.value
+  if (element === null) return
+
+  const lineSplit: string[] = element.value.split(NAME_LINE_BREAK)
 
   // If line exceeds total seat number, don't.
   if (lineSplit.length > totalSeatNumber.value) {
-    const { selectionStart, selectionEnd } = target
+    const { selectionStart, selectionEnd } = element
 
     lineSplit.splice(totalSeatNumber.value)
 
-    target.value = lineSplit.join(NAME_LINE_BREAK)
-    target.setSelectionRange(selectionStart, selectionEnd)
+    element.value = lineSplit.join(NAME_LINE_BREAK)
+    element.setSelectionRange(selectionStart, selectionEnd)
   }
 }
 
-const updateNameData = (event: Event) => {
-  validateTextarea(event)
-  setNameData((event.target as HTMLInputElement).value)
+const updateNameData = () => {
+  const element = textareaRef.value
+  if (element === null) return
+
+  validateTextarea(element)
+  setNameData(element.value)
+}
+
+const moveToNextSection = () => {
+  updateNameData()
+  setCurrentSectionId('random-pick-seat')
 }
 </script>
 
@@ -61,6 +73,7 @@ const updateNameData = (event: Event) => {
           </div>
         </div>
         <textarea
+          ref="textareaRef"
           :class="$style.textarea"
           :value="nameDataString"
           @input="validateTextarea"
@@ -70,9 +83,7 @@ const updateNameData = (event: Event) => {
     </div>
     <ButtonContainer sticky>
       <ShadowButton warning @click="clearNameData">이름 초기화</ShadowButton>
-      <ShadowButton @click="() => setCurrentSectionId('random-pick-seat')"
-        >뽑기 화면으로</ShadowButton
-      >
+      <ShadowButton @click="moveToNextSection">뽑기 화면으로</ShadowButton>
     </ButtonContainer>
   </main>
 </template>
