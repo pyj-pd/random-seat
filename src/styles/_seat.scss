@@ -1,4 +1,5 @@
 @use 'sass:math';
+@use 'sass:color';
 @use './value' as value;
 @use './palette' as palette;
 
@@ -16,15 +17,15 @@ $aspect-ratio: math.div(1.8, 1);
 $border-color: palette.$darker-gray;
 
 $background-color: palette.$dark-gray;
-$text-color: palette.$blackish;
+$text-color: palette.$black;
 
 $top-indicator-background-color: palette.$gray;
 $top-indicator-border-color: palette.$dark-gray;
-$top-indicator-text-color: palette.$blackish;
+$top-indicator-text-color: palette.$black;
 $top-indicator-font-size: 0.9rem;
 
 $seat-number-font-size: 0.8rem;
-$seat-number-text-color: palette.$darker-gray;
+$seat-number-text-color: color.adjust(palette.$darker-gray, $lightness: -15%);
 
 $excluded-background-color: palette.$white;
 $excluded-border-color: palette.$gray;

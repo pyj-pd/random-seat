@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CustomButton from '@/components/common/ShadowButton.vue'
-import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
+import { useSeatDataStore } from '@/stores/useSeatSizeStore'
 import { waitMs } from '@/utils/time'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import confetti from 'canvas-confetti'
@@ -21,8 +21,9 @@ import {
   TABLE_TOP_INDICATOR_WIDTH,
 } from '@/utils/seat-svg'
 import { TOP_INDICATOR_TEXT } from '@/constants/seat'
+import { useOptionStore } from '@/stores/useOptionStore'
 
-/**nvm u
+/**
  * Initial delay between each shuffle in milliseconds.
  */
 const DEFAULT_SHUFFLE_DELAY_MS = 50,
@@ -52,9 +53,12 @@ let rouletteAudioBuffer: AudioBuffer, rouletteDoneAudioBuffer: AudioBuffer
 
 let isUnmounted: boolean = false
 
-const seatSizeStore = useSeatSizeStore()
-const { shuffleSeats, clearSeatData } = seatSizeStore
-const { columnSize, rowSize, seatData, nameData } = storeToRefs(seatSizeStore)
+const seatDataStore = useSeatDataStore(),
+  { shuffleSeats, clearSeatData } = seatDataStore,
+  { columnSize, rowSize, seatData, nameData } = storeToRefs(seatDataStore)
+
+const optionStore = useOptionStore(),
+  { showSeatNumbers } = storeToRefs(optionStore)
 
 type PickingState = 'initial' | 'picking' | 'idle' | 'done'
 
@@ -297,8 +301,9 @@ const resetSeatData = () => {
                 :stroke-width="TABLE_BORDER_WIDTH"
               />
               <template v-if="seat.assignedNumber">
+                <!-- Seat number -->
                 <text
-                  v-if="nameData[seat.assignedNumber]"
+                  v-if="showSeatNumbers && nameData[seat.assignedNumber]"
                   :x="TABLE_SEAT_NUMBER_PADDING"
                   :y="TABLE_SEAT_NUMBER_PADDING"
                   text-anchor="start"
@@ -307,6 +312,7 @@ const resetSeatData = () => {
                 >
                   {{ seat.assignedNumber }}
                 </text>
+                <!-- Seat text(name/number) -->
                 <text
                   :x="TABLE_SEAT_WIDTH / 2"
                   :y="TABLE_SEAT_HEIGHT / 2"

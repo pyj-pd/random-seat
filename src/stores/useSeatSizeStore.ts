@@ -43,7 +43,7 @@ const _isLineSizeInvalid = (type: SeatLineType, size: number): boolean => {
   else return false
 }
 
-export const useSeatSizeStore = defineStore('seatSize', {
+export const useSeatDataStore = defineStore('seatData', {
   state: () => ({
     /** Internal! Do not modify directly. */
     columnSize: DEFAULT_COLUMN_SIZE,
@@ -52,12 +52,6 @@ export const useSeatSizeStore = defineStore('seatSize', {
 
     nameData: { ...DEFAULT_NAME_DATA } as SeatNameData,
     seatData: [...DEFAULT_SEAT_ROW_DATA] as SeatRowData,
-
-    /**
-     * Whether user used the website first time.
-     * Used for showing tooltip guides.
-     */
-    isFirstTime: true,
   }),
   getters: {
     /**

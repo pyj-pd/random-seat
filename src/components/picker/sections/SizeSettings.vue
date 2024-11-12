@@ -11,7 +11,7 @@ import {
   MIN_SEAT_NUMBER,
   TOP_INDICATOR_TEXT,
 } from '@/constants/seat'
-import { useSeatSizeStore } from '@/stores/useSeatSizeStore'
+import { useSeatDataStore } from '@/stores/useSeatSizeStore'
 import { storeToRefs } from 'pinia'
 import PersonIcon from '../icons/PersonIcon.vue'
 import { onMounted, ref, watch } from 'vue'
@@ -21,16 +21,15 @@ import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import SectionTitle from '../SectionTitle.vue'
 import type { SeatPosition } from '@/types/seat'
 import { useSectionNavigation } from '@/composables/useSectionNavigation'
+import { useOptionStore } from '@/stores/useOptionStore'
 
-const seatSizeStore = useSeatSizeStore()
-const { setSize, clearSeatData, clearNameData, setSeatData, removeSeatLine } = seatSizeStore
+const seatDataStore = useSeatDataStore(),
+  { setSize, clearSeatData, clearNameData, setSeatData, removeSeatLine } = seatDataStore,
+  { columnSize, rowSize, seatData, getSeatData, totalSeatNumber } = storeToRefs(seatDataStore)
 
 const scrollViewRef = ref<HTMLDivElement | null>(null)
 
 const { setCurrentSectionId } = useSectionNavigation()
-
-const { columnSize, rowSize, isFirstTime, seatData, getSeatData, totalSeatNumber } =
-  storeToRefs(seatSizeStore)
 
 /**
  * Update this in order to reshow the mouse guide pop-up.
@@ -40,11 +39,15 @@ const showMouseGuide = ref<boolean>(false)
 
 const reshowMouseGuide = () => mouseGuideKey.value++
 
-onMounted(() => {
-  // Show mouse guide only on first time.
-  // This will work on `onMounted` because we need initial data of `isFirstTime`
-  // before actually changing the `isFirstTime` value.
+/**
+ * Show mouse guide only on first time.
+ * This will work on `onMounted` because we need initial data of `isFirstTime`
+ * before actually changing the `isFirstTime` value.
+ */
+const optionStore = useOptionStore(),
+  { isFirstTime } = storeToRefs(optionStore)
 
+onMounted(() => {
   showMouseGuide.value = isFirstTime.value
   if (isFirstTime.value) reshowMouseGuide() // Show tooltip if first time
 
@@ -379,7 +382,7 @@ $table-width: 880px;
   padding: 22px;
 
   background-color: palette.$gray;
-  color: palette.$blackish;
+  color: seat.$text-color;
   border: solid seat.$border-width palette.$dark-gray;
 
   font-variant: proportional-nums;
