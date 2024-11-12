@@ -25,7 +25,6 @@ const { setCurrentSectionId } = useSectionNavigation()
  */
 const validateTextarea = (event: Event) => {
   const target = event.target as HTMLTextAreaElement
-
   const lineSplit: string[] = target.value.split(NAME_LINE_BREAK)
 
   // If line exceeds total seat number, don't.
@@ -39,7 +38,10 @@ const validateTextarea = (event: Event) => {
   }
 }
 
-const updateNameData = (event: Event) => setNameData((event.target as HTMLInputElement).value)
+const updateNameData = (event: Event) => {
+  validateTextarea(event)
+  setNameData((event.target as HTMLInputElement).value)
+}
 </script>
 
 <template>
