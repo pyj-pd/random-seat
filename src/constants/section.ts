@@ -1,5 +1,4 @@
 import { defineAsyncComponent, type Component } from 'vue'
-import MainView from '@/components/picker/sections/MainView.vue'
 import LoadingSection from '@/components/picker/sections/LoadingSection.vue'
 import type { RouteName } from '@/router'
 
@@ -13,7 +12,6 @@ export type SectionData = {
   showTitle?: boolean
 
   component: Component
-  fullscreen?: boolean
 }
 
 export type SectionList = {
@@ -26,13 +24,6 @@ export type SectionList = {
  * **The order of sections matter!** It will be used on navigation bar back button.
  */
 export const sections = {
-  'main-view': {
-    title: '메인 화면',
-    showTitle: false,
-
-    component: MainView,
-    fullscreen: false,
-  },
   'size-settings': {
     title: '행과 열 설정하기',
     component: defineAsyncComponent({
@@ -62,7 +53,7 @@ export type SectionId = keyof typeof sections
 
 export const sectionIds = Object.keys(sections) as SectionId[]
 
-export const defaultSectionId: SectionId = 'main-view',
+export const defaultSectionId: SectionId = 'size-settings',
   defaultRouteHash: string = ''
 
 export const ROUTE_HASH_PREFIX = '#' as const

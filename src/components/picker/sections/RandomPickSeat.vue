@@ -355,9 +355,11 @@ const resetSeatData = () => {
 .container {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-self: center;
 
   padding: 20px;
+
+  min-height: 100%;
 
   &:fullscreen {
     @include value.paper-texture-background;
