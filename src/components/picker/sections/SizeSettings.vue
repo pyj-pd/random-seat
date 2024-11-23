@@ -436,6 +436,8 @@ $table-width: 880px;
   width: 60px;
   height: 40px;
 
+  text-decoration: underline;
+
   &:hover {
     background-color: palette.$red;
     color: palette.$gray;

@@ -72,14 +72,13 @@ watch(currentSectionId, () => {
 .view-container {
   position: relative;
 
+  display: flex;
   flex: 1;
 
   min-height: 100vh;
 }
 
 .view {
-  position: absolute;
-
   width: 100%;
   min-height: 100%;
 
