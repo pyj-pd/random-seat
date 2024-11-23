@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import SlideTransition from '@/components/common/SlideTransition.vue'
 import NavigationBar from '@/components/picker/NavigationBar.vue'
+import PageFooter from '@/components/picker/PageFooter.vue'
 import { defaultRouteHash } from '@/constants/section'
 import type { PickerRouteName } from '@/router'
 import { useSectionStore } from '@/stores/useSectionStore'
@@ -51,6 +52,7 @@ watch(currentSectionId, () => {
         <component :is="currentSectionData.component" :class="$style.view"></component>
       </SlideTransition>
     </div>
+    <PageFooter />
   </div>
 </template>
 
@@ -65,13 +67,14 @@ watch(currentSectionId, () => {
   flex-direction: column;
 
   width: 100%;
-  min-height: 100vh;
 }
 
 .view-container {
   position: relative;
 
   flex: 1;
+
+  min-height: 100vh;
 }
 
 .view {

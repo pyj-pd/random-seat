@@ -52,6 +52,8 @@ watch(currentSectionId, () => {
 @use '@/styles/palette' as palette;
 @use '@/styles/value' as value;
 
+$vertical-padding: 15px;
+
 .container {
   display: flex;
   gap: 15px;
@@ -59,12 +61,12 @@ watch(currentSectionId, () => {
 
   border-bottom: solid value.$border-width palette.$black;
 
-  padding: 15px value.$view-padding;
-
   width: 100%;
 
+  padding: $vertical-padding value.$view-padding;
+
   @media screen and (max-width: value.$small-screen-width) {
-    padding: 15px value.$small-screen-view-padding;
+    padding: $vertical-padding value.$small-screen-view-padding;
   }
 }
 
