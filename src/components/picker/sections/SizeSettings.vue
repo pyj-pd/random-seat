@@ -22,6 +22,9 @@ import SectionTitle from '../SectionTitle.vue'
 import type { SeatPosition } from '@/types/seat'
 import { useSectionNavigation } from '@/composables/useSectionNavigation'
 import { useOptionStore } from '@/stores/useOptionStore'
+import { sections, type SectionId } from '@/constants/section'
+
+const NEXT_SECTION: SectionId = 'name-settings'
 
 const seatDataStore = useSeatDataStore(),
   { setSize, clearSeatData, clearNameData, setSeatData, removeSeatLine } = seatDataStore,
@@ -251,7 +254,9 @@ const removeRow = (index: number) => {
       <ShadowButton warning @click="resetSeatData">자리 및 이름 초기화</ShadowButton>
       <ShadowButton @click="() => reshowMouseGuide()">도움말 보기</ShadowButton>
 
-      <ShadowButton @click="() => setCurrentSectionId('name-settings')">다음으로</ShadowButton>
+      <ShadowButton show-next-icon @click="() => setCurrentSectionId(NEXT_SECTION)"
+        >{{ sections[NEXT_SECTION].title }}으로</ShadowButton
+      >
     </ButtonContainer>
   </main>
 </template>

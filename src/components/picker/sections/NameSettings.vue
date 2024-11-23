@@ -9,6 +9,9 @@ import { useSectionNavigation } from '@/composables/useSectionNavigation'
 import CheckboxInput from '@/components/common/CheckboxInput.vue'
 import { useOptionStore } from '@/stores/useOptionStore'
 import { ref } from 'vue'
+import { sections, type SectionId } from '@/constants/section'
+
+const NEXT_SECTION: SectionId = 'random-pick-seat'
 
 const seatDataStore = useSeatDataStore(),
   { setNameData, clearNameData } = seatDataStore,
@@ -52,7 +55,7 @@ const updateNameData = () => {
 
 const moveToNextSection = () => {
   updateNameData()
-  setCurrentSectionId('random-pick-seat')
+  setCurrentSectionId(NEXT_SECTION)
 }
 </script>
 
@@ -83,7 +86,9 @@ const moveToNextSection = () => {
     </div>
     <ButtonContainer sticky>
       <ShadowButton warning @click="clearNameData">이름 초기화</ShadowButton>
-      <ShadowButton @click="moveToNextSection">뽑기 화면으로</ShadowButton>
+      <ShadowButton show-next-icon @click="moveToNextSection"
+        >{{ sections[NEXT_SECTION].title }}으로</ShadowButton
+      >
     </ButtonContainer>
   </main>
 </template>

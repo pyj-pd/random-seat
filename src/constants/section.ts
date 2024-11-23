@@ -25,7 +25,7 @@ export type SectionList = {
  */
 export const sections = {
   'size-settings': {
-    title: '행과 열 설정하기',
+    title: '자리 배치 설정',
     component: defineAsyncComponent({
       /** @todo use Suspense instead of repeating the same code */
       loader: () => import('@/components/picker/sections/SizeSettings.vue'),
@@ -33,7 +33,7 @@ export const sections = {
     }),
   },
   'name-settings': {
-    title: '이름 설정하기',
+    title: '이름 설정',
     component: defineAsyncComponent({
       /** @todo use Suspense instead of repeating the same code */
       loader: () => import('@/components/picker/sections/NameSettings.vue'),
@@ -41,7 +41,7 @@ export const sections = {
     }),
   },
   'random-pick-seat': {
-    title: '무작위 자리 뽑기',
+    title: '자리 추첨',
     component: defineAsyncComponent({
       loader: () => import('@/components/picker/sections/RandomPickSeat.vue'),
       loadingComponent: LoadingSection,
