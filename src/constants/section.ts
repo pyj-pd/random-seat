@@ -1,6 +1,7 @@
 import { defineAsyncComponent, type Component } from 'vue'
 import LoadingSection from '@/components/picker/sections/LoadingSection.vue'
 import type { RouteName } from '@/router'
+import SizeSettings from '@/components/picker/sections/SizeSettings.vue'
 
 export const DEFAULT_SHOW_TITLE = true,
   DEFAULT_FULLSCREEN = true
@@ -26,11 +27,7 @@ export type SectionList = {
 export const sections = {
   'size-settings': {
     title: '자리 배치 설정',
-    component: defineAsyncComponent({
-      /** @todo use Suspense instead of repeating the same code */
-      loader: () => import('@/components/picker/sections/SizeSettings.vue'),
-      loadingComponent: LoadingSection,
-    }),
+    component: SizeSettings,
   },
   'name-settings': {
     title: '이름 설정',

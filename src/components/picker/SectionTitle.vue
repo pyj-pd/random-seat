@@ -7,7 +7,7 @@ defineProps<{
 
 <template>
   <div :class="$style.title">
-    <h2>{{ $props.title }}</h2>
+    <h3>{{ $props.title }}</h3>
     <p v-if="$props.description" :class="$style.description">{{ $props.description }}</p>
   </div>
 </template>
@@ -20,6 +20,10 @@ defineProps<{
   gap: 5px;
 
   width: 100%;
+
+  h3 {
+    font-size: 1.4rem;
+  }
 }
 
 .description {
