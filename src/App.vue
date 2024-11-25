@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useSeoMeta } from '@unhead/vue'
+import { useSeoMeta, useHead } from '@unhead/vue'
 import { defaultMetadata } from './router'
 import { SITE_NAME, SITE_URL } from './constants/project'
 
@@ -14,6 +14,15 @@ useSeoMeta({
   ogUrl: SITE_URL,
   robots: visibleToSearchEngines ? 'all' : 'none',
   ogImage: `${SITE_URL}/apple-icon.png`,
+})
+
+useHead({
+  link: [
+    {
+      rel: 'canonical',
+      href: SITE_URL,
+    },
+  ],
 })
 </script>
 
