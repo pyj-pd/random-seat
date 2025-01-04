@@ -33,7 +33,7 @@ export const routeMetadata = [
   {
     name: 'home',
     title: `${SITE_NAME} — ${SITE_SLOGAN}`,
-    description: `최대 ${MAX_SEAT_COLUMN_SIZE}×${MAX_SEAT_ROW_SIZE} 크기의 자리 배치를 랜덤하게 바꾸어 보세요. TV에 연결하여 같이 보면 더욱 좋습니다. 직관적인 UI와 깔끔한 디자인을 갖추고 있습니다.`,
+    description: `최대 ${MAX_SEAT_COLUMN_SIZE}×${MAX_SEAT_ROW_SIZE} 크기의 자리 배치를 랜덤하게 바꾸어 보세요. 무작위로 자리를 간편하고 공평하게 뽑을 수 있습니다.`,
     visibleToSearchEngines: true,
   },
 
