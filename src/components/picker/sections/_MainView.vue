@@ -20,7 +20,7 @@ const SEAT_SHAPE_INTERVAL = 1000,
 type SeatShape = (typeof seatShapeTypes)[number]
 
 const seatShapes = ref<SeatShape[][]>([]),
-  seatShapeInterval = ref<number | null>(null)
+  seatShapeInterval = ref<ReturnType<typeof setInterval> | null>(null)
 
 const setRandomSeatShapes = () => {
   const newShapes: SeatShape[][] = []
@@ -31,7 +31,7 @@ const setRandomSeatShapes = () => {
     for (let column = 0; column < SEAT_COLUMN_NUMBER; column++) {
       const randomIndex = Math.floor(getMathRandomValue() * seatShapeTypes.length)
 
-      rowShape.push(seatShapeTypes[randomIndex])
+      rowShape.push(seatShapeTypes[randomIndex]!)
     }
 
     newShapes.push(rowShape)

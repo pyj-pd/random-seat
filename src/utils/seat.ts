@@ -80,7 +80,7 @@ export const getShuffledSeatData = (data: SeatRowData): SeatRowData => {
         numberLength,
     )
 
-    randomNumbers.push(numbers[randomIndex])
+    randomNumbers.push(numbers[randomIndex]!)
     numbers.splice(randomIndex, 1)
   }
 
@@ -95,7 +95,7 @@ export const getShuffledSeatData = (data: SeatRowData): SeatRowData => {
       // from `randomNumbers` array
       const newSeat: SeatData = {
         ...seat,
-        assignedNumber: randomNumbers[currentIndex],
+        assignedNumber: randomNumbers[currentIndex]!,
       }
       currentIndex++
 
@@ -117,6 +117,6 @@ export const getSeatSize = (
   columnSize: number
   rowSize: number
 } => ({
-  columnSize: data[0].length,
+  columnSize: data[0]!.length,
   rowSize: data.length,
 })

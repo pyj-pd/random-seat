@@ -44,8 +44,8 @@ const SHUFFLE_SOUND_VOLUME = 5,
   SHUFFLE_SOUND_PLAYBACK_RATE = 3,
   SHUFFLE_DONE_SOUND_PLAYBACK_RATE = 1.5
 
-const ROULETTE_AUDIO_LOCATION = '/sounds/roulette.mp3',
-  ROULETTE_DONE_AUDIO_LOCATION = '/sounds/roulette-done.mp3'
+const ROULETTE_AUDIO_LOCATION = `${import.meta.env.BASE_URL}sounds/roulette.mp3`,
+  ROULETTE_DONE_AUDIO_LOCATION = `${import.meta.env.BASE_URL}sounds/roulette-done.mp3`
 
 let audioContext: AudioContext, gainNode: GainNode
 
@@ -115,7 +115,7 @@ onBeforeUnmount(() => (document.body.style.cursor = 'unset')) // Reset cursor st
 
 const CONTROL_BUTTONS_HIDE_AFTER = 3_000 //ms
 
-let buttonHiddenTimer: number
+let buttonHiddenTimer: ReturnType<typeof setTimeout>
 
 const startButtonHiddenTimer = () => {
   // Show button controls

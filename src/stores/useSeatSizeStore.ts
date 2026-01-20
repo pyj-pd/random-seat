@@ -59,7 +59,7 @@ export const useSeatDataStore = defineStore('seatData', {
      * @returns A function that can be called to get the data.
      */
     getSeatData(state) {
-      return ({ columnPos, rowPos }: SeatPosition) => state.seatData[rowPos][columnPos]
+      return ({ columnPos, rowPos }: SeatPosition) => state.seatData[rowPos]![columnPos]
     },
     /**
      * Total number of seats included.
@@ -76,7 +76,7 @@ export const useSeatDataStore = defineStore('seatData', {
       for (const seatNumber in this.nameData) {
         const seatIndex = Number(seatNumber) - 1
 
-        data[seatIndex] = state.nameData[seatNumber]
+        data[seatIndex] = state.nameData[seatNumber]!
       }
 
       return data.join(NAME_LINE_BREAK)
@@ -151,7 +151,7 @@ export const useSeatDataStore = defineStore('seatData', {
 
       modifyingSeat: {
         if (type === 'column') {
-          const columnLength = this.seatData[0].length
+          const columnLength = this.seatData[0]!.length
 
           if (_isLineSizeInvalid('column', columnLength - 1)) {
             result.columnSize = false
@@ -199,7 +199,7 @@ export const useSeatDataStore = defineStore('seatData', {
      * @param data Data of the seat to modify into.
      */
     setSeatData({ columnPos, rowPos }: SeatPosition, data: SeatData) {
-      this.seatData[rowPos][columnPos] = data
+      this.seatData[rowPos]![columnPos] = data
     },
     /**
      * Assign random numbers to the seats.

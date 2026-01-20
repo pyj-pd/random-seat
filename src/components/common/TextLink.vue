@@ -7,7 +7,7 @@ defineProps<TextLinkProps>()
 </script>
 
 <template>
-  <a target="_blank" v-bind="$props" :class="$style.a"><slot></slot></a>
+  <a v-bind="$props" target="_blank" :class="$style.a"><slot></slot></a>
 </template>
 
 <style lang="scss" module>

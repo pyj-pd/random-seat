@@ -32,7 +32,7 @@ export const useSectionNavigation = () => {
   const setCurrentSectionIndex = (sectionIndex: number) => {
     const sectionId = sectionIds[sectionIndex]
 
-    setCurrentSectionId(sectionId)
+    if (sectionId) setCurrentSectionId(sectionId)
   }
 
   return { setCurrentSectionId, setCurrentSectionIndex }

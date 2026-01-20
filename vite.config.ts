@@ -14,17 +14,10 @@ export default defineConfig({
     outDir: 'out',
     emptyOutDir: true,
   },
-  base: './',
+  base: '/random-seat/',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-    },
-  },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        api: 'modern-compiler',
-      },
     },
   },
 })

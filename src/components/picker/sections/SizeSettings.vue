@@ -70,7 +70,8 @@ const toggleSeat = (position: SeatPosition, isExcluded: boolean) => {
   if (totalSeatNumber.value <= MIN_SEAT_NUMBER && !isExcluded) return // Seat number reached minimum
 
   const currentSeatData = getSeatData.value(position)
-  setSeatData(position, { ...currentSeatData, isExcluded: !currentSeatData.isExcluded })
+  if (currentSeatData)
+    setSeatData(position, { ...currentSeatData, isExcluded: !currentSeatData.isExcluded })
 }
 
 const resetSeatData = () => {
