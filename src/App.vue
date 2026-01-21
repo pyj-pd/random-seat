@@ -2,6 +2,7 @@
 import { useSeoMeta, useHead } from '@unhead/vue'
 import { defaultMetadata } from './router'
 import { PARENT_SITE_NAME, SITE_URL } from './constants/project'
+import type { WithContext, WebSite } from 'schema-dts'
 
 const { title, description, visibleToSearchEngines } = defaultMetadata
 
@@ -18,7 +19,7 @@ useSeoMeta({
   robots: visibleToSearchEngines ? 'all' : 'none',
 })
 
-const jsonLd = {
+const jsonLd: WithContext<WebSite> = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: PARENT_SITE_NAME,

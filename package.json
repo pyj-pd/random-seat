@@ -42,6 +42,7 @@
     "postcss-html": "^1.8.1",
     "prettier": "^3.8.0",
     "sass": "^1.97.2",
+    "schema-dts": "^1.1.5",
     "typescript": "~5.9.3",
     "vite": "^7.3.1",
     "vite-plugin-vue-devtools": "^8.0.5",
