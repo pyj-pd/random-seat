@@ -6,4 +6,4 @@ export const PARENT_SITE_NAME = 'pyj-pd'
 
 export const SITE_NAME = '무작위 자리 뽑기',
   SITE_SLOGAN = '깔끔하고 편리하게 자리 배치',
-  SITE_URL = 'https://pyj-pd.github.io/random-seat/'
+  SITE_URL = 'https://pyj-pd.dev/random-seat/'
