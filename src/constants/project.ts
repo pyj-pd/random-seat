@@ -1,6 +1,7 @@
 // Make sure to change `base` in `vite.config.ts` too!
 
 export const GITHUB_REPO_URL = 'https://github.com/pyj-pd/random-seat'
+export const BLOG_URL = 'https://pyj-pd.dev/'
 
 export const PARENT_SITE_NAME = 'pyj-pd'
 

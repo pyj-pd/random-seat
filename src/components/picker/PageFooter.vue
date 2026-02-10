@@ -1,14 +1,21 @@
 <script setup lang="ts">
-import { GITHUB_REPO_URL } from '@/constants/project'
+import { BLOG_URL, GITHUB_REPO_URL } from '@/constants/project'
 import TextLink from '../common/TextLink.vue'
 </script>
 
 <template>
   <footer :class="$style.container">
-    <p>
-      이 프로그램은 오픈소스 프로그램입니다.
-      <TextLink :href="GITHUB_REPO_URL">GitHub 레포지토리</TextLink>도 둘러보세요!
-    </p>
+    <ul>
+      <li>
+        <p>
+          이 프로그램은 오픈소스 프로그램입니다.
+          <TextLink :href="GITHUB_REPO_URL" target="_blank" rel="noopener noreferrer">GitHub 레포지토리</TextLink>도 둘러보세요!
+        </p>
+      </li>
+      <li>
+        <p>Made by <TextLink :href="BLOG_URL">pyj-pd</TextLink></p>
+      </li>
+    </ul>
   </footer>
 </template>
 
@@ -19,9 +26,6 @@ import TextLink from '../common/TextLink.vue'
 $vertical-padding: 30px;
 
 .container {
-  display: flex;
-  align-items: center;
-
   width: 100%;
 
   border-top: solid value.$border-width palette.$black;

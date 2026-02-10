@@ -6,7 +6,7 @@ withDefaults(
   }>(),
   {
     enterY: '7px',
-    duration: 0.35,
+    duration: 0.2,
   },
 )
 </script>
