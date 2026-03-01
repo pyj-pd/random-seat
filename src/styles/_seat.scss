@@ -24,8 +24,8 @@ $top-indicator-border-color: palette.$dark-gray;
 $top-indicator-text-color: palette.$black;
 $top-indicator-font-size: 0.9rem;
 
-$seat-number-font-size: 0.8rem;
-$seat-number-text-color: color.adjust(palette.$darker-gray, $lightness: -15%);
+$seat-number-font-size: 1rem;
+$seat-number-text-color: color.adjust(palette.$darker-gray, $lightness: -25%);
 
 $excluded-background-color: palette.$white;
 $excluded-border-color: palette.$gray;
