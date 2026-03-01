@@ -47,12 +47,10 @@ withDefaults(
 
   &.sticky {
     position: sticky;
-    bottom: 0;
+    bottom: value.$button-container-margin;
     z-index: 100;
 
     width: 100%;
-
-    padding: value.$button-container-margin 0;
 
     button {
       backdrop-filter: blur(value.$button-backdrop-blur);

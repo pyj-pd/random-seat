@@ -334,22 +334,23 @@ const resetSeatData = () => {
           </template>
         </svg>
       </div>
-      <div :class="[$style['control-container'], { [$style.inactive]: isControlInactive }]">
-        <ButtonContainer :class="$style['button-container']">
-          <CustomButton v-if="screenfull.isEnabled" @click="toggleFullscreen">{{
-            !isFullscreen ? '전체화면으로 보기' : '전체화면 나가기'
-          }}</CustomButton>
-          <CustomButton :disabled="pickingState === 'picking'" warning @click="resetSeatData"
-            >자리 초기화</CustomButton
-          >
-          <CustomButton
-            :disabled="pickingState === 'picking'"
-            :loading="pickingState === 'picking'"
-            @click="startRandomPick"
-            >뽑기</CustomButton
-          >
-        </ButtonContainer>
-      </div>
+      <ButtonContainer
+        :class="[$style['button-container'], { [$style.inactive]: isControlInactive }]"
+        sticky
+      >
+        <CustomButton v-if="screenfull.isEnabled" @click="toggleFullscreen">{{
+          !isFullscreen ? '전체화면으로 보기' : '전체화면 나가기'
+        }}</CustomButton>
+        <CustomButton :disabled="pickingState === 'picking'" warning @click="resetSeatData"
+          >자리 초기화</CustomButton
+        >
+        <CustomButton
+          :disabled="pickingState === 'picking'"
+          :loading="pickingState === 'picking'"
+          @click="startRandomPick"
+          >뽑기</CustomButton
+        >
+      </ButtonContainer>
     </div>
   </main>
 </template>
@@ -534,43 +535,20 @@ const resetSeatData = () => {
 }
 
 // Controls
-.control-container {
+.button-container {
+  transform: translateY(0px);
+  opacity: 1;
+
+  transition: value.$animation-duration value.$animation-ease;
+  transition-property: opacity, transform;
+
   .container:fullscreen & {
     position: absolute;
-    bottom: value.$button-container-margin;
-    left: 0;
-  }
-
-  & {
-    transform: translateY(0px);
-    opacity: 1;
-
-    width: 100%;
-
-    display: flex;
-    gap: value.$button-container-gap;
-    flex-direction: column;
-    align-items: center;
-
-    transition: value.$animation-duration value.$animation-ease;
-    transition-property: opacity, transform;
   }
 
   &.inactive {
     transform: translateY(20px);
     opacity: 0.2;
-  }
-}
-
-.button-container {
-  .container:fullscreen & {
-    button {
-      backdrop-filter: blur(value.$button-backdrop-blur);
-    }
-  }
-
-  & {
-    flex: 0 0 auto;
   }
 }
 </style>
