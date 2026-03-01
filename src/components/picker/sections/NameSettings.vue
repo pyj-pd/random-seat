@@ -10,6 +10,7 @@ import CheckboxInput from '@/components/common/CheckboxInput.vue'
 import { useOptionStore } from '@/stores/useOptionStore'
 import { ref } from 'vue'
 import { sections, type SectionId } from '@/constants/section'
+import { useEventListener } from '@vueuse/core'
 
 const NEXT_SECTION: SectionId = 'random-pick-seat'
 
@@ -24,32 +25,10 @@ const { setCurrentSectionId } = useSectionNavigation()
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
-/**
- * Detect if text input exceeds max line
- * and trim if it does.
- */
-const validateTextarea = () => {
-  const element = textareaRef.value
-  if (element === null) return
-
-  const lineSplit: string[] = element.value.split(NAME_LINE_BREAK)
-
-  // If line exceeds total seat number, don't.
-  if (lineSplit.length > totalSeatNumber.value) {
-    const { selectionStart, selectionEnd } = element
-
-    lineSplit.splice(totalSeatNumber.value)
-
-    element.value = lineSplit.join(NAME_LINE_BREAK)
-    element.setSelectionRange(selectionStart, selectionEnd)
-  }
-}
-
 const updateNameData = () => {
   const element = textareaRef.value
   if (element === null) return
 
-  validateTextarea()
   setNameData(element.value)
 }
 
@@ -79,7 +58,6 @@ const moveToNextSection = () => {
           ref="textareaRef"
           :class="$style.textarea"
           :value="nameDataString"
-          @input="validateTextarea"
           @change="updateNameData"
         />
       </div>
