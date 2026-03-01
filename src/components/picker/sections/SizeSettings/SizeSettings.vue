@@ -13,12 +13,12 @@ import {
 } from '@/constants/seat'
 import { useSeatDataStore } from '@/stores/useSeatSizeStore'
 import { storeToRefs } from 'pinia'
-import PersonIcon from '../icons/PersonIcon.vue'
+import PersonIcon from '@/components/picker/icons/PersonIcon.vue'
 import { onMounted, ref, watch } from 'vue'
-import XIcon from '../icons/XIcon.vue'
-import MouseGuide from '../MouseGuide.vue'
+import XIcon from '@/components/picker/icons/XIcon.vue'
+import MouseGuide from '@/components/picker/sections/SizeSettings/MouseGuide.vue'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
-import SectionTitle from '../SectionTitle.vue'
+import SectionTitle from '@/components/picker/SectionTitle.vue'
 import type { SeatPosition } from '@/types/seat'
 import { useSectionNavigation } from '@/composables/useSectionNavigation'
 import { useOptionStore } from '@/stores/useOptionStore'
@@ -27,8 +27,9 @@ import { sections, type SectionId } from '@/constants/section'
 const NEXT_SECTION: SectionId = 'name-settings'
 
 const seatDataStore = useSeatDataStore(),
-  { setSize, clearSeatData, clearNameData, setSeatData, removeSeatLine } = seatDataStore,
-  { columnSize, rowSize, seatData, getSeatData, totalSeatNumber } = storeToRefs(seatDataStore)
+  { setSize, clearSeatData, clearNameData, getSeatData, setSeatData, removeSeatLine } =
+    seatDataStore,
+  { columnSize, rowSize, seatData, totalSeatNumber } = storeToRefs(seatDataStore)
 
 const scrollViewRef = ref<HTMLDivElement | null>(null)
 
@@ -69,7 +70,7 @@ const rowUpdateRefresh = ref<number | null>(null),
 const toggleSeat = (position: SeatPosition, isExcluded: boolean) => {
   if (totalSeatNumber.value <= MIN_SEAT_NUMBER && !isExcluded) return // Seat number reached minimum
 
-  const currentSeatData = getSeatData.value(position)
+  const currentSeatData = getSeatData(position)
   if (currentSeatData)
     setSeatData(position, { ...currentSeatData, isExcluded: !currentSeatData.isExcluded })
 }

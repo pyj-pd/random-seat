@@ -1,7 +1,7 @@
 import { defineAsyncComponent, type Component } from 'vue'
 import LoadingSection from '@/components/picker/sections/LoadingSection.vue'
 import type { RouteName } from '@/router'
-import SizeSettings from '@/components/picker/sections/SizeSettings.vue'
+import SizeSettings from '@/components/picker/sections/SizeSettings/SizeSettings.vue'
 
 export const DEFAULT_SHOW_TITLE = true,
   DEFAULT_FULLSCREEN = true
@@ -40,7 +40,7 @@ export const sections = {
   'random-pick-seat': {
     title: '자리 추첨',
     component: defineAsyncComponent({
-      loader: () => import('@/components/picker/sections/RandomPickSeat.vue'),
+      loader: () => import('@/components/picker/sections/SeatPickSection/SeatPickSection.vue'),
       loadingComponent: LoadingSection,
     }),
   },
