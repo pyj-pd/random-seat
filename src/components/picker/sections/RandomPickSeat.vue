@@ -78,11 +78,16 @@ const containerRef = ref<HTMLDivElement | null>(null),
   isFullscreen = ref<boolean>(false)
 
 const toggleFullscreen = () => {
-  if (screenfull.isEnabled && !screenfull.isFullscreen && containerRef.value)
+  if (screenfull.isEnabled && !screenfull.isFullscreen && containerRef.value) {
     screenfull.request(containerRef.value, {
       navigationUI: 'hide',
     })
-  else screenfull.exit()
+
+    if ('lock' in screen.orientation) {
+      // @ts-expect-error TypeScript doesn't know about the lock method, but it exists in modern browsers
+      screen.orientation.lock('landscape').catch(() => null)
+    }
+  } else screenfull.exit()
 }
 
 const onFullscreenChange = () => {
@@ -118,7 +123,7 @@ const CONTROL_BUTTON_INACTIVE_AFTER = 3_000 //ms
 let buttonInactiveTimer: ReturnType<typeof setTimeout>
 
 const startButtonInactiveTimer = (event?: PointerEvent) => {
-  event?.preventDefault()
+  if (isControlInactive.value) event?.preventDefault()
 
   // Show button controls
   isControlInactive.value = false
@@ -537,6 +542,9 @@ const resetSeatData = () => {
   }
 
   & {
+    transform: translateY(0px);
+    opacity: 1;
+
     width: 100%;
 
     display: flex;
@@ -544,11 +552,13 @@ const resetSeatData = () => {
     flex-direction: column;
     align-items: center;
 
-    transition: opacity value.$animation-duration value.$animation-ease;
+    transition: value.$animation-duration value.$animation-ease;
+    transition-property: opacity, transform;
   }
 
   &.inactive {
-    opacity: 0.5;
+    transform: translateY(20px);
+    opacity: 0.2;
   }
 }
 

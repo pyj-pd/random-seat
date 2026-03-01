@@ -20,7 +20,7 @@
 
 :root {
   color-scheme: light only;
-  font-size: 16px; // @todo responsive font size
+  font-size: value.$font-size; // @todo responsive font size
 }
 
 ::selection {
@@ -29,8 +29,8 @@
 }
 
 body {
-  font-family: 'Happiness Sans', sans-serif;
-  line-height: 1.6;
+  font-family: value.$font-family;
+  line-height: value.$line-height;
 
   @include value.paper-texture-background();
   color: palette.$black;
@@ -53,4 +53,9 @@ h4,
 h5,
 h6 {
   font-weight: bold;
+}
+
+ul,
+ol {
+  padding-left: value.$list-padding;
 }
