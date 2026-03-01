@@ -24,7 +24,7 @@
   height: 100%;
 }
 
-$shape-size: 10px;
+$shape-size: 7px;
 $shape-gap: 3px;
 
 .shape-container {

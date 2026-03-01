@@ -4,7 +4,6 @@ import { useSeatDataStore } from '@/stores/useSeatSizeStore'
 import { waitMs } from '@/utils/time'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import confetti from 'canvas-confetti'
-import { useEventListener } from '@/composables/useEventListener'
 import { storeToRefs } from 'pinia'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import screenfull from 'screenfull'
@@ -22,6 +21,7 @@ import {
 } from '@/utils/seat-svg'
 import { TOP_INDICATOR_TEXT } from '@/constants/seat'
 import { useOptionStore } from '@/stores/useOptionStore'
+import { useEventListener } from '@vueuse/core'
 
 /**
  * Initial delay between each shuffle in milliseconds.
@@ -87,7 +87,7 @@ const toggleFullscreen = () => {
 
 const onFullscreenChange = () => {
   isFullscreen.value = screenfull.isFullscreen
-  isControlHidden.value = false
+  isControlInactive.value = false
 }
 
 onMounted(() => {
@@ -103,32 +103,35 @@ onBeforeUnmount(() => {
 })
 
 // Control buttons handling
-const isControlHidden = ref<boolean>(false)
+const isControlInactive = ref<boolean>(false)
 
 watch(
-  isControlHidden,
+  isControlInactive,
   (newStateHidden) =>
     // Hide cursor after inactivity
     (document.body.style.cursor = newStateHidden ? 'none' : 'unset'),
 )
 onBeforeUnmount(() => (document.body.style.cursor = 'unset')) // Reset cursor state before unmounting
 
-const CONTROL_BUTTONS_HIDE_AFTER = 3_000 //ms
+const CONTROL_BUTTON_INACTIVE_AFTER = 3_000 //ms
 
-let buttonHiddenTimer: ReturnType<typeof setTimeout>
+let buttonInactiveTimer: ReturnType<typeof setTimeout>
 
-const startButtonHiddenTimer = () => {
+const startButtonInactiveTimer = (event?: PointerEvent) => {
+  event?.preventDefault()
+
   // Show button controls
-  isControlHidden.value = false
+  isControlInactive.value = false
 
   // Start timer
-  clearTimeout(buttonHiddenTimer)
-  buttonHiddenTimer = setTimeout(() => {
-    if (isFullscreen.value) isControlHidden.value = true
-  }, CONTROL_BUTTONS_HIDE_AFTER)
+  clearTimeout(buttonInactiveTimer)
+  buttonInactiveTimer = setTimeout(() => {
+    if (isFullscreen.value) isControlInactive.value = true
+  }, CONTROL_BUTTON_INACTIVE_AFTER)
 }
 
-useEventListener(window, ['pointermove', 'pointerdown'], startButtonHiddenTimer, true)
+useEventListener(window, ['pointermove', 'pointerdown'], startButtonInactiveTimer)
+onMounted(() => startButtonInactiveTimer())
 
 // Confetti handling
 const confettiCanvas = ref<HTMLCanvasElement | null>(null)
@@ -171,7 +174,7 @@ const startRandomPick = async () => {
 
   pickingState.value = 'picking'
   howManyPicks.value++
-  if (isFullscreen.value) isControlHidden.value = true
+  if (isFullscreen.value) isControlInactive.value = true
 
   let shuffleDelay: number = DEFAULT_SHUFFLE_DELAY_MS,
     /**
@@ -326,8 +329,7 @@ const resetSeatData = () => {
           </template>
         </svg>
       </div>
-      <div :class="[$style['control-container'], { [$style.hidden]: isControlHidden }]">
-        <span :class="$style['tap-info']">화면 탭 또는 마우스 움직여 버튼 보이기</span>
+      <div :class="[$style['control-container'], { [$style.inactive]: isControlInactive }]">
         <ButtonContainer :class="$style['button-container']">
           <CustomButton v-if="screenfull.isEnabled" @click="toggleFullscreen">{{
             !isFullscreen ? '전체화면으로 보기' : '전체화면 나가기'
@@ -542,19 +544,11 @@ const resetSeatData = () => {
     flex-direction: column;
     align-items: center;
 
-    transition: value.$animation-duration value.$animation-ease;
-    transition-property: opacity, transform;
+    transition: opacity value.$animation-duration value.$animation-ease;
   }
 
-  .container:not(:fullscreen) & > .tap-info {
-    display: none;
-  }
-
-  &.hidden {
-    transform: translateY(10px);
-    opacity: 0;
-
-    pointer-events: none;
+  &.inactive {
+    opacity: 0.5;
   }
 }
 

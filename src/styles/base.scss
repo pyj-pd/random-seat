@@ -18,6 +18,10 @@
   font-weight: normal;
 }
 
+:root {
+  color-scheme: light only;
+}
+
 ::selection {
   background-color: palette.$black;
   color: palette.$white;
@@ -25,7 +29,7 @@
 
 body {
   font-family: 'Happiness Sans', sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.6;
 
   @include value.paper-texture-background();
