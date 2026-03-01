@@ -1,8 +1,7 @@
 import { type RouteRecordRaw } from 'vue-router'
 import PickerView from '../views/PickerView.vue'
-import { MAX_SEAT_COLUMN_SIZE, MAX_SEAT_ROW_SIZE } from '@/constants/seat'
 import NotFoundView from '@/views/NotFoundView.vue'
-import { SITE_NAME, SITE_SLOGAN } from '@/constants/project'
+import { SITE_DESCRIPTION, SITE_TITLE } from '@/constants/project'
 
 export const routes = [
   {
@@ -32,11 +31,10 @@ export type RouteMetadata = {
 export const routeMetadata = [
   {
     name: 'home',
-    title: `${SITE_NAME} — ${SITE_SLOGAN}`,
-    description: `최대 ${MAX_SEAT_COLUMN_SIZE}×${MAX_SEAT_ROW_SIZE} 크기의 자리 배치를 랜덤하게 바꾸어 보세요. 무작위로 자리를 간편하고 공평하게 뽑을 수 있습니다.`,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     visibleToSearchEngines: true,
   },
-
   {
     name: '404-not-found',
     title: '404 Not Found',

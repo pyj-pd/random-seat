@@ -27,6 +27,7 @@ withDefaults(
 </template>
 
 <style module lang="scss">
+@use '@/styles/palette' as palette;
 @use '@/styles/value' as value;
 
 .container {
@@ -53,6 +54,7 @@ withDefaults(
     width: 100%;
 
     button {
+      background-color: rgba(palette.$bright-white, 0.7);
       backdrop-filter: blur(value.$button-backdrop-blur);
     }
   }
