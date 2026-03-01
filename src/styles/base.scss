@@ -20,6 +20,7 @@
 
 :root {
   color-scheme: light only;
+  font-size: 16px; // @todo responsive font size
 }
 
 ::selection {
@@ -29,7 +30,6 @@
 
 body {
   font-family: 'Happiness Sans', sans-serif;
-  font-size: 16px;
   line-height: 1.6;
 
   @include value.paper-texture-background();
@@ -43,7 +43,7 @@ body {
 input,
 textarea,
 button {
-  font-family: inherit;
+  font: inherit;
 }
 
 h1,

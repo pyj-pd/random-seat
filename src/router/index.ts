@@ -44,7 +44,6 @@ export const routeMetadata = [
   },
 ] as const satisfies RouteMetadata[]
 
-/** @todo add support for dynamic metadata */
 export const defaultMetadata = routeMetadata.find((value) => value.name === 'home') as RouteMetadata
 
 // Validation
