@@ -55,7 +55,7 @@ let isUnmounted: boolean = false
 
 const seatDataStore = useSeatDataStore(),
   { shuffleSeats, clearSeatData } = seatDataStore,
-  { columnSize, rowSize, seatData, nameData } = storeToRefs(seatDataStore)
+  { columnSize, rowSize, seatData, nameData, orientation } = storeToRefs(seatDataStore)
 
 const optionStore = useOptionStore(),
   { showSeatNumbers } = storeToRefs(optionStore)
@@ -85,7 +85,7 @@ const toggleFullscreen = () => {
 
     if ('lock' in screen.orientation) {
       // @ts-expect-error TypeScript doesn't know about the lock method, but it exists in modern browsers
-      screen.orientation.lock('landscape').catch(() => null)
+      screen.orientation.lock(orientation.value).catch(() => null)
     }
   } else screenfull.exit()
 }

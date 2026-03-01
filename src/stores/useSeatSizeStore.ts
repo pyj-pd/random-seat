@@ -55,13 +55,6 @@ export const useSeatDataStore = defineStore('seatData', {
   }),
   getters: {
     /**
-     * Get data of a seat at certain position.
-     * @returns A function that can be called to get the data.
-     */
-    getSeatData(state) {
-      return ({ columnPos, rowPos }: SeatPosition) => state.seatData[rowPos]![columnPos]
-    },
-    /**
      * Total number of seats included.
      */
     totalSeatNumber(state): number {
@@ -81,8 +74,18 @@ export const useSeatDataStore = defineStore('seatData', {
 
       return data.join(NAME_LINE_BREAK)
     },
+    orientation(state): 'landscape' | 'portrait' {
+      return state.columnSize >= state.rowSize ? 'landscape' : 'portrait'
+    },
   },
   actions: {
+    /**
+     * Get data of a seat at certain position.
+     * @returns A function that can be called to get the data.
+     */
+    getSeatData({ columnPos, rowPos }: SeatPosition) {
+      return this.seatData[rowPos]![columnPos]
+    },
     /**
      * Set seat data size.
      * @param seatSize
