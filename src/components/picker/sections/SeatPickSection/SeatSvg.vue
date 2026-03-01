@@ -20,6 +20,7 @@ import {
   TABLE_FONT_VARIANT,
   TABLE_FONT_WEIGHT,
   TABLE_OVERFLOW,
+  TABLE_EXCLUDED_SEAT_BORDER_COLOR,
 } from '@/styles/seat-svg'
 import { storeToRefs } from 'pinia'
 import { useTemplateRef } from 'vue'
@@ -93,7 +94,7 @@ defineProps<{
           :width="TABLE_SEAT_WIDTH"
           :height="TABLE_SEAT_HEIGHT"
           :stroke-width="TABLE_BORDER_WIDTH"
-          :stroke="TABLE_BORDER_COLOR"
+          :stroke="seat.isExcluded ? TABLE_EXCLUDED_SEAT_BORDER_COLOR : TABLE_BORDER_COLOR"
           :fill="TABLE_SEAT_BACKGROUND_COLOR"
         />
         <template v-if="seat.assignedNumber">
