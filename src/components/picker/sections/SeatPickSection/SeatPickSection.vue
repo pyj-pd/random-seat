@@ -22,7 +22,8 @@ import {
   ROULETTE_AUDIO_LOCATION,
   ROULETTE_DONE_AUDIO_LOCATION,
 } from '@/constants/picker'
-import { downloadExportedSeatToPDF, generatePDFFileName } from '@/utils/pdf'
+import { generateSeatPDF, generatePDFFileName, PDF_MIME_TYPE } from '@/utils/pdf'
+import { downloadFile } from '@/utils/file'
 
 const { playSound, loadAudioFile } = useAudioPlayer({ volume: SHUFFLE_SOUND_VOLUME })
 
@@ -210,7 +211,8 @@ const saveSeatAsPDF = async () => {
   try {
     const fileName = generatePDFFileName()
 
-    await downloadExportedSeatToPDF(svgElement, orientation.value, fileName)
+    const pdfBlob = await generateSeatPDF(svgElement, orientation.value)
+    downloadFile(fileName, pdfBlob, PDF_MIME_TYPE)
   } catch (error) {
     alert('PDF로 저장하는 과정에서 오류가 발생했습니다.')
   } finally {

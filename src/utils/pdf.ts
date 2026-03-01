@@ -3,6 +3,7 @@ import jsPDF from 'jspdf'
 import 'svg2pdf.js'
 
 const PDF_FORMAT = 'a4'
+export const PDF_MIME_TYPE = 'application/pdf'
 
 const FONT_FILE_URL = `${import.meta.env.BASE_URL}fonts/happiness-sans-print.ttf`
 const FONT_FILENAME = 'HappinessSans.ttf'
@@ -10,11 +11,10 @@ const FONT_NAME = 'HappinessSans'
 
 const PAPER_SAFE_PADDING = 20
 
-export const downloadExportedSeatToPDF = async (
+export const generateSeatPDF = async (
   svgElement: SVGSVGElement,
   orientation: SeatOrientation,
-  fileName: string,
-): Promise<void> => {
+): Promise<Blob> => {
   const doc = new jsPDF({
     orientation,
     format: PDF_FORMAT,
@@ -45,7 +45,7 @@ export const downloadExportedSeatToPDF = async (
     height,
   })
 
-  doc.save(fileName)
+  return doc.output('blob')
 }
 
 /**
