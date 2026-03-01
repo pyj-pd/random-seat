@@ -6,7 +6,6 @@ interface ButtonProps extends /* @vue-ignore */ ButtonHTMLAttributes {
   disabled?: boolean
   warning?: boolean
   loading?: boolean
-  showNextIcon?: boolean
 }
 
 defineProps<ButtonProps>()
@@ -20,9 +19,6 @@ defineProps<ButtonProps>()
     >
       <div :class="$style.slot">
         <slot></slot>
-        <svg v-if="showNextIcon" viewBox="0 0 100 100" :class="$style['next-icon']">
-          <path d="M 0 50 H 100 L 50 0 M 100 50 L 50 100"></path>
-        </svg>
       </div>
       <LoadingIndicator v-if="loading" />
     </button>
@@ -109,23 +105,10 @@ $animation-duration: 0.1s;
   gap: value.$button-container-small-gap;
   justify-content: center;
   align-items: center;
-}
 
-.next-icon {
-  & {
-    width: 10px;
-    aspect-ratio: 1 / 1;
-
-    overflow: visible;
-  }
-
-  path {
-    fill: none;
-
-    stroke: currentColor;
-    stroke-width: 15;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+  > svg {
+    width: auto;
+    height: 1.2em;
   }
 }
 </style>

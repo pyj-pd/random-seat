@@ -13,9 +13,7 @@ import {
 } from '@/constants/seat'
 import { useSeatDataStore } from '@/stores/useSeatSizeStore'
 import { storeToRefs } from 'pinia'
-import PersonIcon from '@/components/picker/icons/PersonIcon.vue'
 import { onMounted, ref, watch } from 'vue'
-import XIcon from '@/components/picker/icons/XIcon.vue'
 import MouseGuide from '@/components/picker/sections/SizeSettings/MouseGuide.vue'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import SectionTitle from '@/components/picker/SectionTitle.vue'
@@ -23,6 +21,7 @@ import type { SeatPosition } from '@/types/seat'
 import { useSectionNavigation } from '@/composables/useSectionNavigation'
 import { useOptionStore } from '@/stores/useOptionStore'
 import { sections, type SectionId } from '@/constants/section'
+import { ArrowRight, CircleQuestionMark, Trash2, UserRound, X } from 'lucide-vue-next'
 
 const NEXT_SECTION: SectionId = 'name-settings'
 
@@ -219,8 +218,8 @@ const removeRow = (index: number) => {
                   "
                 >
                   <template v-if="column.assignedNumber">{{ column.assignedNumber }}</template>
-                  <PersonIcon v-else-if="!column.isExcluded" />
-                  <XIcon v-else :class="$style['x-shape']" />
+                  <UserRound v-else-if="!column.isExcluded" />
+                  <X v-else />
                 </NormalButton>
                 <MouseGuide
                   v-if="
@@ -253,12 +252,19 @@ const removeRow = (index: number) => {
       </div>
     </div>
     <ButtonContainer sticky>
-      <ShadowButton warning @click="resetSeatData">자리 및 이름 초기화</ShadowButton>
-      <ShadowButton @click="() => reshowMouseGuide()">도움말 보기</ShadowButton>
-
-      <ShadowButton show-next-icon @click="() => setCurrentSectionId(NEXT_SECTION)"
-        >{{ sections[NEXT_SECTION].title }}으로</ShadowButton
+      <ShadowButton warning @click="resetSeatData">
+        <Trash2 />
+        자리 및 이름 초기화</ShadowButton
       >
+      <ShadowButton @click="() => reshowMouseGuide()">
+        <CircleQuestionMark />
+        도움말 보기</ShadowButton
+      >
+
+      <ShadowButton @click="() => setCurrentSectionId(NEXT_SECTION)"
+        >{{ sections[NEXT_SECTION].title }}으로
+        <ArrowRight />
+      </ShadowButton>
     </ButtonContainer>
   </main>
 </template>
@@ -412,18 +418,9 @@ $table-width: 880px;
   .table tr:nth-child(even) &:not(.excluded) {
     background-color: palette.$dark-gray;
   }
-}
 
-.seat-button > svg {
-  $person-icon-size: 11px;
-
-  width: $person-icon-size;
-
-  &.x-shape {
-    $x-shape-size: 7px;
-
-    width: $x-shape-size;
-    height: $x-shape-size;
+  > svg {
+    width: 16px;
   }
 }
 

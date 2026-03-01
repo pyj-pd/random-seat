@@ -1,4 +1,4 @@
-export const downloadFile = (fileName: string, blob: Blob, type: string): void => {
+export const downloadFile = (fileName: string, blob: Blob): void => {
   const url = URL.createObjectURL(blob)
 
   const a = document.createElement('a')

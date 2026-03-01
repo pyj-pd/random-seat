@@ -4,13 +4,13 @@ import SectionTitle from '../SectionTitle.vue'
 import { storeToRefs } from 'pinia'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import ShadowButton from '@/components/common/ShadowButton.vue'
-import { DATA_ARE_SAVED_TEXT, NAME_LINE_BREAK } from '@/constants/seat'
+import { DATA_ARE_SAVED_TEXT } from '@/constants/seat'
 import { useSectionNavigation } from '@/composables/useSectionNavigation'
 import CheckboxInput from '@/components/common/CheckboxInput.vue'
 import { useOptionStore } from '@/stores/useOptionStore'
 import { ref } from 'vue'
 import { sections, type SectionId } from '@/constants/section'
-import { useEventListener } from '@vueuse/core'
+import { ArrowRight, Trash2 } from 'lucide-vue-next'
 
 const NEXT_SECTION: SectionId = 'random-pick-seat'
 
@@ -63,10 +63,11 @@ const moveToNextSection = () => {
       </div>
     </div>
     <ButtonContainer sticky>
-      <ShadowButton warning @click="clearNameData">이름 초기화</ShadowButton>
-      <ShadowButton show-next-icon @click="moveToNextSection"
-        >{{ sections[NEXT_SECTION].title }}으로</ShadowButton
-      >
+      <ShadowButton warning @click="clearNameData"><Trash2 />이름 초기화</ShadowButton>
+      <ShadowButton @click="moveToNextSection"
+        >{{ sections[NEXT_SECTION].title }}으로
+        <ArrowRight />
+      </ShadowButton>
     </ButtonContainer>
   </main>
 </template>

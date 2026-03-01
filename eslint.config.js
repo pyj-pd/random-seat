@@ -29,6 +29,6 @@ export default [
     ],
   },
   {
-    ignores: ['.gitignore', '**/.vite-ssg-temp/', '**/dist/', '**/node_modules/'],
+    ignores: ['.gitignore', '**/.vite-ssg-temp/', '**/out/', '**/node_modules/'],
   },
 ]

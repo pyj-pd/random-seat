@@ -3,7 +3,6 @@ import jsPDF from 'jspdf'
 import 'svg2pdf.js'
 
 const PDF_FORMAT = 'a4'
-export const PDF_MIME_TYPE = 'application/pdf'
 
 const FONT_FILE_URL = `${import.meta.env.BASE_URL}fonts/happiness-sans-print.ttf`
 const FONT_FILENAME = 'HappinessSans.ttf'

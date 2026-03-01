@@ -22,8 +22,9 @@ import {
   ROULETTE_AUDIO_LOCATION,
   ROULETTE_DONE_AUDIO_LOCATION,
 } from '@/constants/picker'
-import { generateSeatPDF, generatePDFFileName, PDF_MIME_TYPE } from '@/utils/pdf'
+import { generateSeatPDF, generatePDFFileName } from '@/utils/pdf'
 import { downloadFile } from '@/utils/file'
+import { Download, Trash2, Maximize, Minimize, Play } from 'lucide-vue-next'
 
 const { playSound, loadAudioFile } = useAudioPlayer({ volume: SHUFFLE_SOUND_VOLUME })
 
@@ -212,8 +213,8 @@ const saveSeatAsPDF = async () => {
     const fileName = generatePDFFileName()
 
     const pdfBlob = await generateSeatPDF(svgElement, orientation.value)
-    downloadFile(fileName, pdfBlob, PDF_MIME_TYPE)
-  } catch (error) {
+    downloadFile(fileName, pdfBlob)
+  } catch {
     alert('PDF로 저장하는 과정에서 오류가 발생했습니다.')
   } finally {
     isPDFExporting.value = false
@@ -230,28 +231,34 @@ const saveSeatAsPDF = async () => {
         <SeatSvg
           ref="seat-svg"
           :viewBox="tableSvgViewbox"
-          :isDone="pickingState === 'done'"
-          :isFullscreen="isFullscreen"
+          :is-done="pickingState === 'done'"
+          :is-fullscreen="isFullscreen"
         />
       </div>
       <ButtonContainer
         :class="[$style['button-container'], { [$style.inactive]: isControlInactive }]"
         sticky
       >
-        <CustomButton v-if="isFullscreenSupported" @click="toggleFullscreen">{{
-          !isFullscreen ? '전체화면으로 보기' : '전체화면 나가기'
-        }}</CustomButton>
-        <CustomButton :disabled="isPicking" warning @click="resetSeatData"
-          >자리 초기화</CustomButton
+        <CustomButton v-if="isFullscreenSupported" @click="toggleFullscreen">
+          <Minimize v-if="isFullscreen" />
+          <Maximize v-else />
+          {{ isFullscreen ? '전체화면 종료' : '전체화면' }}
+        </CustomButton>
+        <CustomButton :disabled="isPicking" warning @click="resetSeatData">
+          <Trash2 />
+          자리 초기화</CustomButton
         >
-        <CustomButton :disabled="isPicking" :loading="isPicking" @click="startRandomPick"
-          >뽑기</CustomButton
+        <CustomButton :disabled="isPicking" :loading="isPicking" @click="startRandomPick">
+          <Play />
+          뽑기</CustomButton
         >
         <CustomButton
           :disabled="isPicking || isPDFExporting"
-          @click="saveSeatAsPDF"
           :loading="isPDFExporting"
-          >PDF로 저장</CustomButton
+          @click="saveSeatAsPDF"
+        >
+          <Download />
+          PDF로 저장</CustomButton
         >
       </ButtonContainer>
     </div>

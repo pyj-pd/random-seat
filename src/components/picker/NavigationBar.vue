@@ -5,6 +5,7 @@ import { computed, ref, watch } from 'vue'
 import NormalButton from '@/components/common/NormalButton.vue'
 import { useSectionNavigation } from '@/composables/useSectionNavigation'
 import SlideTransition from '../common/SlideTransition.vue'
+import { MoveLeft } from 'lucide-vue-next'
 
 const sectionStore = useSectionStore()
 const { currentSectionIndex, currentSectionId, currentSectionData } = storeToRefs(sectionStore)
@@ -36,7 +37,7 @@ watch(currentSectionId, () => {
           :animation="false"
           @click="navigateToLastSection"
         >
-          <span :class="$style['back-arrow-icon']"></span>
+          <MoveLeft />
         </NormalButton>
       </Transition>
     </div>
@@ -83,18 +84,14 @@ $vertical-padding: 15px;
 
   padding: 0;
   border: none;
-}
 
-.back-arrow-icon {
-  display: block;
+  > svg {
+    transition: transform value.$animation-duration value.$animation-ease;
+  }
 
-  transform: translateX(25%) rotate(45deg);
-
-  width: 1em;
-  height: 1em;
-
-  border: solid currentColor;
-  border-width: 0 0 value.$border-width value.$border-width;
+  &:hover > svg {
+    transform: translateX(-3px);
+  }
 }
 
 .title-container {
