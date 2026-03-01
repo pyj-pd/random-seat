@@ -4,6 +4,7 @@
 @use './palette' as palette;
 
 // Values
+// Should not be used to style SVG. Use `seat-svg.ts` for SVG styling values.
 $border-width: value.$border-slim-width;
 
 $small-gap: 3px;
@@ -12,6 +13,7 @@ $gap: 5px;
 $font-size: 1.2rem;
 
 $aspect-ratio: math.div(1.8, 1);
+$excluded-scale: 0.9;
 
 // Colors
 $border-color: palette.$darker-gray;
@@ -22,11 +24,8 @@ $text-color: palette.$black;
 $top-indicator-background-color: palette.$gray;
 $top-indicator-border-color: palette.$dark-gray;
 $top-indicator-text-color: palette.$black;
-$top-indicator-font-size: 0.9rem;
 
-$seat-number-font-size: 1rem;
 $seat-number-text-color: color.adjust(palette.$darker-gray, $lightness: -25%);
 
 $excluded-background-color: palette.$white;
 $excluded-border-color: palette.$gray;
-$excluded-scale: 0.9;

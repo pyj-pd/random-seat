@@ -2,17 +2,19 @@
 import { TOP_INDICATOR_TEXT } from '@/constants/seat'
 import { useOptionStore } from '@/stores/useOptionStore'
 import { useSeatDataStore } from '@/stores/useSeatSizeStore'
+import { getTableSvgSeatTransform, getTableSvgTopIndicatorTransform } from '@/utils/seat-svg'
 import {
-  getTableSvgSeatTransform,
-  getTableSvgTopIndicatorTransform,
   TABLE_BORDER_WIDTH,
+  TABLE_SEAT_FONT_SIZE,
   TABLE_SEAT_HEIGHT,
+  TABLE_SEAT_NUMBER_FONT_SIZE,
   TABLE_SEAT_NUMBER_PADDING,
   TABLE_SEAT_WIDTH,
   TABLE_TOP_INDICATOR_BORDER_WIDTH,
+  TABLE_TOP_INDICATOR_FONT_SIZE,
   TABLE_TOP_INDICATOR_HEIGHT,
   TABLE_TOP_INDICATOR_WIDTH,
-} from '@/utils/seat-svg'
+} from '@/styles/seat-svg'
 import { storeToRefs } from 'pinia'
 
 const { seatData, nameData } = storeToRefs(useSeatDataStore())
@@ -49,6 +51,7 @@ defineProps<{
         :y="TABLE_TOP_INDICATOR_HEIGHT / 2 + TABLE_TOP_INDICATOR_BORDER_WIDTH"
         text-anchor="middle"
         dominant-baseline="middle"
+        :font-size="TABLE_TOP_INDICATOR_FONT_SIZE"
       >
         {{ TOP_INDICATOR_TEXT }}
       </text>
@@ -75,6 +78,7 @@ defineProps<{
             text-anchor="start"
             dominant-baseline="hanging"
             :class="$style['seat-number']"
+            :font-size="TABLE_SEAT_NUMBER_FONT_SIZE"
           >
             {{ seat.assignedNumber }}
           </text>
@@ -84,6 +88,7 @@ defineProps<{
             :y="TABLE_SEAT_HEIGHT / 2"
             text-anchor="middle"
             dominant-baseline="middle"
+            :font-size="TABLE_SEAT_FONT_SIZE"
           >
             {{ nameData[seat.assignedNumber] ?? seat.assignedNumber }}
           </text>
@@ -124,7 +129,6 @@ defineProps<{
   text {
     font-weight: 700;
     font-variant: proportional-nums;
-    font-size: seat.$font-size;
   }
 }
 
@@ -137,8 +141,6 @@ defineProps<{
   }
 
   text {
-    font-size: seat.$top-indicator-font-size;
-
     fill: seat.$top-indicator-text-color;
   }
 }
@@ -164,8 +166,6 @@ defineProps<{
   }
 
   .seat-number {
-    font-size: seat.$seat-number-font-size;
-
     fill: seat.$seat-number-text-color;
   }
 }
