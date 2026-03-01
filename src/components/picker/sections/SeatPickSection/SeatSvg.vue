@@ -4,21 +4,36 @@ import { useOptionStore } from '@/stores/useOptionStore'
 import { useSeatDataStore } from '@/stores/useSeatSizeStore'
 import { getTableSvgSeatTransform, getTableSvgTopIndicatorTransform } from '@/utils/seat-svg'
 import {
+  TABLE_BORDER_COLOR,
   TABLE_BORDER_WIDTH,
   TABLE_SEAT_FONT_SIZE,
   TABLE_SEAT_HEIGHT,
   TABLE_SEAT_NUMBER_FONT_SIZE,
   TABLE_SEAT_NUMBER_PADDING,
+  TABLE_TEXT_COLOR,
   TABLE_SEAT_WIDTH,
   TABLE_TOP_INDICATOR_BORDER_WIDTH,
   TABLE_TOP_INDICATOR_FONT_SIZE,
   TABLE_TOP_INDICATOR_HEIGHT,
   TABLE_TOP_INDICATOR_WIDTH,
+  TABLE_SEAT_BACKGROUND_COLOR,
+  TABLE_FONT_VARIANT,
+  TABLE_FONT_WEIGHT,
+  TABLE_OVERFLOW,
 } from '@/styles/seat-svg'
 import { storeToRefs } from 'pinia'
+import { useTemplateRef } from 'vue'
 
 const { seatData, nameData } = storeToRefs(useSeatDataStore())
 const { showSeatNumbers } = storeToRefs(useOptionStore())
+
+const svgRef = useTemplateRef<SVGSVGElement>('svg-ref')
+
+const getSVGElement = (): SVGSVGElement | null => {
+  return svgRef.value
+}
+
+defineExpose({ getSVGElement })
 
 defineProps<{
   viewBox: {
@@ -32,9 +47,14 @@ defineProps<{
 
 <template>
   <svg
+    ref="svg-ref"
     :class="[$style.table, isDone && $style.done, isFullscreen && $style.fullscreen]"
     :viewBox="`0 0 ${viewBox.width} ${viewBox.height}`"
     preserveAspectRatio="xMidYMid"
+    :color="TABLE_TEXT_COLOR"
+    :font-weight="TABLE_FONT_WEIGHT"
+    :font-variant="TABLE_FONT_VARIANT"
+    :overflow="TABLE_OVERFLOW"
   >
     <!-- Table top indicator -->
     <g
@@ -45,12 +65,17 @@ defineProps<{
         :width="TABLE_TOP_INDICATOR_WIDTH"
         :height="TABLE_TOP_INDICATOR_HEIGHT"
         :stroke-width="TABLE_TOP_INDICATOR_BORDER_WIDTH"
+        :stroke="TABLE_BORDER_COLOR"
+        :fill="TABLE_SEAT_BACKGROUND_COLOR"
       />
       <text
         :x="TABLE_TOP_INDICATOR_WIDTH / 2"
-        :y="TABLE_TOP_INDICATOR_HEIGHT / 2 + TABLE_TOP_INDICATOR_BORDER_WIDTH"
+        :y="
+          TABLE_TOP_INDICATOR_HEIGHT / 2 +
+          TABLE_TOP_INDICATOR_BORDER_WIDTH +
+          TABLE_TOP_INDICATOR_FONT_SIZE / 4 // `dominant-baseline` can't be used because of jsPDF text rendering issue
+        "
         text-anchor="middle"
-        dominant-baseline="middle"
         :font-size="TABLE_TOP_INDICATOR_FONT_SIZE"
       >
         {{ TOP_INDICATOR_TEXT }}
@@ -68,15 +93,16 @@ defineProps<{
           :width="TABLE_SEAT_WIDTH"
           :height="TABLE_SEAT_HEIGHT"
           :stroke-width="TABLE_BORDER_WIDTH"
+          :stroke="TABLE_BORDER_COLOR"
+          :fill="TABLE_SEAT_BACKGROUND_COLOR"
         />
         <template v-if="seat.assignedNumber">
           <!-- Seat number -->
           <text
             v-if="showSeatNumbers && nameData[seat.assignedNumber]"
             :x="TABLE_SEAT_NUMBER_PADDING"
-            :y="TABLE_SEAT_NUMBER_PADDING"
+            :y="TABLE_SEAT_NUMBER_PADDING + TABLE_SEAT_NUMBER_FONT_SIZE"
             text-anchor="start"
-            dominant-baseline="hanging"
             :class="$style['seat-number']"
             :font-size="TABLE_SEAT_NUMBER_FONT_SIZE"
           >
@@ -85,9 +111,8 @@ defineProps<{
           <!-- Seat text(name/number) -->
           <text
             :x="TABLE_SEAT_WIDTH / 2"
-            :y="TABLE_SEAT_HEIGHT / 2"
+            :y="TABLE_SEAT_HEIGHT / 2 + TABLE_SEAT_FONT_SIZE / 4"
             text-anchor="middle"
-            dominant-baseline="middle"
             :font-size="TABLE_SEAT_FONT_SIZE"
           >
             {{ nameData[seat.assignedNumber] ?? seat.assignedNumber }}
@@ -108,8 +133,6 @@ defineProps<{
     z-index: -1;
 
     user-select: none;
-
-    overflow: visible;
   }
 
   &:not(.fullscreen) {
@@ -124,11 +147,6 @@ defineProps<{
 
   &.done {
     animation: roulette-done-animation 0.2s value.$ease-in-out both;
-  }
-
-  text {
-    font-weight: 700;
-    font-variant: proportional-nums;
   }
 }
 

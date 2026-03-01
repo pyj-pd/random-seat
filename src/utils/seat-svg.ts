@@ -20,6 +20,13 @@ export const getTableSvgViewbox = ({
   return { width, height }
 }
 
+export const getTableSvgTopIndicatorTransform = (tableWidth: number): string => {
+  const x = tableWidth / 2 - TABLE_TOP_INDICATOR_WIDTH / 2, // center
+    y = 0
+
+  return `translate(${x}, ${y})`
+}
+
 export const getTableSvgSeatTransform = ({ columnPos, rowPos }: SeatPosition): string => {
   const x = columnPos * (TABLE_SEAT_WIDTH + TABLE_SEAT_GAP),
     y =
@@ -27,13 +34,6 @@ export const getTableSvgSeatTransform = ({ columnPos, rowPos }: SeatPosition): s
       TABLE_TOP_INDICATOR_GAP +
       TABLE_SEAT_GAP +
       rowPos * (TABLE_SEAT_HEIGHT + TABLE_SEAT_GAP)
-
-  return `translate(${x}, ${y})`
-}
-
-export const getTableSvgTopIndicatorTransform = (tableWidth: number): string => {
-  const x = tableWidth / 2 - TABLE_TOP_INDICATOR_WIDTH / 2,
-    y = 0
 
   return `translate(${x}, ${y})`
 }

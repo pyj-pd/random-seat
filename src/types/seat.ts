@@ -18,3 +18,5 @@ export type SeatRowData = SeatColumnData[]
 
 export type SeatPosition = { columnPos: number; rowPos: number }
 export type SeatSize = { columnSize: number; rowSize: number }
+
+export type SeatOrientation = 'landscape' | 'portrait'

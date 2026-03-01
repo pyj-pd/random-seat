@@ -22,6 +22,7 @@ import {
   ROULETTE_AUDIO_LOCATION,
   ROULETTE_DONE_AUDIO_LOCATION,
 } from '@/constants/picker'
+import { downloadExportedSeatToPDF, generatePDFFileName } from '@/utils/pdf'
 
 const { playSound, loadAudioFile } = useAudioPlayer({ volume: SHUFFLE_SOUND_VOLUME })
 
@@ -36,6 +37,8 @@ const seatDataStore = useSeatDataStore(),
 type PickingState = 'initial' | 'picking' | 'idle' | 'done'
 
 const pickingState = ref<PickingState>('initial')
+
+const isPicking = computed(() => pickingState.value === 'picking')
 
 /**
  * For setting SVG size based on column and row size,
@@ -190,6 +193,30 @@ const resetSeatData = () => {
   clearSeatData(null, true)
   pickCount.value = 0
 }
+
+// Export to PDF
+const seatRef = useTemplateRef('seat-svg')
+const isPDFExporting = ref<boolean>(false)
+
+const saveSeatAsPDF = async () => {
+  if (seatRef.value === null) return
+
+  const svgElement = seatRef.value.getSVGElement()
+
+  if (svgElement === null) return
+
+  isPDFExporting.value = true
+
+  try {
+    const fileName = generatePDFFileName()
+
+    await downloadExportedSeatToPDF(svgElement, orientation.value, fileName)
+  } catch (error) {
+    alert('PDF로 저장하는 과정에서 오류가 발생했습니다.')
+  } finally {
+    isPDFExporting.value = false
+  }
+}
 </script>
 
 <template>
@@ -199,6 +226,7 @@ const resetSeatData = () => {
       <div :class="$style['table-container']">
         <RandomPickCounter :pick-count="pickCount" />
         <SeatSvg
+          ref="seat-svg"
           :viewBox="tableSvgViewbox"
           :isDone="pickingState === 'done'"
           :isFullscreen="isFullscreen"
@@ -211,14 +239,17 @@ const resetSeatData = () => {
         <CustomButton v-if="isFullscreenSupported" @click="toggleFullscreen">{{
           !isFullscreen ? '전체화면으로 보기' : '전체화면 나가기'
         }}</CustomButton>
-        <CustomButton :disabled="pickingState === 'picking'" warning @click="resetSeatData"
+        <CustomButton :disabled="isPicking" warning @click="resetSeatData"
           >자리 초기화</CustomButton
         >
-        <CustomButton
-          :disabled="pickingState === 'picking'"
-          :loading="pickingState === 'picking'"
-          @click="startRandomPick"
+        <CustomButton :disabled="isPicking" :loading="isPicking" @click="startRandomPick"
           >뽑기</CustomButton
+        >
+        <CustomButton
+          :disabled="isPicking || isPDFExporting"
+          @click="saveSeatAsPDF"
+          :loading="isPDFExporting"
+          >PDF로 저장</CustomButton
         >
       </ButtonContainer>
     </div>

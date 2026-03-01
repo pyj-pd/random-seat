@@ -14,6 +14,7 @@ import {
 import {
   type SeatData,
   type SeatNameData,
+  type SeatOrientation,
   type SeatPosition,
   type SeatRowData,
   type SeatSize,
@@ -74,7 +75,7 @@ export const useSeatDataStore = defineStore('seatData', {
 
       return data.join(NAME_LINE_BREAK)
     },
-    orientation(state): 'landscape' | 'portrait' {
+    orientation(state): SeatOrientation {
       return state.columnSize >= state.rowSize ? 'landscape' : 'portrait'
     },
   },
