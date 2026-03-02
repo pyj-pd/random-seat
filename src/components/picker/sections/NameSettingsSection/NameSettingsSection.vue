@@ -44,7 +44,7 @@ const moveToNextSection = () => {
       title="이름을 입력해 주세요(선택)."
       :description="`각 번호에 이름은 최대 4글자까지만 입력할 수 있습니다.\n모든 번호에 이름이 대응되지 않아도 됩니다.\n${DATA_ARE_SAVED_TEXT}`"
     />
-    <div :class="$style['content-container']">
+    <section :class="$style['content-container']">
       <div :class="$style['option-container']">
         <CheckboxInput v-model="showSeatNumbers">자리 옆에 번호 표시하기</CheckboxInput>
       </div>
@@ -61,7 +61,7 @@ const moveToNextSection = () => {
           @change="updateNameData"
         />
       </div>
-    </div>
+    </section>
     <ButtonContainer sticky>
       <ShadowButton warning @click="clearNameData"><Trash2 />이름 초기화</ShadowButton>
       <ShadowButton @click="moveToNextSection"

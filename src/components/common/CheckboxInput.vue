@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import type { InputHTMLAttributes } from 'vue'
+defineOptions({
+  inheritAttrs: false,
+})
 
-type CheckboxProps = /* @vue-ignore */ InputHTMLAttributes
-
-defineProps<CheckboxProps>()
-
-// Model
-const model = defineModel({ type: Boolean })
+const model = defineModel<boolean>()
 </script>
 
 <template>
   <label :class="$style.container">
-    <input v-model="model" v-bind="$props" type="checkbox" />
+    <input v-model="model" v-bind="$attrs" type="checkbox" />
     <slot></slot>
   </label>
 </template>

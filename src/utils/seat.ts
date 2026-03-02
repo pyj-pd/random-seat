@@ -1,6 +1,4 @@
 import { type SeatData, type SeatRowData, type SeatSize } from '@/types/seat'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { getCryptoRandomValue, getMathRandomValue } from './random'
 
 const DEFAULT_SEAT_DATA: SeatData = {
   assignedNumber: null,
@@ -75,10 +73,7 @@ export const getShuffledSeatData = (data: SeatRowData): SeatRowData => {
 
   for (let i = 0; i < totalNumber; i++) {
     const numberLength = numbers.length
-    const randomIndex = Math.floor(
-      getMathRandomValue() /* or `getCryptoRandomValue()` if it really matters to you */ *
-        numberLength,
-    )
+    const randomIndex = Math.floor(Math.random() * numberLength)
 
     randomNumbers.push(numbers[randomIndex]!)
     numbers.splice(randomIndex, 1)

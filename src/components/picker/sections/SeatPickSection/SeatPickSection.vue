@@ -208,7 +208,7 @@ const saveSeatAsPDF = async () => {
 <template>
   <main ref="container-ref" :class="$style.container">
     <EndConfetti ref="confetti" />
-    <div :class="$style['view-container']">
+    <section :class="$style['view-container']">
       <div :class="$style['table-container']">
         <RandomPickCounter :pick-count="pickCount" />
         <SeatSvg
@@ -245,7 +245,7 @@ const saveSeatAsPDF = async () => {
           PDF로 저장</CustomButton
         >
       </ButtonContainer>
-    </div>
+    </section>
   </main>
 </template>
 

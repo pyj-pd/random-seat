@@ -13,7 +13,10 @@ $gap: 5px;
 $font-size: 1.2rem;
 
 $aspect-ratio: math.div(1.8, 1);
-$excluded-scale: 0.9;
+
+$seat-button-hover-scale: 0.9;
+$seat-button-active-scale: 0.85;
+$excluded-scale: 0.8;
 
 // Colors
 $border-color: palette.$darker-gray;
@@ -28,4 +31,4 @@ $top-indicator-text-color: palette.$black;
 $seat-number-text-color: color.adjust(palette.$darker-gray, $lightness: -25%);
 
 $excluded-background-color: palette.$white;
-$excluded-border-color: palette.$gray;
+$excluded-border-color: palette.$dark-gray;

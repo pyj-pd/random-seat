@@ -10,6 +10,7 @@ import { useOptionStore } from '@/stores/useOptionStore'
 import { sections, type SectionId } from '@/constants/section'
 import { ArrowRight, CircleQuestionMark, Trash2 } from 'lucide-vue-next'
 import TableLayout from './TableLayout.vue'
+import SeatSizeInput from './SeatSizeInput.vue'
 
 const NEXT_SECTION: SectionId = 'name-settings'
 
@@ -35,11 +36,12 @@ onMounted(() => {
 <template>
   <main :class="$style.container">
     <SectionTitle title="자리 배치를 설정해 주세요." :description="DATA_ARE_SAVED_TEXT" />
+    <SeatSizeInput />
     <TableLayout ref="table-layout" />
     <ButtonContainer sticky>
       <ShadowButton warning @click="() => tableLayoutRef?.resetSeatData()">
         <Trash2 />
-        자리 초기화</ShadowButton
+        자리 배치 초기화</ShadowButton
       >
       <ShadowButton @click="() => tableLayoutRef?.showMouseGuide()">
         <CircleQuestionMark />

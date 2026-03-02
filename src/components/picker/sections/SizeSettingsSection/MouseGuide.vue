@@ -3,7 +3,6 @@ import { ref, watch } from 'vue'
 
 const props = withDefaults(
   defineProps<{
-    text: string
     /**
      * When this value is set to 0, it will be invisible.
      */
@@ -13,6 +12,8 @@ const props = withDefaults(
     reshowKey: 0,
   },
 )
+
+defineSlots()
 
 const reshowUpdates = ref<number>(0)
 const isVisible = ref<boolean>(false)
@@ -31,7 +32,7 @@ const onAnimationEnd = () => (isVisible.value = false)
 <template>
   <div v-if="isVisible" :class="$style.container" @animationend="onAnimationEnd">
     <div v-if="reshowUpdates !== 0" :key="$props.reshowKey" :class="$style.tooltip">
-      <span>{{ $props.text }}</span>
+      <slot />
     </div>
   </div>
 </template>
@@ -52,7 +53,6 @@ $background-color: palette.$black;
 
 .tooltip {
   position: relative;
-  display: flex;
 
   text-align: center;
   white-space: nowrap;
