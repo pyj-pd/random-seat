@@ -24,7 +24,7 @@ import {
 } from '@/constants/picker'
 import { generateSeatPDF, generatePDFFileName } from '@/utils/pdf'
 import { downloadFile } from '@/utils/file'
-import { Download, Trash2, Maximize, Minimize, Play } from 'lucide-vue-next'
+import { Download, Trash2, Maximize, Minimize, Play, Square } from 'lucide-vue-next'
 
 const { playSound, loadAudioFile } = useAudioPlayer({ volume: SHUFFLE_SOUND_VOLUME })
 
@@ -137,10 +137,14 @@ const launchConfetti = () =>
 const pickCount = ref<number>(0)
 
 /**
- * Start shuffling the seat data.
+ * Start/Stop shuffling the seat data.
  */
-const startRandomPick = async () => {
-  if (pickingState.value === 'picking') return // nope !
+const toggleRandomPick = async () => {
+  if (pickingState.value === 'picking') {
+    // Stop picking if it's currently picking
+    pickingState.value = 'idle'
+    return
+  }
 
   pickingState.value = 'picking'
   pickCount.value++
@@ -152,7 +156,7 @@ const startRandomPick = async () => {
      */
     startDelayRemaining = SHUFFLE_DELAY_START_AFTER_NUMBERS
 
-  while (!isUnmounted && shuffleDelay <= SHUFFLE_END_DELAY) {
+  while (!isUnmounted && pickingState.value === 'picking' && shuffleDelay <= SHUFFLE_END_DELAY) {
     shuffleSeats()
     playSound(rouletteAudioBuffer, { playbackRate: SHUFFLE_SOUND_PLAYBACK_RATE })
 
@@ -162,8 +166,12 @@ const startRandomPick = async () => {
     else startDelayRemaining--
   }
 
+  // Shuffle all done
+
+  if (pickingState.value !== 'picking') return // If picking was stopped before shuffle ended, just return
+
   if (!isUnmounted) {
-    // Play roulette done sound
+    // Play roulette done sound if not unmounted yet
     playSound(rouletteDoneAudioBuffer, { playbackRate: SHUFFLE_DONE_SOUND_PLAYBACK_RATE })
 
     pickingState.value = 'done'
@@ -171,6 +179,7 @@ const startRandomPick = async () => {
     // Confetti
     launchConfetti()
   } else {
+    // Just end it with no effects if already unmounted
     pickingState.value = 'idle'
   }
 }
@@ -248,9 +257,10 @@ const saveSeatAsPDF = async () => {
           <Trash2 />
           자리 초기화</CustomButton
         >
-        <CustomButton :disabled="isPicking" :loading="isPicking" @click="startRandomPick">
-          <Play />
-          뽑기</CustomButton
+        <CustomButton @click="toggleRandomPick">
+          <Square v-if="isPicking" />
+          <Play v-else />
+          {{ isPicking ? '중지' : '뽑기' }}</CustomButton
         >
         <CustomButton
           :disabled="isPicking || isPDFExporting"

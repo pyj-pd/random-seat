@@ -30,7 +30,7 @@ defineProps<{
     background-color: palette.$black;
     color: palette.$white;
 
-    animation: random-pick-counter-animation 2s value.$ease-in-out both;
+    animation: random-pick-counter-animation 1.5s value.$ease-in-out both;
 
     user-select: none;
   }

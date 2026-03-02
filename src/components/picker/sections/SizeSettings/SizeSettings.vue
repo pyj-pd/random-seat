@@ -76,7 +76,6 @@ const toggleSeat = (position: SeatPosition, isExcluded: boolean) => {
 
 const resetSeatData = () => {
   clearSeatData({ columnSize: DEFAULT_COLUMN_SIZE, rowSize: DEFAULT_ROW_SIZE })
-  clearNameData()
 
   rowUpdateRefresh.value = null
   columnUpdateRefresh.value = null
@@ -254,7 +253,7 @@ const removeRow = (index: number) => {
     <ButtonContainer sticky>
       <ShadowButton warning @click="resetSeatData">
         <Trash2 />
-        자리 및 이름 초기화</ShadowButton
+        자리 초기화</ShadowButton
       >
       <ShadowButton @click="() => reshowMouseGuide()">
         <CircleQuestionMark />

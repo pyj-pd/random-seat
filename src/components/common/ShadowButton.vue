@@ -50,7 +50,7 @@ $animation-duration: 0.1s;
       calc($initial-shadow-depth - var(--v-shadow-depth))
     );
 
-    transition: transform value.$animation-duration value.$animation-ease;
+    transition: transform $animation-duration value.$animation-ease;
   }
 }
 
@@ -71,9 +71,8 @@ $animation-duration: 0.1s;
     @include button.button-disabled-styles();
   }
 
-  &::after {
+  &::before {
     content: '';
-
     position: absolute;
     z-index: -1;
     top: calc(-1 * value.$border-width);
@@ -96,7 +95,7 @@ $animation-duration: 0.1s;
     width: calc(100% + var(--v-shadow-depth));
     height: calc(100% + var(--v-shadow-depth));
 
-    transition: all value.$animation-duration value.$animation-ease;
+    transition: all $animation-duration value.$animation-ease;
   }
 }
 

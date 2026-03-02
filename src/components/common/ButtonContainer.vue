@@ -39,11 +39,8 @@ withDefaults(
     white-space: nowrap;
   }
 
-  @media screen and (max-width: value.$small-screen-width) {
-    &.responsive {
-      flex-direction: column;
-      align-items: center;
-    }
+  &.responsive {
+    flex-wrap: wrap;
   }
 
   &.sticky {
@@ -52,11 +49,6 @@ withDefaults(
     z-index: 100;
 
     width: 100%;
-
-    button {
-      background-color: rgba(palette.$bright-white, 0.7);
-      backdrop-filter: blur(value.$button-backdrop-blur);
-    }
   }
 }
 </style>

@@ -72,6 +72,8 @@ $background-color: palette.$black;
   background-color: $background-color;
   color: palette.$white;
 
+  font-weight: normal;
+
   pointer-events: none;
   transform-origin: 50% 0%;
   animation: tooltip-pop-up-animation 5s value.$ease-in-out both;
