@@ -4,43 +4,33 @@ import { ref, watch } from 'vue'
 const props = withDefaults(
   defineProps<{
     text: string
-    reshowKey?: number
     /**
-     * Whether to start animation immediately after mounting.
-     * Set to `false` if you are trying to control only with `reshowKey` prop.
-     * Default value is `true`.
+     * When this value is set to 0, it will be invisible.
      */
-    immediate?: boolean
+    reshowKey?: number
   }>(),
   {
     reshowKey: 0,
-    immediate: true,
   },
 )
 
-const reshowUpdates = ref<number>(0),
-  /**
-   * Whether the tooltip component has unmounted.
-   *
-   * Default value is the `immediate` prop value because if `immediate` value is set to `false`,
-   * it should be not mounted anyways.
-   */
-  isUnmounted = ref<boolean>(!props.immediate)
+const reshowUpdates = ref<number>(0)
+const isVisible = ref<boolean>(false)
 
 watch(
   () => props.reshowKey,
   () => {
     reshowUpdates.value++
-    isUnmounted.value = false
+    isVisible.value = true
   },
 )
 
-const onAnimationEnd = () => (isUnmounted.value = true)
+const onAnimationEnd = () => (isVisible.value = false)
 </script>
 
 <template>
-  <div v-if="!isUnmounted" :class="$style.container" @animationend="onAnimationEnd">
-    <div v-if="immediate || reshowUpdates !== 0" :key="$props.reshowKey" :class="$style.tooltip">
+  <div v-if="isVisible" :class="$style.container" @animationend="onAnimationEnd">
+    <div v-if="reshowUpdates !== 0" :key="$props.reshowKey" :class="$style.tooltip">
       <span>{{ $props.text }}</span>
     </div>
   </div>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useSeatDataStore } from '@/stores/useSeatSizeStore'
-import SectionTitle from '../SectionTitle.vue'
+import SectionTitle from '@/components/picker/SectionTitle.vue'
 import { storeToRefs } from 'pinia'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import ShadowButton from '@/components/common/ShadowButton.vue'

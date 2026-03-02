@@ -1,7 +1,7 @@
 import { defineAsyncComponent, type Component } from 'vue'
 import LoadingSection from '@/components/picker/sections/LoadingSection.vue'
 import type { RouteName } from '@/router'
-import SizeSettings from '@/components/picker/sections/SizeSettings/SizeSettings.vue'
+import SizeSettings from '@/components/picker/sections/SizeSettingsSection/SizeSettingsSection.vue'
 
 export const DEFAULT_SHOW_TITLE = true,
   DEFAULT_FULLSCREEN = true
@@ -33,7 +33,8 @@ export const sections = {
     title: '이름 설정',
     component: defineAsyncComponent({
       /** @todo use Suspense instead of repeating the same code */
-      loader: () => import('@/components/picker/sections/NameSettings.vue'),
+      loader: () =>
+        import('@/components/picker/sections/NameSettingsSection/NameSettingsSection.vue'),
       loadingComponent: LoadingSection,
     }),
   },
