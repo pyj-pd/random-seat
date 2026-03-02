@@ -381,9 +381,9 @@ $table-width: 880px;
   }
 
   &.excluded {
+    filter: grayscale(100%);
+
     transform: scale(seat.$excluded-scale);
-    background-color: seat.$excluded-background-color;
-    border-color: seat.$excluded-border-color;
   }
 
   .table tr:nth-child(even) &:not(.excluded) {
