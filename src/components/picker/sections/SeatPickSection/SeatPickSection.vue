@@ -3,7 +3,6 @@ import CustomButton from '@/components/common/ShadowButton.vue'
 import { useSeatDataStore } from '@/stores/useSeatSizeStore'
 import { waitMs } from '@/utils/time'
 import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue'
-import confetti from 'canvas-confetti'
 import { storeToRefs } from 'pinia'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import { getTableSvgViewbox } from '@/utils/seat-svg'
@@ -25,6 +24,7 @@ import {
 import { generateSeatPDF, generatePDFFileName } from '@/utils/pdf'
 import { downloadFile } from '@/utils/file'
 import { Download, Trash2, Maximize, Minimize, Play, Square } from 'lucide-vue-next'
+import EndConfetti from './EndConfetti.vue'
 
 const { playSound, loadAudioFile } = useAudioPlayer({ volume: SHUFFLE_SOUND_VOLUME })
 
@@ -103,38 +103,12 @@ const startButtonInactiveTimer = (event?: PointerEvent) => {
 useEventListener(window, ['pointermove', 'pointerdown'], startButtonInactiveTimer)
 onMounted(() => startButtonInactiveTimer())
 
-// Confetti handling
-const confettiCanvas = useTemplateRef<HTMLCanvasElement>('confetti-canvas')
-let confettiInstance: confetti.CreateTypes
-
-onMounted(() => {
-  if (confettiCanvas.value === null) return
-
-  // Initialize confetti instance
-  confettiInstance = confetti.create(confettiCanvas.value, {
-    resize: true,
-    useWorker: true,
-  })
-})
-
-onBeforeUnmount(() => confettiInstance.reset()) // Destroy confetti instance
-
-const launchConfetti = () =>
-  confettiInstance({
-    scalar: 1.5,
-    shapes: ['circle'],
-    spread: 300,
-    particleCount: 250,
-    origin: {
-      x: 0.5,
-      y: 0.5,
-    },
-  })
-
 /**
  * How many times the seat has been picked since last reset.
  */
 const pickCount = ref<number>(0)
+
+const confettiRef = useTemplateRef('confetti')
 
 /**
  * Start/Stop shuffling the seat data.
@@ -177,7 +151,7 @@ const toggleRandomPick = async () => {
     pickingState.value = 'done'
 
     // Confetti
-    launchConfetti()
+    confettiRef.value?.launchConfetti()
   } else {
     // Just end it with no effects if already unmounted
     pickingState.value = 'idle'
@@ -233,7 +207,7 @@ const saveSeatAsPDF = async () => {
 
 <template>
   <main ref="container-ref" :class="$style.container">
-    <canvas ref="confetti-canvas" :class="$style['confetti-canvas']"></canvas>
+    <EndConfetti ref="confetti" />
     <div :class="$style['view-container']">
       <div :class="$style['table-container']">
         <RandomPickCounter :pick-count="pickCount" />
@@ -292,18 +266,6 @@ const saveSeatAsPDF = async () => {
   &:fullscreen {
     @include value.paper-texture-background;
   }
-}
-
-.confetti-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 10;
-
-  width: 100%;
-  height: 100%;
-
-  pointer-events: none;
 }
 
 .view-container {

@@ -46,7 +46,7 @@ withDefaults(
   &.sticky {
     position: sticky;
     bottom: value.$button-container-margin;
-    z-index: 100;
+    z-index: 20;
 
     width: 100%;
   }
