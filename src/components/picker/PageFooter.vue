@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BLOG_URL, GITHUB_REPO_URL } from '@/constants/project'
+import { BLOG_URL, GITHUB_REPO_URL, LICENSE_TEXT } from '@/constants/project'
 import TextLink from '../common/TextLink.vue'
 </script>
 
@@ -8,8 +8,10 @@ import TextLink from '../common/TextLink.vue'
     <ul>
       <li>
         <p>
-          이 프로그램은 오픈소스 프로그램입니다.
-          <TextLink :href="GITHUB_REPO_URL" target="_blank" rel="noopener noreferrer">GitHub 레포지토리</TextLink>도 둘러보세요!
+          Licensed under {{ LICENSE_TEXT }}
+          <TextLink :href="GITHUB_REPO_URL" target="_blank" rel="noopener noreferrer"
+            >GitHub 레포지토리</TextLink
+          >
         </p>
       </li>
       <li>

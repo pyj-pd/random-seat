@@ -3,6 +3,8 @@
 import { MAX_SEAT_COLUMN_SIZE, MAX_SEAT_ROW_SIZE } from './seat'
 
 export const GITHUB_REPO_URL = 'https://github.com/pyj-pd/random-seat'
+export const LICENSE_TEXT = 'AGPL-3.0'
+
 export const BLOG_URL = 'https://pyj-pd.dev/'
 
 export const PARENT_SITE_NAME = 'pyj-pd'

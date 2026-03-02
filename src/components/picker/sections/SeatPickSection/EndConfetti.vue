@@ -26,8 +26,8 @@ const launchConfetti = () => {
 
   confettiInstance({
     scalar: 1.5,
-    shapes: ['circle'],
-    spread: 300,
+    shapes: ['circle', 'square'],
+    spread: 500,
     particleCount: 250,
     origin: {
       x: 0.5,
