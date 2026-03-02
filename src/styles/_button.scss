@@ -1,12 +1,17 @@
 @use '@/styles/palette' as palette;
 @use '@/styles/value' as value;
 
+// Colors
 $warning-button-color: palette.$red;
 
+// Values
+$button-disabled-opacity: 0.5;
+
+// Mixins
 @mixin button-common-styles(
-  $text-color: palette.$black,
+  $text-color: currentColor,
   $background-color: palette.$bright-white,
-  $border-color: palette.$black
+  $border-color: currentColor
 ) {
   position: relative;
 
@@ -24,16 +29,9 @@ $warning-button-color: palette.$red;
 
   cursor: pointer;
 
+  &:disabled {
+    cursor: not-allowed;
+  }
+
   border: solid value.$border-width $border-color;
-}
-
-@mixin button-warning-styles() {
-  @include button-common-styles(
-    $text-color: $warning-button-color,
-    $border-color: $warning-button-color
-  );
-}
-
-@mixin button-disabled-styles() {
-  opacity: 0.7;
 }

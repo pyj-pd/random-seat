@@ -21,13 +21,12 @@ import type { SeatPosition } from '@/types/seat'
 import { useSectionNavigation } from '@/composables/useSectionNavigation'
 import { useOptionStore } from '@/stores/useOptionStore'
 import { sections, type SectionId } from '@/constants/section'
-import { ArrowRight, CircleQuestionMark, Trash2, UserRound, X } from 'lucide-vue-next'
+import { ArrowRight, CircleQuestionMark, Plus, Trash2, UserRound, X } from 'lucide-vue-next'
 
 const NEXT_SECTION: SectionId = 'name-settings'
 
 const seatDataStore = useSeatDataStore(),
-  { setSize, clearSeatData, clearNameData, getSeatData, setSeatData, removeSeatLine } =
-    seatDataStore,
+  { setSize, clearSeatData, getSeatData, setSeatData, removeSeatLine } = seatDataStore,
   { columnSize, rowSize, seatData, totalSeatNumber } = storeToRefs(seatDataStore)
 
 const scrollViewRef = ref<HTMLDivElement | null>(null)
@@ -176,11 +175,15 @@ const removeRow = (index: number) => {
               <td :class="$style['no-style']"></td>
               <!-- Row add button -->
               <td
-                v-if="rowSize < MAX_SEAT_ROW_SIZE"
                 :colspan="columnSize"
-                :class="$style['line-button-container']"
+                :class="[
+                  $style['line-button-container'],
+                  rowSize >= MAX_SEAT_ROW_SIZE && $style.hidden,
+                ]"
               >
-                <NormalButton :class="$style['line-button']" @click="addRow">+</NormalButton>
+                <NormalButton :class="$style['line-button']" @click="addRow">
+                  <Plus />
+                </NormalButton>
               </td>
             </tr>
             <!-- Row content -->
@@ -232,17 +235,21 @@ const removeRow = (index: number) => {
               </td>
               <!-- Column add button on first row and make it full height -->
               <td
-                v-if="rowIndex === 0 && columnSize < MAX_SEAT_COLUMN_SIZE"
+                v-if="rowIndex === 0"
                 rowspan="0"
-                :class="[$style['line-button-container'], $style.vertical]"
+                :class="[
+                  $style['line-button-container'],
+                  $style.vertical,
+                  columnSize >= MAX_SEAT_COLUMN_SIZE && $style.hidden,
+                ]"
               >
                 <div>
                   <NormalButton
                     :class="[$style['line-button'], $style.vertical]"
                     vertical
                     @click="addColumn"
-                    >+</NormalButton
-                  >
+                    ><Plus
+                  /></NormalButton>
                 </div>
               </td>
             </tr>
@@ -454,6 +461,10 @@ $line-button-size: 30px;
 .line-button-container {
   position: relative;
 
+  &.hidden {
+    visibility: hidden;
+  }
+
   &.vertical {
     width: $line-button-size;
     height: unset;
@@ -472,19 +483,23 @@ $line-button-size: 30px;
   &:not(.vertical) {
     height: $line-button-size;
   }
+}
 
-  .line-button {
-    display: block;
+.line-button {
+  display: block;
 
-    padding: 0;
+  padding: 0;
 
+  width: 100%;
+  height: $line-button-size;
+
+  &.vertical {
     width: 100%;
-    height: $line-button-size;
+    height: 100%;
+  }
 
-    &.vertical {
-      width: 100%;
-      height: 100%;
-    }
+  svg {
+    width: 1em;
   }
 }
 </style>
