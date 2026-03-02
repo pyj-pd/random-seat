@@ -31,7 +31,10 @@ withDefaults(defineProps<ButtonProps>(), {
 @use '@/styles/button' as button;
 
 .button {
-  @include button.button-common-styles($background-color: transparent);
+  @include button.button-common-styles(
+    $background-color: transparent,
+    $border-color: palette.$black
+  );
 }
 
 // Animation is on

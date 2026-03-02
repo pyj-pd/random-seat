@@ -49,7 +49,7 @@ const moveToNextSection = () => {
         <CheckboxInput v-model="showSeatNumbers">자리 옆에 번호 표시하기</CheckboxInput>
       </div>
       <div :class="$style['textarea-container']">
-        <div :class="[$style['textarea-line-container'], !showSeatNumbers && $style.hidden]">
+        <div :class="$style['textarea-line-container']">
           <div v-for="i in totalSeatNumber" :key="i" :class="$style['textarea-line']">
             <span></span>
           </div>

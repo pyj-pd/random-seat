@@ -178,7 +178,7 @@ const removeRow = (index: number) => {
                 :colspan="columnSize"
                 :class="[
                   $style['line-button-container'],
-                  rowSize >= MAX_SEAT_ROW_SIZE && $style.hidden,
+                  { [$style.hidden]: rowSize >= MAX_SEAT_ROW_SIZE },
                 ]"
               >
                 <NormalButton :class="$style['line-button']" @click="addRow">
@@ -240,7 +240,7 @@ const removeRow = (index: number) => {
                 :class="[
                   $style['line-button-container'],
                   $style.vertical,
-                  columnSize >= MAX_SEAT_COLUMN_SIZE && $style.hidden,
+                  { [$style.hidden]: columnSize >= MAX_SEAT_COLUMN_SIZE },
                 ]"
               >
                 <div>
