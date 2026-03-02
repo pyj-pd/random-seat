@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useSeoMeta, useHead } from '@unhead/vue'
 import { defaultMetadata } from './router'
-import { PARENT_SITE_NAME, SITE_URL } from './constants/project'
+import { PARENT_SITE_NAME, SITE_URL, THEME_COLOR } from './constants/project'
 import type { WithContext, WebSite } from 'schema-dts'
 
 const { title, description, visibleToSearchEngines } = defaultMetadata
@@ -15,6 +15,7 @@ useSeoMeta({
   ogSiteName: PARENT_SITE_NAME,
   ogUrl: SITE_URL,
   ogImage: `${SITE_URL}apple-icon.png`,
+  themeColor: THEME_COLOR,
 
   robots: visibleToSearchEngines ? 'all' : 'none',
 })
