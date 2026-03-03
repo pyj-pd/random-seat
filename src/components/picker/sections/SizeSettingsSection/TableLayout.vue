@@ -233,8 +233,8 @@ $table-width: 880px;
   th {
     position: relative;
 
-    width: 70px;
-    height: 50px;
+    width: 80px;
+    height: 60px;
   }
 
   td.no-style,
@@ -252,10 +252,10 @@ $table-width: 880px;
   justify-content: center;
   align-items: center;
 
-  width: 70px;
-  height: 50px;
+  width: 100%;
+  height: 100%;
 
-  padding: 22px;
+  font-size: seat.$font-size;
 
   background-color: palette.$gray;
   color: seat.$text-color;
@@ -295,7 +295,7 @@ $table-width: 880px;
 
   // Icon
   > svg {
-    width: 16px;
+    width: 1em;
   }
 }
 
