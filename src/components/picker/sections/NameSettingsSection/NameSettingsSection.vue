@@ -4,11 +4,9 @@ import SectionTitle from '@/components/picker/SectionTitle.vue'
 import { storeToRefs } from 'pinia'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import ShadowButton from '@/components/common/ShadowButton.vue'
-import { DATA_ARE_SAVED_TEXT } from '@/constants/seat'
+import { DATA_ARE_SAVED_TEXT, MAX_NAME_LENGTH } from '@/constants/seat'
 import { useSectionNavigation } from '@/composables/useSectionNavigation'
-import CheckboxInput from '@/components/common/CheckboxInput.vue'
-import { useOptionStore } from '@/stores/useOptionStore'
-import { ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { sections, type SectionId } from '@/constants/section'
 import { ArrowRight, Trash2 } from 'lucide-vue-next'
 
@@ -18,19 +16,18 @@ const seatDataStore = useSeatDataStore(),
   { setNameData, clearNameData } = seatDataStore,
   { totalSeatNumber, nameDataString } = storeToRefs(seatDataStore)
 
-const optionStore = useOptionStore(),
-  { showSeatNumbers } = storeToRefs(optionStore)
+const nameDataStringInput = ref(nameDataString.value)
+const isInputEmpty = computed(() => nameDataStringInput.value.trim().length < 1)
 
 const { setCurrentSectionId } = useSectionNavigation()
 
-const textareaRef = ref<HTMLTextAreaElement | null>(null)
-
 const updateNameData = () => {
-  const element = textareaRef.value
-  if (element === null) return
-
-  setNameData(element.value)
+  setNameData(nameDataStringInput.value)
 }
+
+watch(nameDataString, (newValue) => {
+  nameDataStringInput.value = newValue
+})
 
 const moveToNextSection = () => {
   updateNameData()
@@ -42,12 +39,9 @@ const moveToNextSection = () => {
   <main :class="$style.container">
     <SectionTitle
       title="이름을 입력해 주세요(선택)."
-      :description="`각 번호에 이름은 최대 4글자까지만 입력할 수 있습니다.\n모든 번호에 이름이 대응되지 않아도 됩니다.\n${DATA_ARE_SAVED_TEXT}`"
+      :description="`각 번호에 이름은 최대 ${MAX_NAME_LENGTH}글자까지만 입력할 수 있습니다.\n모든 번호에 이름이 대응되지 않아도 됩니다.\n${DATA_ARE_SAVED_TEXT}`"
     />
     <section :class="$style['content-container']">
-      <div :class="$style['option-container']">
-        <CheckboxInput v-model="showSeatNumbers">자리 옆에 번호 표시하기</CheckboxInput>
-      </div>
       <div :class="$style['textarea-container']">
         <div :class="$style['textarea-line-container']">
           <div v-for="i in totalSeatNumber" :key="i" :class="$style['textarea-line']">
@@ -56,16 +50,16 @@ const moveToNextSection = () => {
         </div>
         <textarea
           ref="textareaRef"
+          v-model="nameDataStringInput"
           :class="$style.textarea"
-          :value="nameDataString"
-          @change="updateNameData"
+          @blur="updateNameData"
         />
       </div>
     </section>
     <ButtonContainer sticky>
       <ShadowButton warning @click="clearNameData"><Trash2 />이름 초기화</ShadowButton>
-      <ShadowButton @click="moveToNextSection"
-        >{{ sections[NEXT_SECTION].title }}으로
+      <ShadowButton @click="moveToNextSection">
+        {{ isInputEmpty ? '건너뛰기' : `${sections[NEXT_SECTION].title}으로` }}
         <ArrowRight />
       </ShadowButton>
     </ButtonContainer>
@@ -103,12 +97,6 @@ $border-color: palette.$darker-gray;
 
   width: 100%;
   max-width: 300px;
-}
-
-.option-container {
-  display: flex;
-  gap: value.$button-container-small-gap;
-  flex-direction: column;
 }
 
 .textarea-container {

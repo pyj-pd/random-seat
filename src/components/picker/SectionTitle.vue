@@ -13,6 +13,8 @@ defineProps<{
 </template>
 
 <style module lang="scss">
+@use '@/styles/value' as value;
+
 .title {
   display: flex;
   flex-direction: column;
@@ -20,6 +22,7 @@ defineProps<{
   gap: 5px;
 
   width: 100%;
+  max-width: value.$fixed-width;
 
   h3 {
     font-size: 1.4rem;

@@ -27,26 +27,28 @@ watch(currentSectionId, () => {
 </script>
 
 <template>
-  <div :class="$style.container">
-    <div :class="$style['back-button-container']">
-      <Transition name="back-button">
-        <NormalButton
-          v-if="isBackButtonVisible"
-          aria-label="뒤로가기"
-          :class="$style['back-button']"
-          :animation="false"
-          @click="navigateToLastSection"
-        >
-          <MoveLeft />
-        </NormalButton>
-      </Transition>
+  <nav :class="$style.container">
+    <div :class="$style['content-container']">
+      <div :class="$style['back-button-container']">
+        <Transition name="back-button">
+          <NormalButton
+            v-if="isBackButtonVisible"
+            aria-label="뒤로가기"
+            :class="$style['back-button']"
+            :animation="false"
+            @click="navigateToLastSection"
+          >
+            <MoveLeft />
+          </NormalButton>
+        </Transition>
+      </div>
+      <div :class="$style['title-container']">
+        <SlideTransition enter-y="5px">
+          <h2 :key="titleRefresh" :class="$style.title">{{ currentSectionData.title }}</h2>
+        </SlideTransition>
+      </div>
     </div>
-    <div :class="$style['title-container']">
-      <SlideTransition enter-y="5px">
-        <h2 :key="titleRefresh" :class="$style.title">{{ currentSectionData.title }}</h2>
-      </SlideTransition>
-    </div>
-  </div>
+  </nav>
 </template>
 
 <style module lang="scss">
@@ -57,8 +59,7 @@ $vertical-padding: 15px;
 
 .container {
   display: flex;
-  gap: 15px;
-  align-items: center;
+  justify-content: center;
 
   border-bottom: solid value.$border-width palette.$black;
 
@@ -69,6 +70,16 @@ $vertical-padding: 15px;
   @media screen and (max-width: value.$small-screen-width) {
     padding: $vertical-padding value.$small-screen-view-padding;
   }
+}
+
+.content-container {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-start;
+  align-items: center;
+
+  width: 100%;
+  max-width: value.$fixed-width;
 }
 
 .back-button-container {

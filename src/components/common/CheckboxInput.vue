@@ -1,14 +1,18 @@
 <script setup lang="ts">
+import { useId } from 'vue'
+
 defineOptions({
   inheritAttrs: false,
 })
 
 const model = defineModel<boolean>()
+
+const id = useId()
 </script>
 
 <template>
-  <label :class="$style.container">
-    <input v-model="model" v-bind="$attrs" type="checkbox" />
+  <label :class="$style.container" :for="id">
+    <input v-bind="$attrs" :id v-model="model" type="checkbox" />
     <slot></slot>
   </label>
 </template>

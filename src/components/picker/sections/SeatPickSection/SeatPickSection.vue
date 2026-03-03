@@ -25,6 +25,7 @@ import { generateSeatPDF, generatePDFFileName } from '@/utils/pdf'
 import { downloadFile } from '@/utils/file'
 import { Download, Trash2, Maximize, Minimize, Play, Square } from 'lucide-vue-next'
 import EndConfetti from './EndConfetti.vue'
+import SeatPickOtherOptions from './SeatPickOtherOptions.vue'
 
 const { playSound, loadAudioFile } = useAudioPlayer({ volume: SHUFFLE_SOUND_VOLUME })
 
@@ -245,6 +246,7 @@ const saveSeatAsPDF = async () => {
           PDF로 저장</CustomButton
         >
       </ButtonContainer>
+      <SeatPickOtherOptions />
     </section>
   </main>
 </template>
