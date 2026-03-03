@@ -2,9 +2,6 @@
 import {
   DEFAULT_COLUMN_SIZE,
   DEFAULT_ROW_SIZE,
-  MAX_SEAT_COLUMN_SIZE,
-  MAX_SEAT_ROW_SIZE,
-  MIN_SEAT_COLUMN_SIZE,
   MIN_SEAT_NUMBER,
   TOP_INDICATOR_TEXT,
 } from '@/constants/seat'
@@ -12,15 +9,14 @@ import { useSeatDataStore } from '@/stores/useSeatSizeStore'
 import type { SeatPosition } from '@/types/seat'
 import { storeToRefs } from 'pinia'
 import { ref, watch } from 'vue'
-import MouseGuide from './MouseGuide.vue'
 import NormalButton from '@/components/common/NormalButton.vue'
-import { Plus, UserRound, X } from 'lucide-vue-next'
+import { UserRound, X } from 'lucide-vue-next'
 import SeatSizeTip from './SeatSizeTip.vue'
 
 const scrollViewRef = ref<HTMLDivElement | null>(null)
 
 const seatDataStore = useSeatDataStore(),
-  { setSize, clearSeatData, getSeatData, setSeatData, removeSeatLine } = seatDataStore,
+  { clearSeatData, getSeatData, setSeatData } = seatDataStore,
   { columnSize, rowSize, seatData, totalSeatNumber } = storeToRefs(seatDataStore)
 
 // Transition every time a row/column is added
@@ -47,49 +43,6 @@ const resetSeatData = () => {
   columnUpdateRefresh.value = null
 }
 
-// Line add buttons
-const addRow = () => {
-  setSize({ columnSize: columnSize.value, rowSize: rowSize.value + 1 }, true)
-
-  rowUpdateRefresh.value ??= 0
-  rowUpdateRefresh.value++
-
-  columnUpdateRefresh.value = null
-}
-
-const addColumn = () => {
-  setSize({ columnSize: columnSize.value + 1, rowSize: rowSize.value }, true)
-
-  rowUpdateRefresh.value = null
-
-  columnUpdateRefresh.value ??= 0
-  columnUpdateRefresh.value++
-}
-
-// Line header buttons for removing the line
-const removeRow = (index: number) => {
-  removeSeatLine('row', index)
-
-  rowUpdateRefresh.value = null
-}
-
-const removeColumn = (index: number) => {
-  removeSeatLine('column', index)
-
-  columnUpdateRefresh.value = null
-}
-
-// Mouse guide
-
-/**
- * Update this in order to reshow the mouse guide pop-up.
- */
-const mouseGuideKey = ref<number>(0)
-
-const showMouseGuide = () => {
-  mouseGuideKey.value++
-}
-
 /**
  * Scroll to edge of scroll view for better UX.
  * Users won't have to scroll every time they add a column. That's painful af.
@@ -110,7 +63,6 @@ watch(
 
 defineExpose({
   resetSeatData,
-  showMouseGuide,
 })
 </script>
 
@@ -138,45 +90,14 @@ defineExpose({
               <th scope="col" :class="$style['no-style']"></th>
               <!-- Column number headers -->
               <th v-for="column in columnSize" :key="column" scope="col">
-                <NormalButton
-                  :class="$style['header-button']"
-                  :animation="false"
-                  @click="() => removeColumn(column - 1)"
-                >
-                  {{ column }}
-                </NormalButton>
-                <MouseGuide v-if="column === MIN_SEAT_COLUMN_SIZE" :reshow-key="mouseGuideKey">
-                  숫자를 클릭해서 <b>해당 줄을 삭제</b>할 수 있어요.
-                </MouseGuide>
+                {{ column }}
               </th>
-            </tr>
-            <tr>
-              <!-- For spacing -->
-              <td :class="$style['no-style']"></td>
-              <!-- Row add button -->
-              <td
-                :colspan="columnSize"
-                :class="[
-                  $style['line-button-container'],
-                  { [$style.hidden]: rowSize >= MAX_SEAT_ROW_SIZE },
-                ]"
-              >
-                <NormalButton :class="$style['line-button']" @click="addRow">
-                  <Plus />
-                </NormalButton>
-              </td>
             </tr>
             <!-- Row content -->
             <tr v-for="(row, rowIndex) in seatData" :key="rowIndex">
               <!-- Row number headers -->
               <th scope="row">
-                <NormalButton
-                  :class="$style['header-button']"
-                  :animation="false"
-                  @click="() => removeRow(rowIndex)"
-                >
-                  {{ rowIndex + 1 }}
-                </NormalButton>
+                {{ rowIndex + 1 }}
               </th>
               <!-- Seat button -->
               <td v-for="(column, columnIndex) in row" :key="`${rowIndex},${columnIndex}`">
@@ -203,35 +124,6 @@ defineExpose({
                   <template v-else-if="column.assignedNumber">{{ column.assignedNumber }}</template>
                   <UserRound v-else />
                 </NormalButton>
-                <MouseGuide
-                  v-if="
-                    columnIndex === MIN_SEAT_COLUMN_SIZE - 1 &&
-                    rowIndex === MIN_SEAT_COLUMN_SIZE - 1
-                  "
-                  :reshow-key="mouseGuideKey"
-                >
-                  자리를 클릭해서 <b>해당 자리를 제외</b>할 수 있어요.
-                </MouseGuide>
-              </td>
-              <!-- Column add button on first row and make it full height -->
-              <td
-                v-if="rowIndex === 0"
-                rowspan="0"
-                :class="[
-                  $style['line-button-container'],
-                  $style.vertical,
-                  { [$style.hidden]: columnSize >= MAX_SEAT_COLUMN_SIZE },
-                ]"
-              >
-                <div>
-                  <NormalButton
-                    :class="[$style['line-button'], $style.vertical]"
-                    vertical
-                    @click="addColumn"
-                  >
-                    <Plus />
-                  </NormalButton>
-                </div>
               </td>
             </tr>
           </tbody>
@@ -413,70 +305,6 @@ $table-width: 880px;
   }
   to {
     opacity: 1;
-  }
-}
-
-// Line header buttons
-.header-button {
-  border: none;
-
-  width: 60px;
-  height: 40px;
-
-  text-decoration: underline;
-
-  &:hover {
-    background-color: palette.$red;
-    color: palette.$gray;
-  }
-}
-
-// Line modifier button
-$line-button-size: 30px;
-
-// <td>
-.line-button-container {
-  position: relative;
-
-  &.hidden {
-    visibility: hidden;
-  }
-
-  &.vertical {
-    width: $line-button-size;
-    height: unset;
-
-    > div {
-      // Extra div is needed for vertically-full column because of the suckness of CSS
-      position: absolute;
-      top: 0;
-      left: 0;
-
-      width: 100%;
-      height: 100%;
-    }
-  }
-
-  &:not(.vertical) {
-    height: $line-button-size;
-  }
-}
-
-.line-button {
-  display: block;
-
-  padding: 0;
-
-  width: 100%;
-  height: $line-button-size;
-
-  &.vertical {
-    width: 100%;
-    height: 100%;
-  }
-
-  svg {
-    width: 1em;
   }
 }
 </style>

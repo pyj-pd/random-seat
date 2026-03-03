@@ -15,5 +15,7 @@ import { Info } from 'lucide-vue-next'
 .container {
   display: flex;
   gap: value.$button-container-small-gap;
+
+  font-size: 1.1rem;
 }
 </style>
