@@ -7,7 +7,7 @@ import ShadowButton from '@/components/common/ShadowButton.vue'
 import { DATA_ARE_SAVED_TEXT } from '@/constants/seat'
 import { useSectionNavigation } from '@/composables/useSectionNavigation'
 import { computed, ref, watch } from 'vue'
-import { sections, type SectionId } from '@/constants/section'
+import { NEXT_SECTION_TEXT, type SectionId } from '@/constants/section'
 import { ArrowRight, Trash2 } from 'lucide-vue-next'
 
 const NEXT_SECTION: SectionId = 'random-pick-seat'
@@ -59,7 +59,7 @@ const moveToNextSection = () => {
     <ButtonContainer sticky>
       <ShadowButton warning @click="clearNameData"><Trash2 />이름 초기화</ShadowButton>
       <ShadowButton @click="moveToNextSection">
-        {{ isInputEmpty ? '건너뛰기' : `${sections[NEXT_SECTION].title}으로` }}
+        {{ isInputEmpty ? '건너뛰기' : NEXT_SECTION_TEXT }}
         <ArrowRight />
       </ShadowButton>
     </ButtonContainer>

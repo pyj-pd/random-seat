@@ -1,52 +1,31 @@
 <script setup lang="ts">
 import { useSectionStore } from '@/stores/useSectionStore'
 import { storeToRefs } from 'pinia'
-import { computed, ref, watch } from 'vue'
-import NormalButton from '@/components/common/NormalButton.vue'
-import { useSectionNavigation } from '@/composables/useSectionNavigation'
-import SlideTransition from '../common/SlideTransition.vue'
-import { MoveLeft } from 'lucide-vue-next'
+import { ROUTE_HASH_PREFIX, sections } from '@/constants/section'
 
 const sectionStore = useSectionStore()
-const { currentSectionIndex, currentSectionId, currentSectionData } = storeToRefs(sectionStore)
-
-const { setCurrentSectionIndex } = useSectionNavigation()
-
-const isBackButtonVisible = computed(() => currentSectionIndex.value > 0)
-
-const navigateToLastSection = () => setCurrentSectionIndex(currentSectionIndex.value - 1)
-
-/**
- * Slide transition each time section changes
- */
-const titleRefresh = ref<number>(0)
-
-watch(currentSectionId, () => {
-  titleRefresh.value++
-})
+const { currentSectionIndex, currentSectionId } = storeToRefs(sectionStore)
 </script>
 
 <template>
   <nav :class="$style.container">
-    <div :class="$style['content-container']">
-      <div :class="$style['back-button-container']">
-        <Transition name="back-button">
-          <NormalButton
-            v-if="isBackButtonVisible"
-            aria-label="뒤로가기"
-            :class="$style['back-button']"
-            :animation="false"
-            @click="navigateToLastSection"
-          >
-            <MoveLeft />
-          </NormalButton>
-        </Transition>
-      </div>
-      <div :class="$style['title-container']">
-        <SlideTransition enter-y="5px">
-          <h2 :key="titleRefresh" :class="$style.title">{{ currentSectionData.title }}</h2>
-        </SlideTransition>
-      </div>
+    <div :class="$style['route-container']">
+      <template v-for="(section, sectionId, index) in sections" :key="sectionId">
+        <a
+          :href="`${ROUTE_HASH_PREFIX}${sectionId}`"
+          :class="[
+            $style['route-link'],
+            { [$style['active']]: currentSectionIndex >= index },
+            { [$style['current']]: currentSectionIndex === index },
+          ]"
+          :aria-current="currentSectionId === sectionId ? 'step' : undefined"
+          >{{ index + 1 }}. {{ section.title }}</a
+        >
+        <span
+          v-if="index < Object.keys(sections).length - 1"
+          :class="[$style['route-separator'], { [$style['active']]: currentSectionIndex > index }]"
+        ></span>
+      </template>
     </div>
   </nav>
 </template>
@@ -54,14 +33,21 @@ watch(currentSectionId, () => {
 <style module lang="scss">
 @use '@/styles/palette' as palette;
 @use '@/styles/value' as value;
+@use 'sass:color';
 
-$vertical-padding: 15px;
+$vertical-padding: 20px;
 
 .container {
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 100;
+
   display: flex;
   justify-content: center;
 
   border-bottom: solid value.$border-width palette.$black;
+  background-color: palette.$white;
 
   width: 100%;
 
@@ -72,61 +58,61 @@ $vertical-padding: 15px;
   }
 }
 
-.content-container {
+$active-route-color: palette.$black;
+$inactive-route-color: color.scale($active-route-color, $alpha: -60%);
+
+.route-container {
+  position: relative;
+
   display: flex;
-  gap: 15px;
-  justify-content: flex-start;
   align-items: center;
+  gap: value.$button-container-gap;
 
-  width: 100%;
-  max-width: value.$fixed-width;
+  overflow-x: auto;
+
+  color: $inactive-route-color;
 }
 
-.back-button-container {
-  display: flex;
+.route-link {
+  display: block;
 
-  width: 45px;
-  height: 45px;
-}
+  font-weight: bold;
+  font-size: 1rem;
 
-.back-button {
-  width: 100%;
-  height: 100%;
+  text-decoration: none;
 
-  padding: 0;
-  border: none;
+  white-space: nowrap;
 
-  > svg {
-    transition: transform value.$animation-duration value.$animation-ease;
+  color: currentColor;
+
+  transition: color value.$animation-duration value.$animation-ease;
+
+  &.active {
+    color: $active-route-color;
   }
 
-  &:hover > svg {
-    transform: translateX(-3px);
+  &:focus-visible,
+  &:hover {
+    text-decoration: underline;
   }
 }
 
-.title-container {
-  & {
-    position: relative;
+.route-separator {
+  display: block;
+
+  width: 150px;
+  max-width: 100%;
+  min-width: 30px;
+  height: 2px;
+
+  background: linear-gradient(to right, currentColor 50%, $active-route-color 50%);
+  background-size: 200% 100%;
+  background-position-x: 0%;
+
+  transition: background-position-x value.$animation-duration value.$animation-ease;
+
+  &.active {
+    background-position-x: -100%;
   }
-
-  .title {
-    display: block;
-
-    font-weight: bold;
-    font-size: 1rem;
-  }
-}
-</style>
-
-<style scoped lang="scss">
-.back-button-enter-active,
-.back-button-leave-active {
-  transition: 0.5s ease-in-out;
-}
-
-.back-button-enter-from,
-.back-button-leave-to {
-  opacity: 0;
 }
 </style>

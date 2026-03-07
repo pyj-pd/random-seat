@@ -6,6 +6,8 @@ import SizeSettings from '@/components/picker/sections/SizeSettingsSection/SizeS
 export const DEFAULT_SHOW_TITLE = true,
   DEFAULT_FULLSCREEN = true
 
+export const NEXT_SECTION_TEXT = '다음으로'
+
 export type PickerType = Extract<RouteName, 'home'>
 
 export type SectionData = {
