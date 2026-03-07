@@ -75,15 +75,15 @@ const toggleFullscreen = () => {
 // Control buttons handling
 const isControlInactive = ref<boolean>(false)
 
-watch(
-  isControlInactive,
-  (newStateHidden) =>
-    // Hide cursor after inactivity
-    (document.body.style.cursor = newStateHidden ? 'none' : 'unset'),
-)
-onBeforeUnmount(() => (document.body.style.cursor = 'unset')) // Reset cursor state before unmounting
+const setCursorStyle = (hidden: boolean) => {
+  document.documentElement.style.cursor = hidden ? 'none' : 'unset'
+}
 
-const CONTROL_BUTTON_INACTIVE_AFTER = 2000 //ms
+// Hide cursor after inactivity
+watch(isControlInactive, (newStateHidden) => setCursorStyle(newStateHidden))
+onBeforeUnmount(() => setCursorStyle(false)) // Reset cursor state before unmounting
+
+const CONTROL_BUTTON_INACTIVE_AFTER = 1500 //ms
 
 let buttonInactiveTimer: ReturnType<typeof setTimeout>
 
@@ -298,9 +298,6 @@ const saveSeatAsPDF = async () => {
 
 // Controls
 .button-container {
-  transform: translateY(0px);
-  opacity: 1;
-
   transition: value.$animation-duration value.$animation-ease;
   transition-property: opacity, transform;
 
@@ -309,7 +306,7 @@ const saveSeatAsPDF = async () => {
   }
 
   &.inactive {
-    transform: translateY(20px);
+    transform: translateY(20px) scale(0.95);
     opacity: 0.2;
   }
 }

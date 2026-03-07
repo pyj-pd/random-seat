@@ -156,7 +156,7 @@ defineProps<{
 
   &:not(.fullscreen) {
     width: 100%;
-    max-width: 1000px;
+    max-width: 900px;
   }
 
   &.fullscreen {

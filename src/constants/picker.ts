@@ -5,11 +5,11 @@ export const DEFAULT_SHUFFLE_DELAY_MS = 50,
   /**
    * Wait this times until the delay actually starts to get increased.
    */
-  SHUFFLE_DELAY_START_AFTER_NUMBERS = 50,
+  SHUFFLE_DELAY_START_AFTER_NUMBERS = 20,
   /**
    * The factor by which the delay increases after each shuffle.
    */
-  SHUFFLE_DELAY_INCREASE = 1.025,
+  SHUFFLE_DELAY_INCREASE = 1.045,
   /**
    * Shuffling will end after reaching this amount of delay(miliseconds).
    */

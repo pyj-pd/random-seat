@@ -19,10 +19,6 @@ const seatDataStore = useSeatDataStore(),
   { clearSeatData, getSeatData, setSeatData } = seatDataStore,
   { columnSize, rowSize, seatData, totalSeatNumber } = storeToRefs(seatDataStore)
 
-// Transition every time a row/column is added
-const rowUpdateRefresh = ref<number | null>(null),
-  columnUpdateRefresh = ref<number | null>(null)
-
 /**
  * Exclude or include a seat at certain position based on current state.
  * @param position Position of the seat
@@ -38,9 +34,6 @@ const toggleSeat = (position: SeatPosition, isExcluded: boolean) => {
 
 const resetSeatData = () => {
   clearSeatData({ columnSize: DEFAULT_COLUMN_SIZE, rowSize: DEFAULT_ROW_SIZE })
-
-  rowUpdateRefresh.value = null
-  columnUpdateRefresh.value = null
 }
 
 /**
@@ -102,14 +95,8 @@ defineExpose({
               <!-- Seat button -->
               <td v-for="(column, columnIndex) in row" :key="`${rowIndex},${columnIndex}`">
                 <NormalButton
-                  :key="rowUpdateRefresh ?? columnUpdateRefresh ?? 0"
                   :class="[
                     $style['seat-button'],
-                    {
-                      [$style.new]:
-                        (rowIndex === 0 && rowUpdateRefresh !== null) ||
-                        (columnIndex === columnSize - 1 && columnUpdateRefresh !== null),
-                    },
                     {
                       [$style.excluded]: column.isExcluded,
                     },
@@ -267,10 +254,6 @@ $table-width: 880px;
 
   transition: 0.08s value.$animation-ease;
   transition-property: transform;
-
-  &.new {
-    animation: seat-initial-animation 0.5s value.$ease-in-out both;
-  }
 
   &.excluded {
     filter: grayscale(100%);
