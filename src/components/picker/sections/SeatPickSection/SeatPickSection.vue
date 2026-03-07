@@ -262,7 +262,7 @@ const saveSeatAsPDF = async () => {
   align-items: center;
   gap: 30px;
 
-  padding: 20px;
+  padding: value.$view-padding;
 
   min-height: 100%;
 }

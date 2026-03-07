@@ -15,7 +15,8 @@ export const TABLE_SEAT_WIDTH = 120,
   TABLE_SEAT_GAP = 4,
   TABLE_BORDER_WIDTH = 1.5
 
-export const TABLE_SEAT_FONT_SIZE = 17
+export const TABLE_SEAT_FONT_SIZE = 17,
+  TABLE_SEAT_NUMBER_ONLY_FONT_SIZE = 20
 
 // Seat number
 export const TABLE_SEAT_NUMBER_PADDING = 5,

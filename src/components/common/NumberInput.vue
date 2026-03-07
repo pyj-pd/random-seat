@@ -16,7 +16,7 @@ const props = defineProps<{
   step: number
 }>()
 
-const model = defineModel<string | number>()
+const model = defineModel<number>()
 
 const id = useId()
 
@@ -105,6 +105,8 @@ const incrementValue = (amount: number) => {
   border: none;
 
   background: none;
+
+  text-align: center;
 
   width: 100%;
   height: 100%;

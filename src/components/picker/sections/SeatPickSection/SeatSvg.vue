@@ -21,6 +21,7 @@ import {
   TABLE_FONT_WEIGHT,
   TABLE_OVERFLOW,
   TABLE_EXCLUDED_SEAT_BORDER_COLOR,
+  TABLE_SEAT_NUMBER_ONLY_FONT_SIZE,
 } from '@/styles/seat-svg'
 import { storeToRefs } from 'pinia'
 import { useTemplateRef } from 'vue'
@@ -118,9 +119,20 @@ defineProps<{
           <!-- Seat text(name/number) -->
           <text
             :x="TABLE_SEAT_WIDTH / 2"
-            :y="TABLE_SEAT_HEIGHT / 2 + TABLE_SEAT_FONT_SIZE / 4"
+            :y="
+              TABLE_SEAT_HEIGHT / 2 +
+              // @todo improve readability
+              (nameData[seat.assignedNumber]
+                ? TABLE_SEAT_FONT_SIZE
+                : TABLE_SEAT_NUMBER_ONLY_FONT_SIZE) /
+                4
+            "
             text-anchor="middle"
-            :font-size="TABLE_SEAT_FONT_SIZE"
+            :font-size="
+              nameData[seat.assignedNumber]
+                ? TABLE_SEAT_FONT_SIZE
+                : TABLE_SEAT_NUMBER_ONLY_FONT_SIZE
+            "
           >
             {{ nameData[seat.assignedNumber] ?? seat.assignedNumber }}
           </text>
@@ -144,7 +156,7 @@ defineProps<{
 
   &:not(.fullscreen) {
     width: 100%;
-    max-width: 800px;
+    max-width: 1000px;
   }
 
   &.fullscreen {

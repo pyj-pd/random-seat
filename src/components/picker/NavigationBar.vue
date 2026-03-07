@@ -55,7 +55,7 @@ watch(currentSectionId, () => {
 @use '@/styles/palette' as palette;
 @use '@/styles/value' as value;
 
-$vertical-padding: 15px;
+$vertical-padding: 10px;
 
 .container {
   display: flex;

@@ -44,8 +44,7 @@ const resetSeatData = () => {
 }
 
 /**
- * Scroll to edge of scroll view for better UX.
- * Users won't have to scroll every time they add a column. That's painful af.
+ * Scroll to edge of scroll view whenever column size changes for better UX
  */
 watch(
   [columnSize],
@@ -56,6 +55,7 @@ watch(
 
     scrollViewRef.value.scrollTo({
       left: width,
+      behavior: 'smooth',
     })
   },
   { flush: 'post' },
@@ -233,7 +233,7 @@ $table-width: 880px;
   th {
     position: relative;
 
-    width: 80px;
+    width: 85px;
     height: 60px;
   }
 
