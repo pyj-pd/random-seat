@@ -7,9 +7,9 @@ const { showSeatNumbers } = storeToRefs(useOptionStore())
 </script>
 
 <template>
-  <div :class="$style.container">
+  <section :class="$style.container">
     <CheckboxInput v-model="showSeatNumbers">이름 옆에 번호 표시</CheckboxInput>
-  </div>
+  </section>
 </template>
 
 <style lang="scss" module>

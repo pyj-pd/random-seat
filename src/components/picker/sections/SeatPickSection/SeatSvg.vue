@@ -24,6 +24,7 @@ import {
 } from '@/styles/seat-svg'
 import { storeToRefs } from 'pinia'
 import { useTemplateRef } from 'vue'
+import type { SeatPickingState } from '@/types/seat'
 
 const { seatData, nameData } = storeToRefs(useSeatDataStore())
 const { showSeatNumbers } = storeToRefs(useOptionStore())
@@ -41,7 +42,7 @@ defineProps<{
     width: number
     height: number
   }
-  isDone: boolean
+  pickingState?: SeatPickingState
   isFullscreen: boolean
 }>()
 </script>
@@ -49,7 +50,12 @@ defineProps<{
 <template>
   <svg
     ref="svg-ref"
-    :class="[$style.table, { [$style.done]: isDone }, { [$style.fullscreen]: isFullscreen }]"
+    :class="[
+      $style.table,
+      { [$style.picking]: pickingState === 'picking' },
+      { [$style.done]: pickingState === 'done' },
+      { [$style.fullscreen]: isFullscreen },
+    ]"
     :viewBox="`0 0 ${viewBox.width} ${viewBox.height}`"
     preserveAspectRatio="xMidYMid"
     :color="TABLE_TEXT_COLOR"
@@ -144,6 +150,11 @@ defineProps<{
   &.fullscreen {
     width: 70%;
     height: 80%;
+  }
+
+  &.picking,
+  &.done {
+    will-change: transform;
   }
 
   &.done {

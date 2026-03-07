@@ -20,3 +20,5 @@ export type SeatPosition = { columnPos: number; rowPos: number }
 export type SeatSize = { columnSize: number; rowSize: number }
 
 export type SeatOrientation = 'landscape' | 'portrait'
+
+export type SeatPickingState = 'initial' | 'picking' | 'idle' | 'done'

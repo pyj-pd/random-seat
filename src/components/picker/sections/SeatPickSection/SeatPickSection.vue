@@ -26,6 +26,7 @@ import { downloadFile } from '@/utils/file'
 import { Download, Trash2, Maximize, Minimize, Play, Square } from 'lucide-vue-next'
 import EndConfetti from './EndConfetti.vue'
 import SeatPickOtherOptions from './SeatPickOtherOptions.vue'
+import type { SeatPickingState } from '@/types/seat'
 
 const { playSound, loadAudioFile } = useAudioPlayer({ volume: SHUFFLE_SOUND_VOLUME })
 
@@ -37,9 +38,7 @@ const seatDataStore = useSeatDataStore(),
   { shuffleSeats, clearSeatData } = seatDataStore,
   { columnSize, rowSize, orientation } = storeToRefs(seatDataStore)
 
-type PickingState = 'initial' | 'picking' | 'idle' | 'done'
-
-const pickingState = ref<PickingState>('initial')
+const pickingState = ref<SeatPickingState>('initial')
 
 const isPicking = computed(() => pickingState.value === 'picking')
 
@@ -53,7 +52,7 @@ const tableSvgViewbox = computed(() =>
 )
 
 // Fullscreen handling
-const containerRef = useTemplateRef<HTMLDivElement>('container-ref')
+const containerRef = useTemplateRef<HTMLDivElement>('fullscreen-container-ref')
 
 const {
   isFullscreen,
@@ -84,7 +83,7 @@ watch(
 )
 onBeforeUnmount(() => (document.body.style.cursor = 'unset')) // Reset cursor state before unmounting
 
-const CONTROL_BUTTON_INACTIVE_AFTER = 3_000 //ms
+const CONTROL_BUTTON_INACTIVE_AFTER = 2000 //ms
 
 let buttonInactiveTimer: ReturnType<typeof setTimeout>
 
@@ -207,15 +206,15 @@ const saveSeatAsPDF = async () => {
 </script>
 
 <template>
-  <main ref="container-ref" :class="$style.container">
-    <EndConfetti ref="confetti" />
-    <section :class="$style['view-container']">
+  <main :class="$style.container">
+    <section ref="fullscreen-container-ref" :class="$style['view-container']">
+      <EndConfetti ref="confetti" />
       <div :class="$style['table-container']">
         <RandomPickCounter :pick-count="pickCount" />
         <SeatSvg
           ref="seat-svg"
           :viewBox="tableSvgViewbox"
-          :is-done="pickingState === 'done'"
+          :picking-state="pickingState"
           :is-fullscreen="isFullscreen"
         />
       </div>
@@ -246,8 +245,8 @@ const saveSeatAsPDF = async () => {
           PDF로 저장</CustomButton
         >
       </ButtonContainer>
-      <SeatPickOtherOptions />
     </section>
+    <SeatPickOtherOptions />
   </main>
 </template>
 
@@ -258,19 +257,19 @@ const saveSeatAsPDF = async () => {
 
 .container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  align-self: center;
+  align-items: center;
+  gap: 30px;
 
   padding: 20px;
 
   min-height: 100%;
-
-  &:fullscreen {
-    @include value.paper-texture-background;
-  }
 }
 
 .view-container {
+  position: relative;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -279,6 +278,10 @@ const saveSeatAsPDF = async () => {
 
   width: 100%;
   height: 100%;
+
+  &:fullscreen {
+    @include value.paper-texture-background;
+  }
 }
 
 // Table
@@ -301,7 +304,7 @@ const saveSeatAsPDF = async () => {
   transition: value.$animation-duration value.$animation-ease;
   transition-property: opacity, transform;
 
-  .container:fullscreen & {
+  .view-container:fullscreen & {
     position: absolute;
   }
 

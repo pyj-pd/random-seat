@@ -16,7 +16,7 @@ import TextLink from '../common/TextLink.vue'
           </p>
         </li>
         <li>
-          <p>Made by <TextLink :href="BLOG_URL">pyj-pd</TextLink></p>
+          <p>제작: <TextLink :href="BLOG_URL">pyj-pd</TextLink></p>
         </li>
       </ul>
     </div>
