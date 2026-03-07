@@ -47,8 +47,6 @@ withDefaults(
     position: sticky;
     bottom: value.$button-container-margin;
     z-index: 20;
-
-    width: 100%;
   }
 }
 </style>

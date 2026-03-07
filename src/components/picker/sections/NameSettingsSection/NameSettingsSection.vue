@@ -4,7 +4,7 @@ import SectionTitle from '@/components/picker/SectionTitle.vue'
 import { storeToRefs } from 'pinia'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import ShadowButton from '@/components/common/ShadowButton.vue'
-import { DATA_ARE_SAVED_TEXT, MAX_NAME_LENGTH } from '@/constants/seat'
+import { DATA_ARE_SAVED_TEXT } from '@/constants/seat'
 import { useSectionNavigation } from '@/composables/useSectionNavigation'
 import { computed, ref, watch } from 'vue'
 import { sections, type SectionId } from '@/constants/section'
@@ -38,8 +38,8 @@ const moveToNextSection = () => {
 <template>
   <main :class="$style.container">
     <SectionTitle
-      title="이름을 입력해 주세요(선택)."
-      :description="`각 번호에 이름은 최대 ${MAX_NAME_LENGTH}글자까지만 입력할 수 있습니다.\n모든 번호에 이름이 대응되지 않아도 됩니다.\n${DATA_ARE_SAVED_TEXT}`"
+      title="이름을 입력해 주세요."
+      :description="`모든 번호에 이름이 대응되지 않아도 됩니다.\n${DATA_ARE_SAVED_TEXT}`"
     />
     <section :class="$style['content-container']">
       <div :class="$style['textarea-container']">
