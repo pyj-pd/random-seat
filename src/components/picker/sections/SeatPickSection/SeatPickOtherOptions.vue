@@ -8,8 +8,8 @@ const { showSeatNumbers, invertVertical } = storeToRefs(useOptionStore())
 
 <template>
   <section :class="$style.container">
-    <CheckboxInput v-model="showSeatNumbers">이름 옆에 번호 표시</CheckboxInput>
     <CheckboxInput v-model="invertVertical">위아래 뒤집기</CheckboxInput>
+    <CheckboxInput v-model="showSeatNumbers">이름 옆에 번호 표시</CheckboxInput>
   </section>
 </template>
 
@@ -20,6 +20,6 @@ const { showSeatNumbers, invertVertical } = storeToRefs(useOptionStore())
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: value.$button-container-small-gap;
+  gap: value.$button-container-gap;
 }
 </style>
