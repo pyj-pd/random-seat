@@ -1,20 +1,33 @@
 <script setup lang="ts">
+import { Check } from 'lucide-vue-next'
 import { useId } from 'vue'
+import NormalButton from './NormalButton.vue'
 
-defineOptions({
-  inheritAttrs: false,
-})
-
-const model = defineModel<boolean>()
+const isChecked = defineModel<boolean>()
 
 const id = useId()
+
+const handleCheckbox = () => {
+  isChecked.value = !isChecked.value
+}
 </script>
 
 <template>
-  <label :class="$style.container" :for="id">
-    <input v-bind="$attrs" :id v-model="model" type="checkbox" />
-    <slot></slot>
-  </label>
+  <div :class="$style.container">
+    <NormalButton
+      :aria-checked="isChecked"
+      role="checkbox"
+      :class="$style.checkbox"
+      :aria-labelledby="id"
+      type="button"
+      @click="handleCheckbox"
+    >
+      <Check />
+    </NormalButton>
+    <label :id @click="handleCheckbox">
+      <slot></slot>
+    </label>
+  </div>
 </template>
 
 <style lang="scss" module>
@@ -24,5 +37,24 @@ const id = useId()
   display: flex;
   gap: value.$button-container-small-gap;
   align-items: center;
+
+  user-select: none;
+}
+
+.checkbox {
+  height: 1.5em;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+
+  > svg {
+    visibility: hidden;
+
+    width: 100%;
+    height: 100%;
+  }
+
+  &[aria-checked='true'] > svg {
+    visibility: visible;
+  }
 }
 </style>
