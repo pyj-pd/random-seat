@@ -4,6 +4,7 @@ import { defineStore } from 'pinia'
 export const useOptionStore = defineStore('options', {
   state: () => ({
     showSeatNumbers: DEFAULT_SEAT_NUMBERS_OPTION,
+    invertVertical: false,
   }),
   persist: {
     key: OPTIONS_LOCAL_STORAGE_KEY,
