@@ -12,11 +12,11 @@ import {
   SEAT_DATA_LOCAL_STORAGE_KEY,
 } from '@/constants/seat'
 import {
-  type SeatData,
+  type IndividualSeatData,
   type SeatNameData,
   type SeatOrientation,
   type SeatPosition,
-  type SeatRowData,
+  type SeatData,
   type SeatSize,
 } from '@/types/seat'
 import { getShuffledSeatData, getTotalNumberOfSeats, initializeSeatData } from '@/utils/seat'
@@ -52,7 +52,7 @@ export const useSeatDataStore = defineStore('seatData', {
     rowSize: DEFAULT_ROW_SIZE,
 
     nameData: { ...DEFAULT_NAME_DATA } as SeatNameData,
-    seatData: [...DEFAULT_SEAT_ROW_DATA] as SeatRowData,
+    seatData: [...DEFAULT_SEAT_ROW_DATA] as SeatData,
   }),
   getters: {
     /**
@@ -202,7 +202,7 @@ export const useSeatDataStore = defineStore('seatData', {
      * @param seatPos.rowPos
      * @param data Data of the seat to modify into.
      */
-    setSeatData({ columnPos, rowPos }: SeatPosition, data: SeatData) {
+    setSeatData({ columnPos, rowPos }: SeatPosition, data: IndividualSeatData) {
       this.seatData[rowPos]![columnPos] = data
     },
     /**

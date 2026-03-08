@@ -8,13 +8,13 @@ export type SeatNameData = {
 }
 
 // Seat data
-export type SeatData = {
+export type IndividualSeatData = {
   assignedNumber: number | null
   isExcluded: boolean
 }
 
-export type SeatColumnData = SeatData[]
-export type SeatRowData = SeatColumnData[]
+export type SeatRowData = IndividualSeatData[]
+export type SeatData = SeatRowData[]
 
 export type SeatPosition = { columnPos: number; rowPos: number }
 export type SeatSize = { columnSize: number; rowSize: number }

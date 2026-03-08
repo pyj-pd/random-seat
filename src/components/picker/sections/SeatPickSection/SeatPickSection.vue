@@ -5,7 +5,6 @@ import { waitMs } from '@/utils/time'
 import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import ButtonContainer from '@/components/common/ButtonContainer.vue'
-import { getTableSvgViewbox } from '@/utils/seat-svg'
 import { useEventListener, useFullscreen, useScreenOrientation } from '@vueuse/core'
 import SeatSvg from './SeatSvg.vue'
 import RandomPickCounter from './RandomPickCounter.vue'
@@ -36,20 +35,11 @@ let isUnmounted: boolean = false
 
 const seatDataStore = useSeatDataStore(),
   { shuffleSeats, clearSeatData } = seatDataStore,
-  { columnSize, rowSize, orientation } = storeToRefs(seatDataStore)
+  { orientation } = storeToRefs(seatDataStore)
 
 const pickingState = ref<SeatPickingState>('initial')
 
 const isPicking = computed(() => pickingState.value === 'picking')
-
-/**
- * For setting SVG size based on column and row size,
- * so that styles like border width or font size doesn't look
- * too big in small size or too small in big size.
- */
-const tableSvgViewbox = computed(() =>
-  getTableSvgViewbox({ columnSize: columnSize.value, rowSize: rowSize.value }),
-)
 
 // Fullscreen handling
 const containerRef = useTemplateRef<HTMLDivElement>('fullscreen-container-ref')
@@ -211,12 +201,7 @@ const saveSeatAsPDF = async () => {
       <EndConfetti ref="confetti" />
       <div :class="$style['table-container']">
         <RandomPickCounter :pick-count="pickCount" />
-        <SeatSvg
-          ref="seat-svg"
-          :viewBox="tableSvgViewbox"
-          :picking-state="pickingState"
-          :is-fullscreen="isFullscreen"
-        />
+        <SeatSvg ref="seat-svg" :picking-state="pickingState" :is-fullscreen="isFullscreen" />
       </div>
       <ButtonContainer
         :class="[$style['button-container'], { [$style.inactive]: isControlInactive }]"

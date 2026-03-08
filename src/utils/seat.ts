@@ -1,6 +1,6 @@
-import { type SeatData, type SeatRowData, type SeatSize } from '@/types/seat'
+import { type IndividualSeatData, type SeatData, type SeatSize } from '@/types/seat'
 
-const DEFAULT_SEAT_DATA: SeatData = {
+const DEFAULT_SEAT_DATA: IndividualSeatData = {
   assignedNumber: null,
   isExcluded: false,
 }
@@ -14,11 +14,13 @@ const DEFAULT_SEAT_DATA: SeatData = {
  */
 export const initializeSeatData = (
   { columnSize, rowSize }: SeatSize,
-  originalData?: SeatRowData,
-): SeatRowData => {
+  originalData?: SeatData,
+): SeatData => {
   // Intialize new data
   if (originalData === undefined)
-    return [...new Array(rowSize)].map(() => Array<SeatData>(columnSize).fill(DEFAULT_SEAT_DATA))
+    return [...new Array(rowSize)].map(() =>
+      Array<IndividualSeatData>(columnSize).fill(DEFAULT_SEAT_DATA),
+    )
 
   // Modify the data
 
@@ -26,18 +28,18 @@ export const initializeSeatData = (
   if (originalData.length < rowSize)
     originalData.unshift(
       ...Array(rowSize - originalData.length).fill(
-        Array<SeatData>(columnSize).fill(DEFAULT_SEAT_DATA),
+        Array<IndividualSeatData>(columnSize).fill(DEFAULT_SEAT_DATA),
       ),
     )
   else if (originalData.length > rowSize) originalData.splice(rowSize)
 
   // Add columns
-  const newSeatData: SeatRowData = originalData.map((row) => {
+  const newSeatData: SeatData = originalData.map((row) => {
     const newRow = [...row]
 
     if (newRow.length < columnSize) {
       // Fill the row with default data if the row is shorter than the column size
-      newRow.push(...Array<SeatData>(columnSize - newRow.length).fill(DEFAULT_SEAT_DATA))
+      newRow.push(...Array<IndividualSeatData>(columnSize - newRow.length).fill(DEFAULT_SEAT_DATA))
     } else if (newRow.length > columnSize) {
       // Shrink the row if the row is longer than the column size
       newRow.splice(columnSize)
@@ -54,7 +56,7 @@ export const initializeSeatData = (
  * @param data Seat row data
  * @returns Total number of seats
  */
-export const getTotalNumberOfSeats = (data: SeatRowData): number =>
+export const getTotalNumberOfSeats = (data: SeatData): number =>
   data.flat().filter((seat) => !seat.isExcluded).length
 
 /**
@@ -62,7 +64,7 @@ export const getTotalNumberOfSeats = (data: SeatRowData): number =>
  * @param data Seat row data
  * @returns Shuffled seat row data
  */
-export const getShuffledSeatData = (data: SeatRowData): SeatRowData => {
+export const getShuffledSeatData = (data: SeatData): SeatData => {
   const totalNumber = getTotalNumberOfSeats(data)
 
   /**
@@ -81,14 +83,14 @@ export const getShuffledSeatData = (data: SeatRowData): SeatRowData => {
 
   let currentIndex: number = 0
 
-  const newData: SeatRowData = data.map((row) =>
-    row.map((seat): SeatData => {
+  const newData: SeatData = data.map((row) =>
+    row.map((seat): IndividualSeatData => {
       // If the seat is excluded, do not assign random numbers
       if (seat.isExcluded) return { ...seat, assignedNumber: null }
 
       // If the seat is included, assign a random number
       // from `randomNumbers` array
-      const newSeat: SeatData = {
+      const newSeat: IndividualSeatData = {
         ...seat,
         assignedNumber: randomNumbers[currentIndex]!,
       }
@@ -107,7 +109,7 @@ export const getShuffledSeatData = (data: SeatRowData): SeatRowData => {
  * @returns Object that contains column and row size
  */
 export const getSeatSize = (
-  data: SeatRowData,
+  data: SeatData,
 ): {
   columnSize: number
   rowSize: number

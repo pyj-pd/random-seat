@@ -2,7 +2,6 @@
 import { TOP_INDICATOR_TEXT } from '@/constants/seat'
 import { useOptionStore } from '@/stores/useOptionStore'
 import { useSeatDataStore } from '@/stores/useSeatSizeStore'
-import { getTableSvgSeatTransform, getTableSvgTopIndicatorTransform } from '@/utils/seat-svg'
 import {
   TABLE_BORDER_COLOR,
   TABLE_BORDER_WIDTH,
@@ -26,8 +25,9 @@ import {
 import { storeToRefs } from 'pinia'
 import { useTemplateRef } from 'vue'
 import type { SeatPickingState } from '@/types/seat'
+import { useSeatSvg } from '@/composables/useSeatSvg'
 
-const { seatData, nameData } = storeToRefs(useSeatDataStore())
+const { nameData } = storeToRefs(useSeatDataStore())
 const { showSeatNumbers } = storeToRefs(useOptionStore())
 
 const svgRef = useTemplateRef<SVGSVGElement>('svg-ref')
@@ -39,13 +39,11 @@ const getSVGElement = (): SVGSVGElement | null => {
 defineExpose({ getSVGElement })
 
 defineProps<{
-  viewBox: {
-    width: number
-    height: number
-  }
   pickingState?: SeatPickingState
   isFullscreen: boolean
 }>()
+
+const { tableViewbox, topIndicatorTransform, getTableSvgSeatTransform, seatData } = useSeatSvg()
 </script>
 
 <template>
@@ -57,7 +55,7 @@ defineProps<{
       { [$style.done]: pickingState === 'done' },
       { [$style.fullscreen]: isFullscreen },
     ]"
-    :viewBox="`0 0 ${viewBox.width} ${viewBox.height}`"
+    :viewBox="`0 0 ${tableViewbox.width} ${tableViewbox.height}`"
     preserveAspectRatio="xMidYMid"
     :color="TABLE_TEXT_COLOR"
     :font-weight="TABLE_FONT_WEIGHT"
@@ -65,10 +63,7 @@ defineProps<{
     :overflow="TABLE_OVERFLOW"
   >
     <!-- Table top indicator -->
-    <g
-      :transform="getTableSvgTopIndicatorTransform(viewBox.width)"
-      :class="$style['top-indicator']"
-    >
+    <g :transform="topIndicatorTransform" :class="$style['top-indicator']">
       <rect
         :width="TABLE_TOP_INDICATOR_WIDTH"
         :height="TABLE_TOP_INDICATOR_HEIGHT"

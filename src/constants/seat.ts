@@ -1,4 +1,4 @@
-import type { SeatNameData, SeatRowData } from '@/types/seat'
+import type { SeatNameData, SeatData } from '@/types/seat'
 import { initializeSeatData } from '@/utils/seat'
 
 export const DATA_ARE_SAVED_TEXT = '자리 배치와 이름 정보, 뽑힌 자리는 모두 저장됩니다.',
@@ -12,7 +12,7 @@ export const DEFAULT_NAME_DATA: SeatNameData = {}
 // Seat size
 export const DEFAULT_COLUMN_SIZE = 6,
   DEFAULT_ROW_SIZE = 5,
-  DEFAULT_SEAT_ROW_DATA: SeatRowData = initializeSeatData({
+  DEFAULT_SEAT_ROW_DATA: SeatData = initializeSeatData({
     columnSize: DEFAULT_COLUMN_SIZE,
     rowSize: DEFAULT_ROW_SIZE,
   })
