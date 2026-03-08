@@ -35,7 +35,7 @@ const handleCheckbox = () => {
 
 .container {
   display: flex;
-  gap: value.$button-container-small-gap;
+  gap: 7px;
   align-items: center;
 
   user-select: none;
