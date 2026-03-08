@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CustomButton from '@/components/common/ShadowButton.vue'
+import ShadowButton from '@/components/common/ShadowButton.vue'
 import { useSeatDataStore } from '@/stores/useSeatSizeStore'
 import { waitMs } from '@/utils/time'
 import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue'
@@ -207,27 +207,27 @@ const saveSeatAsPDF = async () => {
         :class="[$style['button-container'], { [$style.inactive]: isControlInactive }]"
         sticky
       >
-        <CustomButton v-if="isFullscreenSupported" @click="toggleFullscreen">
+        <ShadowButton v-if="isFullscreenSupported" @click="toggleFullscreen">
           <Minimize v-if="isFullscreen" />
           <Maximize v-else />
           {{ isFullscreen ? '전체화면 종료' : '전체화면' }}
-        </CustomButton>
-        <CustomButton :disabled="isPicking" warning @click="resetSeatData">
+        </ShadowButton>
+        <ShadowButton :disabled="isPicking" warning @click="resetSeatData">
           <Trash2 />
-          자리 초기화</CustomButton
+          자리 초기화</ShadowButton
         >
-        <CustomButton @click="toggleRandomPick">
+        <ShadowButton @click="toggleRandomPick">
           <Square v-if="isPicking" />
           <Play v-else />
-          {{ isPicking ? '중지' : '뽑기' }}</CustomButton
+          {{ isPicking ? '중지' : '뽑기' }}</ShadowButton
         >
-        <CustomButton
+        <ShadowButton
           :disabled="isPicking || isPDFExporting"
           :loading="isPDFExporting"
           @click="saveSeatAsPDF"
         >
           <Download />
-          PDF로 저장</CustomButton
+          PDF로 저장</ShadowButton
         >
       </ButtonContainer>
     </section>
