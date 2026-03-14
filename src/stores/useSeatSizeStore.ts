@@ -2,6 +2,7 @@ import {
   DEFAULT_COLUMN_SIZE,
   DEFAULT_NAME_DATA,
   DEFAULT_ROW_SIZE,
+  DEFAULT_SEAT_DATA,
   DEFAULT_SEAT_ROW_DATA,
   MAX_NAME_LENGTH,
   MAX_SEAT_COLUMN_SIZE,
@@ -134,7 +135,7 @@ export const useSeatDataStore = defineStore('seatData', {
           (seat) =>
             preserveExcludedState
               ? { ...seat, assignedNumber: null } // Only remove assigned number to preserve other states
-              : { isExcluded: false, assignedNumber: null }, // Reset all data
+              : structuredClone(DEFAULT_SEAT_DATA), // Reset all data
         ),
       )
     },

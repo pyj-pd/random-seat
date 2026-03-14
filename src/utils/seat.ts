@@ -1,9 +1,5 @@
+import { DEFAULT_SEAT_DATA } from '@/constants/seat'
 import { type IndividualSeatData, type SeatData, type SeatSize } from '@/types/seat'
-
-const DEFAULT_SEAT_DATA: IndividualSeatData = {
-  assignedNumber: null,
-  isExcluded: false,
-}
 
 /**
  * Make an initial seat data from column and row size.
