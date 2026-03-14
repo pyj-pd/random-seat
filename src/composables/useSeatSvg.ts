@@ -9,7 +9,7 @@ import {
   TABLE_TOP_INDICATOR_WIDTH,
 } from '@/styles/seat-svg'
 import type { SeatSize, SeatPosition } from '@/types/seat'
-import { reversed } from '@/utils/array'
+import { reversed, safeClone } from '@/utils/array'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 
@@ -62,7 +62,7 @@ export const useSeatSvg = () => {
     if (!invertVertical.value) return originalSeatData.value
 
     // Invert seat data
-    return reversed(originalSeatData.value).map((row) => reversed(row))
+    return reversed(safeClone(originalSeatData.value)).map((row) => reversed(row))
   })
 
   return {
