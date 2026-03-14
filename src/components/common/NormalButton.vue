@@ -65,6 +65,11 @@ withDefaults(defineProps<ButtonProps>(), {
   }
 
   & {
+    display: flex;
+    gap: value.$button-container-small-gap;
+    justify-content: center;
+    align-items: center;
+
     transition: color value.$animation-duration value.$animation-ease;
   }
 

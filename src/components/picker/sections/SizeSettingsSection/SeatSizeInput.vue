@@ -64,6 +64,8 @@ const rowSizeInput = computed<number>({
 @use '@/styles/value' as value;
 @use '@/styles/palette' as palette;
 
+$width: 400px;
+
 .container {
   display: flex;
 
@@ -71,7 +73,7 @@ const rowSizeInput = computed<number>({
   border: solid value.$border-width palette.$black;
 
   width: 100%;
-  max-width: 400px;
+  max-width: $width;
 }
 
 .title {
@@ -81,6 +83,10 @@ const rowSizeInput = computed<number>({
 .input-list-container {
   display: flex;
   gap: value.$button-container-gap;
+
+  @media screen and (max-width: $width) {
+    flex-direction: column;
+  }
 
   width: 100%;
 

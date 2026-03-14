@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { BLOG_URL, GITHUB_REPO_URL, LICENSE_TEXT } from '@/constants/project'
+import { BLOG_URL, GITHUB_REPO_URL, LICENSE_TEXT, SURVEY_URL } from '@/constants/project'
 import TextLink from '../common/TextLink.vue'
+import NormalButton from '../common/NormalButton.vue'
+import { Star } from 'lucide-vue-next'
 </script>
 
 <template>
@@ -19,6 +21,18 @@ import TextLink from '../common/TextLink.vue'
           <p>제작: <TextLink :href="BLOG_URL">pyj-pd</TextLink></p>
         </li>
       </ul>
+      <a
+        :href="SURVEY_URL"
+        target="_blank"
+        rel="noopener noreferrer"
+        tabindex="-1"
+        :class="$style['survey-button']"
+      >
+        <NormalButton>
+          <Star />
+          만족도 조사 참여하기(1분 소요)
+        </NormalButton>
+      </a>
     </div>
   </footer>
 </template>
@@ -45,7 +59,27 @@ $vertical-padding: 30px;
 }
 
 .content-container {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: value.$button-container-gap;
+
   width: 100%;
   max-width: value.$fixed-width;
+}
+
+.survey-button {
+  color: palette.$black;
+  text-decoration: none;
+
+  > button {
+    padding: value.$mini-section-padding;
+
+    text-align: left;
+
+    svg {
+      height: 1.2em;
+    }
+  }
 }
 </style>

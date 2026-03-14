@@ -7,6 +7,8 @@ export const LICENSE_TEXT = 'AGPL-3.0'
 
 export const BLOG_URL = 'https://pyj-pd.dev/'
 
+export const SURVEY_URL = 'https://forms.gle/ToV4MhdVGFkXgUNF7'
+
 export const PARENT_SITE_NAME = 'pyj-pd'
 
 export const SITE_NAME = '무작위 자리 뽑기',
