@@ -30,7 +30,7 @@ import { Star } from 'lucide-vue-next'
       >
         <NormalButton>
           <Star />
-          만족도 조사 참여하기(1분 소요)
+          만족도 조사 참여하기(20초 소요)
         </NormalButton>
       </a>
     </div>
