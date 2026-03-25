@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { BLOG_URL, GITHUB_REPO_URL, LICENSE_TEXT, SURVEY_URL } from '@/constants/project'
+import { BLOG_URL, GITHUB_REPO_URL, LICENSE_TEXT } from '@/constants/project'
 import TextLink from '../common/TextLink.vue'
-import NormalButton from '../common/NormalButton.vue'
-import { Star } from 'lucide-vue-next'
 </script>
 
 <template>
@@ -21,7 +19,7 @@ import { Star } from 'lucide-vue-next'
           <p>제작: <TextLink :href="BLOG_URL">pyj-pd</TextLink></p>
         </li>
       </ul>
-      <a
+      <!-- <a
         :href="SURVEY_URL"
         target="_blank"
         rel="noopener noreferrer"
@@ -32,7 +30,7 @@ import { Star } from 'lucide-vue-next'
           <Star />
           만족도 조사 참여하기(20초 소요)
         </NormalButton>
-      </a>
+      </a> -->
     </div>
   </footer>
 </template>
