@@ -28,6 +28,9 @@ const jsonLd: WithContext<WebSite> = {
 }
 
 useHead({
+  htmlAttrs: {
+    lang: 'ko',
+  },
   link: [
     {
       rel: 'canonical',
