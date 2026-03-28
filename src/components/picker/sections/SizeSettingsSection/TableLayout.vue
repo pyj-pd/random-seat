@@ -24,7 +24,7 @@ const seatDataStore = useSeatDataStore(),
  * @param position Position of the seat
  * @param isExcluded Whether the seat is excluded or not
  */
-const toggleSeat = (position: SeatPosition, isExcluded: boolean) => {
+const toggleSeatExclusion = (position: SeatPosition, isExcluded: boolean = false) => {
   if (totalSeatNumber.value <= MIN_SEAT_NUMBER && !isExcluded) return // Seat number reached minimum
 
   const currentSeatData = getSeatData(position)
@@ -104,7 +104,10 @@ defineExpose({
                   :animation="false"
                   @click="
                     () =>
-                      toggleSeat({ columnPos: columnIndex, rowPos: rowIndex }, column.isExcluded)
+                      toggleSeatExclusion(
+                        { columnPos: columnIndex, rowPos: rowIndex },
+                        column.isExcluded,
+                      )
                   "
                 >
                   <X v-if="column.isExcluded" />

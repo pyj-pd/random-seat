@@ -37,7 +37,7 @@ const rowSizeInput = computed<number>({
       <li>
         <NumberInput
           v-model="columnSizeInput"
-          label="가로(열)"
+          label="가로 개수"
           type="number"
           :min="MIN_SEAT_COLUMN_SIZE"
           :max="MAX_SEAT_COLUMN_SIZE"
@@ -48,7 +48,7 @@ const rowSizeInput = computed<number>({
       <li>
         <NumberInput
           v-model="rowSizeInput"
-          label="세로(행)"
+          label="세로 개수"
           type="number"
           :min="MIN_SEAT_ROW_SIZE"
           :max="MAX_SEAT_ROW_SIZE"

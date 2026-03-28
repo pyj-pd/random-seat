@@ -53,50 +53,42 @@ export const initializeSeatData = (
  * @returns Total number of seats
  */
 export const getTotalNumberOfSeats = (data: SeatData): number =>
-  data.flat().filter((seat) => !seat.isExcluded).length
+  data.flat().filter((seat) => isSeatAssignable(seat)).length
+
+export const isSeatAssignable = (seat: IndividualSeatData): boolean =>
+  Boolean(!(seat.isExcluded || seat.isFixed))
 
 /**
  * Assign random numbers to every seat that is included.
- * @param data Seat row data
+ * @param originalSeatData Seat row data
  * @returns Shuffled seat row data
  */
-export const getShuffledSeatData = (data: SeatData): SeatData => {
-  const totalNumber = getTotalNumberOfSeats(data)
+export const getShuffledSeatData = (originalSeatData: SeatData): SeatData => {
+  const numberOfSeats = getTotalNumberOfSeats(originalSeatData)
 
-  /**
-   * Array containing random numbers from 1 to `totalNumber`.
-   */
-  const numbers: number[] = Array.from(Array(totalNumber).keys(), (n) => n + 1),
-    randomNumbers: number[] = []
+  const numbersToAssign = Array.from({ length: numberOfSeats }, (_, index) => index + 1)
 
-  for (let i = 0; i < totalNumber; i++) {
-    const numberLength = numbers.length
-    const randomIndex = Math.floor(Math.random() * numberLength)
+  const newSeatData = [...originalSeatData]
 
-    randomNumbers.push(numbers[randomIndex]!)
-    numbers.splice(randomIndex, 1)
+  for (const row of newSeatData) {
+    for (const seat of row) {
+      if (!isSeatAssignable(seat)) {
+        if (seat.isExcluded) seat.assignedNumber = null
+
+        continue
+      }
+
+      const randomIndex = Math.floor(Math.random() * numbersToAssign.length)
+      const assignedNumber = numbersToAssign[randomIndex]
+
+      seat.assignedNumber = assignedNumber
+
+      // Remove the assigned number from the array
+      numbersToAssign.splice(randomIndex, 1)
+    }
   }
 
-  let currentIndex: number = 0
-
-  const newData: SeatData = data.map((row) =>
-    row.map((seat): IndividualSeatData => {
-      // If the seat is excluded, do not assign random numbers
-      if (seat.isExcluded) return { ...seat, assignedNumber: null }
-
-      // If the seat is included, assign a random number
-      // from `randomNumbers` array
-      const newSeat: IndividualSeatData = {
-        ...seat,
-        assignedNumber: randomNumbers[currentIndex]!,
-      }
-      currentIndex++
-
-      return newSeat
-    }),
-  )
-
-  return newData
+  return newSeatData
 }
 
 /**

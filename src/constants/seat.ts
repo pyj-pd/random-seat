@@ -12,7 +12,6 @@ export const DEFAULT_NAME_DATA: SeatNameData = {}
 // Seat data
 export const DEFAULT_SEAT_DATA: IndividualSeatData = {
   assignedNumber: null,
-  isExcluded: false,
 }
 
 // Seat size

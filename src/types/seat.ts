@@ -8,10 +8,14 @@ export type SeatNameData = {
 }
 
 // Seat data
-export type IndividualSeatData = {
-  assignedNumber: number | null
+export type IndividualSeatOptions = {
+  isFixed: boolean
   isExcluded: boolean
 }
+
+export type IndividualSeatData = {
+  assignedNumber: number | null
+} & Partial<IndividualSeatOptions>
 
 export type SeatRowData = IndividualSeatData[]
 export type SeatData = SeatRowData[]
