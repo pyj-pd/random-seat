@@ -13,6 +13,10 @@ import NormalButton from '@/components/common/NormalButton.vue'
 import { UserRound, X } from 'lucide-vue-next'
 import SeatSizeTip from './SeatSizeTip.vue'
 
+const props = defineProps<{
+  isSettingFixedSeats?: boolean
+}>()
+
 const scrollViewRef = ref<HTMLDivElement | null>(null)
 
 const seatDataStore = useSeatDataStore(),
@@ -61,7 +65,7 @@ defineExpose({
 
 <template>
   <section :class="$style.container">
-    <SeatSizeTip />
+    <SeatSizeTip :is-visible="!props.isSettingFixedSeats" />
     <div ref="scrollViewRef" :class="$style['table-scroll-view-container']">
       <div :class="$style['table-container']">
         <!-- Table info -->
