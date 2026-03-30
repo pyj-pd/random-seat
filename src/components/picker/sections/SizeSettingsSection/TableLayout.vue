@@ -51,7 +51,7 @@ const askFixedSeat = (seatPosition: SeatPosition) => {
   if (!fixedSeatSelectElementRef.value) return
 
   currentSelectedSeatPosition.value = seatPosition
-  fixedSeatSelectElementRef.value.showPicker()
+  fixedSeatSelectElementRef.value.showPicker() // @todo support ios
 }
 
 const handleFixedSeatInput = (event: InputEvent) => {
