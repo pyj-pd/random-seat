@@ -8,7 +8,7 @@ import {
 import { useSeatDataStore } from '@/stores/useSeatSizeStore'
 import type { SeatPosition } from '@/types/seat'
 import { storeToRefs } from 'pinia'
-import { ref, watch } from 'vue'
+import { ref, useTemplateRef, watch } from 'vue'
 import NormalButton from '@/components/common/NormalButton.vue'
 import { UserRound, X } from 'lucide-vue-next'
 import SeatSizeTip from './SeatSizeTip.vue'
@@ -21,19 +21,51 @@ const scrollViewRef = ref<HTMLDivElement | null>(null)
 
 const seatDataStore = useSeatDataStore(),
   { clearSeatData, getSeatData, setSeatData } = seatDataStore,
-  { columnSize, rowSize, seatData, totalSeatNumber } = storeToRefs(seatDataStore)
+  { columnSize, rowSize, seatData, nameData, totalSeatNumber, assignableSeatNumbers } =
+    storeToRefs(seatDataStore)
 
-/**
- * Exclude or include a seat at certain position based on current state.
- * @param position Position of the seat
- * @param isExcluded Whether the seat is excluded or not
- */
-const toggleSeatExclusion = (position: SeatPosition, isExcluded: boolean = false) => {
-  if (totalSeatNumber.value <= MIN_SEAT_NUMBER && !isExcluded) return // Seat number reached minimum
+const handleSeatButtonClick = (seatPosition: SeatPosition) => {
+  const currentSeatData = getSeatData(seatPosition)
+  if (!currentSeatData) return
 
-  const currentSeatData = getSeatData(position)
-  if (currentSeatData)
-    setSeatData(position, { ...currentSeatData, isExcluded: !currentSeatData.isExcluded })
+  if (props.isSettingFixedSeats) {
+    askFixedSeat(seatPosition)
+  } else {
+    // Toggle seat exclusion
+    if (totalSeatNumber.value <= MIN_SEAT_NUMBER && !currentSeatData.isExcluded) return // Seat number reached minimum. Can't exclude more seats.
+
+    setSeatData(seatPosition, {
+      ...currentSeatData,
+      assignedNumber: null,
+      isExcluded: !currentSeatData.isExcluded,
+      isFixed: false,
+    })
+  }
+}
+
+// Handle fixed seat settings
+const fixedSeatSelectElementRef = useTemplateRef<HTMLSelectElement>('fixed-seat-select-element')
+
+const currentSelectedSeatPosition = ref<SeatPosition | null>(null)
+const askFixedSeat = (seatPosition: SeatPosition) => {
+  if (!fixedSeatSelectElementRef.value) return
+
+  currentSelectedSeatPosition.value = seatPosition
+  fixedSeatSelectElementRef.value.showPicker()
+}
+
+const handleFixedSeatInput = (event: InputEvent) => {
+  const element = event.target as HTMLSelectElement
+
+  const selectedSeatNumber = Number(element.value)
+  if (isNaN(selectedSeatNumber)) return
+
+  setSeatData(currentSelectedSeatPosition.value!, {
+    assignedNumber: selectedSeatNumber,
+    isFixed: true,
+  })
+
+  element.value = '' // Reset select element to allow same option selection
 }
 
 const resetSeatData = () => {
@@ -58,6 +90,15 @@ watch(
   { flush: 'post' },
 )
 
+const getOptionTextForSeatNumber = (seatNumber: number): string => {
+  let textContent = `${seatNumber}번`
+
+  const currentName: string | undefined = nameData.value[seatNumber]
+  if (currentName) textContent += ` (${currentName})`
+
+  return textContent
+}
+
 defineExpose({
   resetSeatData,
 })
@@ -65,7 +106,18 @@ defineExpose({
 
 <template>
   <section :class="$style.container">
-    <SeatSizeTip :is-visible="!props.isSettingFixedSeats" />
+    <SeatSizeTip :mode="props.isSettingFixedSeats ? 'fix' : 'exclude'" />
+    <!-- Virtual select element for fixed seat settings -->
+    <select
+      ref="fixed-seat-select-element"
+      :class="$style['fixed-seat-select-element']"
+      @input="handleFixedSeatInput"
+    >
+      <option v-for="seatNumber of assignableSeatNumbers" :key="seatNumber" :value="seatNumber">
+        {{ getOptionTextForSeatNumber(seatNumber) }}
+      </option>
+    </select>
+    <!-- Table scroll view -->
     <div ref="scrollViewRef" :class="$style['table-scroll-view-container']">
       <div :class="$style['table-container']">
         <!-- Table info -->
@@ -104,15 +156,12 @@ defineExpose({
                     {
                       [$style.excluded]: column.isExcluded,
                     },
+                    {
+                      [$style.fixed]: column.isFixed,
+                    },
                   ]"
                   :animation="false"
-                  @click="
-                    () =>
-                      toggleSeatExclusion(
-                        { columnPos: columnIndex, rowPos: rowIndex },
-                        column.isExcluded,
-                      )
-                  "
+                  @click="() => handleSeatButtonClick({ columnPos: columnIndex, rowPos: rowIndex })"
                 >
                   <X v-if="column.isExcluded" />
                   <template v-else-if="column.assignedNumber">{{ column.assignedNumber }}</template>
@@ -139,6 +188,13 @@ defineExpose({
   align-items: center;
 
   width: 100%;
+}
+
+// Select element
+.fixed-seat-select-element {
+  position: absolute;
+
+  visibility: hidden;
 }
 
 // Table scroll view
@@ -266,6 +322,10 @@ $table-width: 880px;
     filter: grayscale(100%);
 
     transform: scale(seat.$excluded-scale);
+  }
+
+  &.fixed {
+    border-color: palette.$green;
   }
 
   .table tr:nth-child(even) &:not(.excluded) {

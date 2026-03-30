@@ -20,7 +20,12 @@ import {
   type SeatData,
   type SeatSize,
 } from '@/types/seat'
-import { getShuffledSeatData, getTotalNumberOfSeats, initializeSeatData } from '@/utils/seat'
+import {
+  getAssignableSeatNumbers,
+  getShuffledSeatData,
+  getTotalNumberOfSeats,
+  initializeSeatData,
+} from '@/utils/seat'
 import { defineStore } from 'pinia'
 
 /**
@@ -61,6 +66,9 @@ export const useSeatDataStore = defineStore('seatData', {
      */
     totalSeatNumber(state): number {
       return getTotalNumberOfSeats(state.seatData)
+    },
+    assignableSeatNumbers(state): number[] {
+      return getAssignableSeatNumbers(state.seatData, this.totalSeatNumber)
     },
     /**
      * Name data into string which contains line break.
@@ -120,9 +128,9 @@ export const useSeatDataStore = defineStore('seatData', {
      * @param seatSize Set to `null` to use current size.
      * @param columnSize Column size to reset to. If not provided, it will use current column size.
      * @param rowSize Row size to reset to. If not provided, it will use current row size.
-     * @param preserveExcludedState Whether to preserve excluded state of the seats. Default value is `false`.
+     * @param preserveSeatData Whether to preserve excluded state & fixed state of the seats. Default value is `false`.
      */
-    clearSeatData(seatSize: SeatSize | null, preserveExcludedState = false) {
+    clearSeatData(seatSize: SeatSize | null, preserveSeatData = false) {
       const columnSize = seatSize?.columnSize ?? this.columnSize,
         rowSize = seatSize?.rowSize ?? this.rowSize
 
@@ -133,8 +141,10 @@ export const useSeatDataStore = defineStore('seatData', {
       this.seatData = this.seatData.map((row) =>
         row.map(
           (seat) =>
-            preserveExcludedState
-              ? { ...seat, assignedNumber: null } // Only remove assigned number to preserve other states
+            preserveSeatData
+              ? seat.isFixed
+                ? { ...seat } // Preserve fixed state and assigned number
+                : { ...seat, assignedNumber: null } // Only remove assigned number to preserve other states
               : structuredClone(DEFAULT_SEAT_DATA), // Reset all data
         ),
       )
@@ -210,7 +220,7 @@ export const useSeatDataStore = defineStore('seatData', {
      * Assign random numbers to the seats.
      */
     shuffleSeats() {
-      this.seatData = getShuffledSeatData(this.seatData)
+      this.seatData = getShuffledSeatData(this.seatData, this.assignableSeatNumbers)
     },
     /**
      * Set name data from plain string.

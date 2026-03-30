@@ -47,26 +47,41 @@ export const initializeSeatData = (
   return newSeatData
 }
 
+export const getAssignableSeatNumbers = (seatData: SeatData, numberOfSeats: number): number[] => {
+  const numbersToAssign = Array.from({ length: numberOfSeats }, (_, index) => index + 1)
+
+  for (const seat of seatData.flat()) {
+    if (seat.isFixed && seat.assignedNumber) {
+      numbersToAssign.splice(numbersToAssign.indexOf(seat.assignedNumber), 1)
+    }
+  }
+
+  return numbersToAssign
+}
+
 /**
  * Get total number of seats that are not excluded.
  * @param data Seat row data
  * @returns Total number of seats
  */
-export const getTotalNumberOfSeats = (data: SeatData): number =>
-  data.flat().filter((seat) => isSeatAssignable(seat)).length
+export const getTotalNumberOfSeats = (data: SeatData): number => {
+  return data.flat().filter((seat) => !seat.isExcluded).length
+}
 
 export const isSeatAssignable = (seat: IndividualSeatData): boolean =>
   Boolean(!(seat.isExcluded || seat.isFixed))
 
 /**
  * Assign random numbers to every seat that is included.
- * @param originalSeatData Seat row data
+ * @param originalSeatData Seat row data\
+ * @param numberOfSeats Total number of seats to assign. It is used to generate the numbers to assign.
  * @returns Shuffled seat row data
  */
-export const getShuffledSeatData = (originalSeatData: SeatData): SeatData => {
-  const numberOfSeats = getTotalNumberOfSeats(originalSeatData)
-
-  const numbersToAssign = Array.from({ length: numberOfSeats }, (_, index) => index + 1)
+export const getShuffledSeatData = (
+  originalSeatData: SeatData,
+  assignableSeatNumbers: number[],
+): SeatData => {
+  const numbersToAssign = [...assignableSeatNumbers]
 
   const newSeatData = [...originalSeatData]
 
