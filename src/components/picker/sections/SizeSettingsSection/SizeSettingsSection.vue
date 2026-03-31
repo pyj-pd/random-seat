@@ -6,7 +6,7 @@ import ButtonContainer from '@/components/common/ButtonContainer.vue'
 import SectionTitle from '@/components/picker/SectionTitle.vue'
 import { useSectionNavigation } from '@/composables/useSectionNavigation'
 import { sections, type SectionId } from '@/constants/section'
-import { ArrowRight, Settings, Trash2, Ban } from 'lucide-vue-next'
+import { ArrowRight, Settings, Trash2, Pin, Ban } from 'lucide-vue-next'
 import TableLayout from './TableLayout.vue'
 import SeatSizeInput from './SeatSizeInput.vue'
 
@@ -31,8 +31,14 @@ const isSettingFixedSeats = ref<boolean>(false)
         자리 배치 초기화</ShadowButton
       >
       <ShadowButton @click="() => (isSettingFixedSeats = !isSettingFixedSeats)">
-        <Ban />
-        {{ isSettingFixedSeats ? '고정 좌석 설정 완료' : '고정 좌석 설정' }}
+        <template v-if="isSettingFixedSeats">
+          <Ban />
+          제외 좌석 설정
+        </template>
+        <template v-else>
+          <Pin />
+          고정 좌석 설정
+        </template>
       </ShadowButton>
       <ShadowButton @click="() => setCurrentSectionId(NEXT_SECTION)">
         <Settings />

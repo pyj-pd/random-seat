@@ -34,7 +34,7 @@ withDefaults(defineProps<{ mode?: 'exclude' | 'fix' }>(), { mode: 'exclude' })
 .highlight {
   font-weight: bold;
 
-  background-color: palette.$red;
+  background-color: palette.$green;
   color: palette.$white;
 
   padding: 0 0.2em;

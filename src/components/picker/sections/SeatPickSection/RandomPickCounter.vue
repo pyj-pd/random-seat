@@ -27,8 +27,8 @@ defineProps<{
 
     padding: 25px 60px;
 
-    background-color: palette.$black;
-    color: palette.$white;
+    background-color: rgba(palette.$black, 0.8);
+    color: palette.$bright-white;
 
     animation: random-pick-counter-animation 1.5s value.$ease-in-out both;
 

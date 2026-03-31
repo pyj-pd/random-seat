@@ -10,7 +10,7 @@ import type { SeatPosition } from '@/types/seat'
 import { storeToRefs } from 'pinia'
 import { ref, useTemplateRef, watch } from 'vue'
 import NormalButton from '@/components/common/NormalButton.vue'
-import { UserRound, X } from 'lucide-vue-next'
+import { Pin, UserRound, X } from 'lucide-vue-next'
 import SeatSizeTip from './SeatSizeTip.vue'
 
 const props = defineProps<{
@@ -29,6 +29,16 @@ const handleSeatButtonClick = (seatPosition: SeatPosition) => {
   if (!currentSeatData) return
 
   if (props.isSettingFixedSeats) {
+    if (currentSeatData.isFixed) {
+      // Un-fix seat
+      setSeatData(seatPosition, {
+        ...currentSeatData,
+        assignedNumber: null,
+        isFixed: false,
+      })
+      return
+    }
+
     askFixedSeat(seatPosition)
   } else {
     // Toggle seat exclusion
@@ -149,22 +159,23 @@ defineExpose({
                 {{ rowIndex + 1 }}
               </th>
               <!-- Seat button -->
-              <td v-for="(column, columnIndex) in row" :key="`${rowIndex},${columnIndex}`">
+              <td v-for="(seat, seatIndex) in row" :key="`${rowIndex},${seatIndex}`">
                 <NormalButton
                   :class="[
                     $style['seat-button'],
                     {
-                      [$style.excluded]: column.isExcluded,
+                      [$style.excluded]: seat.isExcluded,
                     },
                     {
-                      [$style.fixed]: column.isFixed,
+                      [$style.fixed]: seat.isFixed,
                     },
                   ]"
                   :animation="false"
-                  @click="() => handleSeatButtonClick({ columnPos: columnIndex, rowPos: rowIndex })"
+                  @click="() => handleSeatButtonClick({ columnPos: seatIndex, rowPos: rowIndex })"
                 >
-                  <X v-if="column.isExcluded" />
-                  <template v-else-if="column.assignedNumber">{{ column.assignedNumber }}</template>
+                  <Pin v-if="seat.isFixed" :class="$style['pin-icon']" />
+                  <X v-if="seat.isExcluded" />
+                  <template v-else-if="seat.assignedNumber">{{ seat.assignedNumber }}</template>
                   <UserRound v-else />
                 </NormalButton>
               </td>
@@ -326,9 +337,19 @@ $table-width: 880px;
 
   &.fixed {
     border-color: palette.$green;
+    background-color: palette.$light-green;
+    color: palette.$white;
+
+    .pin-icon {
+      position: absolute;
+      top: seat.$small-gap;
+      left: seat.$small-gap;
+
+      width: 0.8em;
+    }
   }
 
-  .table tr:nth-child(even) &:not(.excluded) {
+  .table tr:nth-child(even) &:not(.excluded):not(.fixed) {
     background-color: palette.$dark-gray;
   }
 
