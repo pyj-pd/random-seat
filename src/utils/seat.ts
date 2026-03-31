@@ -1,5 +1,6 @@
 import { DEFAULT_SEAT_DATA } from '@/constants/seat'
 import { type IndividualSeatData, type SeatData, type SeatSize } from '@/types/seat'
+import { safeClone } from './array'
 
 /**
  * Make an initial seat data from column and row size.
@@ -83,7 +84,7 @@ export const getShuffledSeatData = (
 ): SeatData => {
   const numbersToAssign = [...assignableSeatNumbers]
 
-  const newSeatData = [...originalSeatData]
+  const newSeatData = safeClone(originalSeatData)
 
   for (const row of newSeatData) {
     for (const seat of row) {

@@ -12,11 +12,11 @@ export const SURVEY_URL = 'https://forms.gle/ToV4MhdVGFkXgUNF7'
 export const PARENT_SITE_NAME = 'pyj-pd'
 
 export const SITE_NAME = '무작위 자리 뽑기',
-  SITE_SLOGAN = '랜덤 자리 배치 & PDF 저장',
+  SITE_SLOGAN = '랜덤 자리 배치 & PDF 저장, 자리 고정',
   SITE_URL = 'https://pyj-pd.dev/random-seat/'
 
 // For metadata
 export const SITE_TITLE = `${SITE_NAME} — ${SITE_SLOGAN}`
-export const SITE_DESCRIPTION = `최대 ${MAX_SEAT_COLUMN_SIZE}×${MAX_SEAT_ROW_SIZE} 크기의 랜덤 자리 뽑기! 클릭 한 번으로 공평하게 뽑고, 랜덤으로 배치한 자리는 PDF로 저장하여 손쉽게 인쇄 및 공유할 수 있습니다. 학교, 버스, 행사 등 어디든지 사용해보세요!`
+export const SITE_DESCRIPTION = `최대 ${MAX_SEAT_COLUMN_SIZE}×${MAX_SEAT_ROW_SIZE} 크기의 랜덤 자리 뽑기! 클릭 한 번으로 공평하게 뽑고, 랜덤으로 배치한 자리는 PDF로 저장하여 손쉽게 인쇄 및 공유할 수 있습니다. 원하는 번호는 자리 배정을 고정할 수도 있습니다. 학교, 버스, 행사 등 어디든지 사용해보세요!`
 
 export const THEME_COLOR = '#ebdcc7'
