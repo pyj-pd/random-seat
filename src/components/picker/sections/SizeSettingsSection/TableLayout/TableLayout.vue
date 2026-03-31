@@ -12,6 +12,7 @@ import { ref, useTemplateRef, watch } from 'vue'
 import NormalButton from '@/components/common/NormalButton.vue'
 import { Pin, UserRound, X } from 'lucide-vue-next'
 import SeatSizeTip from './SeatSizeTip.vue'
+import FixedSeatModal from './FixedSeatModal.vue'
 
 const props = defineProps<{
   isSettingFixedSeats?: boolean
@@ -117,16 +118,8 @@ defineExpose({
 <template>
   <section :class="$style.container">
     <SeatSizeTip :mode="props.isSettingFixedSeats ? 'fix' : 'exclude'" />
-    <!-- Virtual select element for fixed seat settings -->
-    <select
-      ref="fixed-seat-select-element"
-      :class="$style['fixed-seat-select-element']"
-      @input="handleFixedSeatInput"
-    >
-      <option v-for="seatNumber of assignableSeatNumbers" :key="seatNumber" :value="seatNumber">
-        {{ getOptionTextForSeatNumber(seatNumber) }}
-      </option>
-    </select>
+    <!-- Fixed seat settings modal -->
+    <FixedSeatModal />
     <!-- Table scroll view -->
     <div ref="scrollViewRef" :class="$style['table-scroll-view-container']">
       <div :class="$style['table-container']">
@@ -193,6 +186,8 @@ defineExpose({
 @use '@/styles/value' as value;
 
 .container {
+  position: relative;
+
   display: flex;
   gap: value.$button-container-gap;
   flex-direction: column;

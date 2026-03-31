@@ -39,6 +39,8 @@ withDefaults(defineProps<ButtonProps>(), {
 
 // Animation is on
 .button.animated {
+  z-index: 1;
+
   &::after {
     content: '';
 
@@ -73,7 +75,11 @@ withDefaults(defineProps<ButtonProps>(), {
     transition: color value.$animation-duration value.$animation-ease;
   }
 
-  &:hover {
+  &:disabled {
+    opacity: button.$button-disabled-opacity;
+  }
+
+  &:enabled:hover {
     color: palette.$white;
 
     &::after {

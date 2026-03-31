@@ -7,7 +7,7 @@ import SectionTitle from '@/components/picker/SectionTitle.vue'
 import { useSectionNavigation } from '@/composables/useSectionNavigation'
 import { sections, type SectionId } from '@/constants/section'
 import { ArrowRight, Settings, Trash2, Pin, Ban } from 'lucide-vue-next'
-import TableLayout from './TableLayout.vue'
+import TableLayout from './TableLayout/TableLayout.vue'
 import SeatSizeInput from './SeatSizeInput.vue'
 
 const NEXT_SECTION: SectionId = 'name-settings'

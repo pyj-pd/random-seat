@@ -68,6 +68,9 @@ export const useSeatDataStore = defineStore('seatData', {
     assignableSeatNumbers(): number[] {
       return this._seatStats.assignableNumbers
     },
+    fixedNumbers(): number[] {
+      return this._seatStats.fixedNumbers
+    },
     /**
      * Name data into string which contains line break.
      */
