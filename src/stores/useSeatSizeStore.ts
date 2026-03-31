@@ -20,12 +20,7 @@ import {
   type SeatData,
   type SeatSize,
 } from '@/types/seat'
-import {
-  getAssignableSeatNumbers,
-  getShuffledSeatData,
-  getTotalNumberOfSeats,
-  initializeSeatData,
-} from '@/utils/seat'
+import { computeSeatStats, getShuffledSeatData, initializeSeatData } from '@/utils/seat'
 import { defineStore } from 'pinia'
 
 /**
@@ -61,14 +56,17 @@ export const useSeatDataStore = defineStore('seatData', {
     seatData: [...DEFAULT_SEAT_ROW_DATA] as SeatData,
   }),
   getters: {
+    _seatStats(state) {
+      return computeSeatStats(state.seatData)
+    },
     /**
      * Total number of seats included.
      */
-    totalSeatNumber(state): number {
-      return getTotalNumberOfSeats(state.seatData)
+    totalSeatNumber(): number {
+      return this._seatStats.totalNumberOfSeats
     },
-    assignableSeatNumbers(state): number[] {
-      return getAssignableSeatNumbers(state.seatData, this.totalSeatNumber)
+    assignableSeatNumbers(): number[] {
+      return this._seatStats.assignableNumbers
     },
     /**
      * Name data into string which contains line break.

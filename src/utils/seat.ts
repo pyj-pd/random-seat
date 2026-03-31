@@ -47,25 +47,25 @@ export const initializeSeatData = (
   return newSeatData
 }
 
-export const getAssignableSeatNumbers = (seatData: SeatData, numberOfSeats: number): number[] => {
-  const numbersToAssign = Array.from({ length: numberOfSeats }, (_, index) => index + 1)
+export const computeSeatStats = (seatData: SeatData) => {
+  const fixedAssigned = new Set<number>()
+  let totalNumberOfSeats = 0
 
-  for (const seat of seatData.flat()) {
-    if (seat.isFixed && seat.assignedNumber) {
-      numbersToAssign.splice(numbersToAssign.indexOf(seat.assignedNumber), 1)
+  for (const row of seatData) {
+    for (const seat of row) {
+      if (!seat.isExcluded) totalNumberOfSeats++
+      if (seat.isFixed && seat.assignedNumber !== null) fixedAssigned.add(seat.assignedNumber)
     }
   }
 
-  return numbersToAssign
-}
+  const fixedNumbers = Array.from(fixedAssigned).sort((a, b) => a - b)
 
-/**
- * Get total number of seats that are not excluded.
- * @param data Seat row data
- * @returns Total number of seats
- */
-export const getTotalNumberOfSeats = (data: SeatData): number => {
-  return data.flat().filter((seat) => !seat.isExcluded).length
+  const assignableNumbers: number[] = []
+  for (let i = 1; i <= totalNumberOfSeats; i++) {
+    if (!fixedAssigned.has(i)) assignableNumbers.push(i)
+  }
+
+  return { totalNumberOfSeats, fixedNumbers, assignableNumbers }
 }
 
 export const isSeatAssignable = (seat: IndividualSeatData): boolean =>
