@@ -22,8 +22,7 @@ const scrollViewRef = ref<HTMLDivElement | null>(null)
 
 const seatDataStore = useSeatDataStore(),
   { clearSeatData, getSeatData, setSeatData } = seatDataStore,
-  { columnSize, rowSize, seatData, nameData, totalSeatNumber, assignableSeatNumbers } =
-    storeToRefs(seatDataStore)
+  { columnSize, rowSize, seatData, totalSeatNumber } = storeToRefs(seatDataStore)
 
 const handleSeatButtonClick = (seatPosition: SeatPosition) => {
   const currentSeatData = getSeatData(seatPosition)
@@ -55,28 +54,28 @@ const handleSeatButtonClick = (seatPosition: SeatPosition) => {
 }
 
 // Handle fixed seat settings
-const fixedSeatSelectElementRef = useTemplateRef<HTMLSelectElement>('fixed-seat-select-element')
-
 const currentSelectedSeatPosition = ref<SeatPosition | null>(null)
-const askFixedSeat = (seatPosition: SeatPosition) => {
-  if (!fixedSeatSelectElementRef.value) return
+const isFixedSettingsModalVisible = ref(false)
 
+const askFixedSeat = (seatPosition: SeatPosition) => {
   currentSelectedSeatPosition.value = seatPosition
-  fixedSeatSelectElementRef.value.showPicker() // @todo support ios
+  isFixedSettingsModalVisible.value = true
 }
 
-const handleFixedSeatInput = (event: InputEvent) => {
-  const element = event.target as HTMLSelectElement
+const onFixedSeatNumberSelect = (seatNumber: number | null) => {
+  isFixedSettingsModalVisible.value = false
 
-  const selectedSeatNumber = Number(element.value)
-  if (isNaN(selectedSeatNumber)) return
+  if (seatNumber === null || currentSelectedSeatPosition.value === null) return
 
-  setSeatData(currentSelectedSeatPosition.value!, {
-    assignedNumber: selectedSeatNumber,
+  const currentSeatData = getSeatData(currentSelectedSeatPosition.value)
+  if (!currentSeatData) return
+
+  setSeatData(currentSelectedSeatPosition.value, {
+    ...currentSeatData,
+    assignedNumber: seatNumber,
+    isExcluded: false,
     isFixed: true,
   })
-
-  element.value = '' // Reset select element to allow same option selection
 }
 
 const resetSeatData = () => {
@@ -101,15 +100,6 @@ watch(
   { flush: 'post' },
 )
 
-const getOptionTextForSeatNumber = (seatNumber: number): string => {
-  let textContent = `${seatNumber}번`
-
-  const currentName: string | undefined = nameData.value[seatNumber]
-  if (currentName) textContent += ` (${currentName})`
-
-  return textContent
-}
-
 defineExpose({
   resetSeatData,
 })
@@ -119,7 +109,7 @@ defineExpose({
   <section :class="$style.container">
     <SeatSizeTip :mode="props.isSettingFixedSeats ? 'fix' : 'exclude'" />
     <!-- Fixed seat settings modal -->
-    <FixedSeatModal />
+    <FixedSeatModal :is-visible="isFixedSettingsModalVisible" @select="onFixedSeatNumberSelect" />
     <!-- Table scroll view -->
     <div ref="scrollViewRef" :class="$style['table-scroll-view-container']">
       <div :class="$style['table-container']">
